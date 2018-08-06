@@ -1,0 +1,8 @@
+Instructions for installing LANDIS-II and Biomass Succession.
+
+1. Install LANDIS-II
+   a. http://www.landis-ii.org/install
+   b. no need to install the recommended base extensions
+2. Install Biomass Succession
+   a. http://www.landis-ii.org/extensions/biomass-succession
+ 

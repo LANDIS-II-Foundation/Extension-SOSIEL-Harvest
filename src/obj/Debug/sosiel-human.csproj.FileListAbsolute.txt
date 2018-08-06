@@ -1,0 +1,11 @@
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\configuration.json
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\Landis.Extension.SOSIELHuman.dll
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\Landis.Extension.SOSIELHuman.pdb
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\CsvHelper.dll
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\Newtonsoft.Json.dll
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\CsvHelper.pdb
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\CsvHelper.xml
+D:\projects\Extension-Social-Human\Integration\src\bin\Debug\Newtonsoft.Json.xml
+D:\projects\Extension-Social-Human\Integration\src\obj\Debug\Landis.Extension.SOSIELHuman.dll
+D:\projects\Extension-Social-Human\Integration\src\obj\Debug\Landis.Extension.SOSIELHuman.pdb
+D:\projects\Extension-Social-Human\Integration\src\obj\Debug\sosiel-human.csproj.CoreCompileInputs.cache

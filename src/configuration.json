@@ -1,0 +1,779 @@
+﻿{
+  "AlgorithmConfiguration": {
+    "CognitiveLevel": 4
+  },
+
+  "AgentConfiguration": {
+    "FE-Prototype": {
+      "NamePrefix": "FE",
+
+      "CommonVariables": {
+        "AgentType": "Type1"
+      },
+
+      "Goals": [
+        {
+          "Name": "G1",
+          "Tendency": "Maximize",
+          "ReferenceVariable": "Profit",
+          "FocalValue": 0,
+          "ChangeFocalValueOnPrevious": true,
+          "FocalValueReference": "",
+          "IsCommulative": false
+        },
+        {
+          "Name": "G2",
+          "Tendency": "EqualToOrAboveFocalValue",
+          "ReferenceVariable": "AverageBiomass",
+          "FocalValue": 10400,
+          "FocalValueReference": "",
+          "IsCommulative": false
+        }
+      ],
+
+      "SetConfiguration": {
+        "1": {
+          "AssociatedWith": [ "G1", "G2" ],
+          "Layer": {
+            "1": {
+              "Modifiable": true,
+              "UseDoNothing": false,
+              "MaxNumberOfRules": 3600,
+              "ConsequentValueInterval": [ 0, 100 ],
+              "MinConsequentReference": "",
+              "MaxConsequentReference": "",
+              "ConsequentRelationshipSign": {
+                "G1": "+",
+                "G2": "-"
+              }
+            }
+          }
+        }
+      },
+
+      "Rules": [
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 1,
+          "Id": "RS1_L1_R1",
+          "Antecedent": [
+            {
+              "Param": "Biomass",
+              "Sign": ">=",
+              "Value": 0
+            }
+          ],
+          "Consequent": {
+            "Param": "ReductionPercentage",
+            "Value": 0,
+            "VariableValue": ""
+          },
+          "RequiredParticipants": 1,
+          "IsAction": false
+        },
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 2,
+          "Id": "RS1_L1_R2",
+          "Antecedent": [
+            {
+              "Param": "Biomass",
+              "Sign": ">=",
+              "Value": 0
+            }
+          ],
+          "Consequent": {
+            "Param": "ReductionPercentage",
+            "Value": 10,
+            "VariableValue": ""
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        }
+
+      ],
+
+      "DoNothingAnticipatedInfluence": {
+        "G1": 0,
+        "G2": 0
+      },
+      
+      "IsSiteOriented": true 
+    },
+    "HouseholdMember-Prototype": {
+      "NamePrefix": "HM",
+
+      "CommonVariables": {
+        "AgentType": "Type2",
+        "AgeMax": 100,
+        "WorkAgeMin": 18,
+        "WorkAgeMax": 60,
+        "UnionAgeMin": 16,
+        "UnionAgeMax": 60,
+        "AverageUnionAge": 20,
+
+        "IncomeFromChoresAtHome": 0,
+        "IncomeFromDisability": 18000,
+        "IncomeFromPension": 18000,
+        "IncomeFromForestry": 33000,
+        "IncomeFromAbroad": 160000,
+        "IncomeFromPickingMushrooms": 10000,
+        "IncomeFromGreenTourism": 320000,
+
+        "TourismThreshold": 1000,
+        "FE_JobAvailable": true,
+        "RequiredSavingsForGreenTourism": 200000,
+
+        "PriceOfTimber": 600,
+        "PriceOfElectricity": 700
+      },
+
+      "Goals": [
+        {
+          "Name": "G3",
+          "Tendency": "Maximize",
+          "ReferenceVariable": "Income",
+          "FocalValue": 0,
+          "ChangeFocalValueOnPrevious": true,
+          "FocalValueReference": "",
+          "IsCommulative": false
+        },
+        {
+          "Name": "G4",
+          "Tendency": "Minimize",
+          "ReferenceVariable": "Expenses",
+          "FocalValue": 0,
+          "ChangeFocalValueOnPrevious": true,
+          "FocalValueReference": "",
+          "IsCommulative": false
+        }
+      ],
+
+      "SetConfiguration": {
+        "1": {
+          "AssociatedWith": [ "G3" ],
+          "Layer": {
+            "1": {
+              "Modifiable": false,
+              "MaxNumberOfRules": 7
+            }
+          }
+        },
+        "2": {
+          "AssociatedWith": [ "G4" ],
+          "Layer": {
+            "1": {
+              "Modifiable": false,
+              "MaxNumberOfRules": 2
+            }
+          }
+        }
+      },
+
+      "Rules": [
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 1,
+          "Id": "RS1_L1_R1",
+          "Antecedent": [
+            {
+              "Param": "IsActive",
+              "Sign": "==",
+              "Value": true
+            }
+          ],
+          "Consequent": {
+            "Param": "Income",
+            "VariableValue": "IncomeFromChoresAtHome"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 2,
+          "Id": "RS1_L1_R2",
+          "Antecedent": [
+            {
+              "Param": "Age",
+              "Sign": ">=",
+              "Value": 0,
+              "ReferenceVariable": "WorkAgeMin"
+
+            },
+            {
+              "Param": "Age",
+              "Sign": "<=",
+              "Value": 0,
+              "ReferenceVariable": "WorkAgeMax"
+            },
+            {
+              "Param": "Gender",
+              "Sign": "==",
+              "Value": "male",
+              "ReferenceVariable": ""
+            },
+            {
+              "Param": "Disability",
+              "Sign": "==",
+              "Value": false,
+              "ReferenceVariable": ""
+            },
+            {
+              "Param": "FE_JobAvailable",
+              "Sign": "==",
+              "Value": true,
+              "ReferenceVariable": ""
+            }
+          ],
+          "Consequent": {
+            "Param": "Income",
+            "VariableValue": "IncomeFromForestry"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 3,
+          "Id": "RS1_L1_R3",
+          "Antecedent": [
+            {
+              "Param": "Age",
+              "Sign": ">=",
+              "ReferenceVariable": "WorkAgeMin"
+
+            },
+            {
+              "Param": "Age",
+              "Sign": "<=",
+              "ReferenceVariable": "WorkAgeMax"
+            },
+            {
+              "Param": "Gender",
+              "Sign": "==",
+              "Value": "male"
+            },
+            {
+              "Param": "Disability",
+              "Sign": "==",
+              "Value": false
+            },
+            {
+              "Param": "FE_JobAvailable",
+              "Sign": "==",
+              "Value": false
+            }
+          ],
+          "Consequent": {
+            "Param": "Income",
+            "VariableValue": "IncomeFromAbroad"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 4,
+          "Id": "RS1_L1_R4",
+          "Antecedent": [
+            {
+              "Param": "Age",
+              "Sign": ">=",
+              "ReferenceVariable": "WorkAgeMax"
+
+            }
+          ],
+          "Consequent": {
+            "Param": "Income",
+            "VariableValue": "IncomeFromPension"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 5,
+          "Id": "RS1_L1_R5",
+          "Antecedent": [
+            {
+              "Param": "Disability",
+              "Sign": "==",
+              "Value": true
+
+            }
+          ],
+          "Consequent": {
+            "Param": "Income",
+            "VariableValue": "IncomeFromDisability"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 6,
+          "Id": "RS1_L1_R6",
+          "Antecedent": [
+            {
+              "Param": "Age",
+              "Sign": ">=",
+              "ReferenceVariable": "WorkAgeMin"
+
+            },
+            {
+              "Param": "Age",
+              "Sign": "<=",
+              "ReferenceVariable": "WorkAgeMax"
+            },
+            {
+              "Param": "Disability",
+              "Sign": "==",
+              "Value": false
+            },
+            {
+              "Param": "Tourism",
+              "Sign": "==",
+              "Value": true
+            },
+            {
+              "Param": "HouseholdSavings",
+              "Sign": ">=",
+              "ReferenceVariable": "RequiredSavingsForGreenTourism"
+            }
+          ],
+          "Consequent": {
+            "Param": "Income",
+            "VariableValue": "IncomeFromGreenTourism"
+          },
+          "RequiredParticipants": 2,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 1,
+          "RuleLayer": 1,
+          "RulePositionNumber": 7,
+          "Id": "RS1_L1_R7",
+          "Antecedent": [
+            {
+              "Param": "Age",
+              "Sign": ">=",
+              "Value": 8
+
+            },
+            {
+              "Param": "Age",
+              "Sign": "<=",
+              "Value": 70
+            },
+            {
+              "Param": "Disability",
+              "Sign": "==",
+              "Value": false
+            }
+          ],
+          "Consequent": {
+            "Param": "Income",
+            "VariableValue": "IncomeFromPickingMushrooms"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 2,
+          "RuleLayer": 1,
+          "RulePositionNumber": 1,
+          "Id": "RS2_L1_R1",
+          "Antecedent": [
+            {
+              "Param": "PriceOfTimber",
+              "Sign": "<=",
+              "ReferenceVariable": "PriceOfElectricity"
+
+            }
+          ],
+          "Consequent": {
+            "Param": "Expenses",
+            "VariableValue": "PriceOfTimber"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        },
+        {
+          "RuleSet": 2,
+          "RuleLayer": 1,
+          "RulePositionNumber": 1,
+          "Id": "RS2_L1_R1",
+          "Antecedent": [
+            {
+              "Param": "PriceOfElectricity",
+              "Sign": "<",
+              "ReferenceVariable": "PriceOfTimber"
+
+            }
+          ],
+          "Consequent": {
+            "Param": "Expenses",
+            "VariableValue": "PriceOfElectricity"
+          },
+          "RequiredParticipants": 1,
+          "IsAction": true
+        }
+      ],
+
+      "IsSiteOriented": false
+    }
+  },
+
+  "InitialState": {
+
+    "AgentsState": [
+      {
+        "PrototypeOfAgent": "FE-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G1": 0,
+            "G2": 0
+          },
+          "RS1_L1_R2": {
+            "G1": 1000,
+            "G2": 1000
+          }
+
+        },
+
+        "AssignedRules": [
+          "RS1_L1_R1",
+          "RS1_L1_R2"
+        ],
+
+        "AssignedGoals": [ "G1", "G2" ],
+
+        "GoalsState": {
+          "G1": {
+            "Importance": 0.5,
+            "Value": 0
+          },
+          "G2": {
+            "Importance": 0.5,
+            "Value": 0
+          }
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R2" ]
+      },
+      {
+        "PrototypeOfAgent": "HouseholdMember-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true,
+          "Age": 35,
+          "Gender": "male",
+          "Disability": false
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G3": 0
+          },
+          "RS1_L1_R2": {
+            "G3": 33000
+          },
+          "RS1_L1_R3": {
+            "G3": 160000
+          },
+          "RS2_L1_R1": {
+            "G4": 600
+          },
+          "RS2_L1_R2": {
+            "G4": 700
+          }
+        },
+
+        "AssignedRules": [
+          "RS1_L1_R1",
+          "RS1_L1_R2",
+          "RS1_L1_R3",
+          "RS2_L1_R1",
+          "RS2_L1_R2"
+        ],
+
+        "AssignedGoals": [ "G3", "G4" ],
+
+        "GoalsState": {
+          "G3": {
+            "Importance": 0.5,
+            "Value": 0
+          },
+          "G4": {
+            "Importance": 0.5,
+            "Value": 0
+          }
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R2", "RS2_L1_R1" ],
+
+        "SocialNetwork": [ "H1" ]
+      },
+      {
+        "PrototypeOfAgent": "HouseholdMember-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true,
+          "Age": 30,
+          "Gender": "female",
+          "Disability": false
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G3": 0
+          }
+        },
+
+        "AssignedRules": [
+          "RS1_L1_R1"
+        ],
+
+        "AssignedGoals": [ "G3" ],
+
+        "GoalsState": {
+          "G3": {
+            "Importance": 1,
+            "Value": 0
+          }
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R1" ],
+
+        "SocialNetwork": [ "H1", "Church" ]
+      },
+      {
+        "PrototypeOfAgent": "HouseholdMember-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true,
+          "Age": 75,
+          "Gender": "female",
+          "Disability": false
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G3": 0
+          },
+          "RS1_L1_R4": {
+            "G3": 18000
+          }
+        },
+
+        "AssignedRules": [
+          "RS1_L1_R1",
+          "RS1_L1_R4"
+        ],
+
+        "AssignedGoals": [ "G3" ],
+
+        "GoalsState": {
+          "G3": {
+            "Importance": 1,
+            "Value": 0
+          }
+
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R4" ],
+
+        "SocialNetwork": [ "H1" ]
+      },
+      {
+        "PrototypeOfAgent": "HouseholdMember-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true,
+          "Age": 40,
+          "Gender": "male",
+          "Disability": false
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G3": 0
+          },
+          "RS1_L1_R2": {
+            "G3": 33000
+          },
+          "RS1_L1_R3": {
+            "G3": 160000
+          },
+          "RS1_L1_R6": {
+            "G3": 320000
+          },
+          "RS2_L1_R1": {
+            "G4": 600
+          },
+          "RS2_L1_R2": {
+            "G4": 700
+          }
+        },
+
+        "AssignedRules": [
+          "RS1_L1_R1",
+          "RS1_L1_R2",
+          "RS1_L1_R3",
+          "RS1_L1_R6",
+          "RS2_L1_R1",
+          "RS2_L1_R2"
+        ],
+
+        "AssignedGoals": [ "G3", "G4" ],
+
+        "GoalsState": {
+          "G3": {
+            "Importance": 0.5,
+            "Value": 0
+          },
+          "G4": {
+            "Importance": 0.5,
+            "Value": 0
+          }
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R6", "RS2_L1_R1" ],
+
+        "SocialNetwork": [ "H2" ]
+      },
+      {
+        "PrototypeOfAgent": "HouseholdMember-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true,
+          "Age": 35,
+          "Gender": "female",
+          "Disability": false
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G3": 0
+          },
+          "RS1_L1_R6": {
+            "G3": 320000
+          }
+        },
+
+        "AssignedRules": [
+          "RS1_L1_R1",
+          "RS1_L1_R6"
+        ],
+
+        "AssignedGoals": [ "G3" ],
+
+        "GoalsState": {
+          "G3": {
+            "Importance": 1,
+            "Value": 0
+          }
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R6" ],
+
+        "SocialNetwork": [ "H2", "Church" ]
+      },
+      {
+        "PrototypeOfAgent": "HouseholdMember-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true,
+          "Age": 50,
+          "Gender": "male",
+          "Disability": true
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G3": 0
+          },
+          "RS1_L1_R5": {
+            "G3": 18000
+          }
+        },
+
+        "AssignedRules": [
+          "RS1_L1_R1",
+          "RS1_L1_R5"
+        ],
+
+        "AssignedGoals": [ "G3" ],
+
+        "GoalsState": {
+          "G3": {
+            "Importance": 1,
+            "Value": 0
+          }
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R5" ],
+
+        "SocialNetwork": [ "H2" ]
+      },
+      {
+        "PrototypeOfAgent": "HouseholdMember-Prototype",
+        "NumberOfAgents": 1,
+
+        "PrivateVariables": {
+          "IsActive": true,
+          "Age": 12,
+          "Gender": "male",
+          "Disability": false
+        },
+
+        "AnticipatedInfluenceState": {
+          "RS1_L1_R1": {
+            "G3": 0
+          },
+          "RS1_L1_R5": {
+            "G3": 10000
+          }
+        },
+        "AssignedRules": [
+          "RS1_L1_R1",
+          "RS1_L1_R7"
+        ],
+
+        "AssignedGoals": [ "G3" ],
+
+        "GoalsState": {
+          "G3": {
+            "Importance": 1,
+            "Value": 0
+          }
+        },
+
+        "ActivatedRulesOnFirstIteration": [ "RS1_L1_R7" ],
+
+        "SocialNetwork": [ "H2" ]
+      }
+    ]
+  }
+}

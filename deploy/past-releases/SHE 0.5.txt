@@ -1,0 +1,9 @@
+LandisData   Extension
+
+Name         "Sosiel Humans"
+Version      0.5
+Type         Disturbance
+Assembly     Landis.Extension.SosielHuman
+Class        Landis.Extension.Sosiel.PlugIn
+Description  "Interactions among agents"
+CoreVersion  6.0
