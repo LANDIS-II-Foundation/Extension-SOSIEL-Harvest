@@ -19,7 +19,7 @@ namespace Landis.Extension.SOSIELHuman
         : Landis.Core.ExtensionMain
     {
 
-        public static readonly ExtensionType ExtType = new ExtensionType("disturbance:SOSIEL Human");
+        public static readonly ExtensionType ExtType = new ExtensionType("disturbance:harvest");
         public static readonly string ExtensionName = "SOSIEL Human";
 
         private Parameters parameters;
