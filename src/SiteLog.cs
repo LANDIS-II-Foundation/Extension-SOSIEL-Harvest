@@ -8,7 +8,7 @@ using log4net;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Landis.Extension.SocialHuman
+namespace Landis.Extension.SOSIELHuman
 {
     /// <summary>
     /// A log file with details about the biomass removed at each site.
@@ -31,10 +31,10 @@ namespace Landis.Extension.SocialHuman
 
         public static void Initialize(string path)
         {
-            Model.Core.UI.WriteLine("  Opening log file \"{0}\"...", path);
+            PlugIn.ModelCore.UI.WriteLine("  Opening log file \"{0}\"...", path);
             logFile = Landis.Data.CreateTextFile(path);
             logFile.Write("timestep,row,column");
-            foreach (ISpecies species in Model.Core.Species)
+            foreach (ISpecies species in PlugIn.ModelCore.Species)
                 logFile.Write(",{0}", species.Name);
             logFile.WriteLine();
             Enabled = true;
@@ -68,8 +68,8 @@ namespace Landis.Extension.SocialHuman
 
         public static void WriteTotalsFor(ActiveSite site)
         {
-            logFile.Write("{0},{1},{2}", Model.Core.CurrentTime, site.Location.Row, site.Location.Column);
-            foreach (ISpecies species in Model.Core.Species)
+            logFile.Write("{0},{1},{2}", PlugIn.ModelCore.CurrentTime, site.Location.Row, site.Location.Column);
+            foreach (ISpecies species in PlugIn.ModelCore.Species)
                 logFile.Write(",{0}", SiteBiomass.Harvested[species]);
             logFile.WriteLine();
             SiteBiomass.ResetHarvestTotals();

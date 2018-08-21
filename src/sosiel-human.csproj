@@ -1,189 +1,76 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{B8CED21D-693F-4551-908B-E63321DD1D9F}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Landis.Extension.SOSIELHuman</RootNamespace>
-    <AssemblyName>Landis.Extension.SOSIELHuman</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-    <AssemblyVersion>1.0.6.6374</AssemblyVersion>
+    <AssemblyName>Landis.Extension.SOSIELHuman-v2</AssemblyName>
+    <AssemblyTitle>Landis.Extension.SOSIELHuman-v2</AssemblyTitle>
+    <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
+    <AssemblyProduct>Landis.Extension.SOSIELHuman-v2</AssemblyProduct>
+    <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
+    <AssemblyVersion>2.0</AssemblyVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Human</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Human/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
+    <NeutralLanguage>English</NeutralLanguage>
+    <Authors>Garry Sotnik</Authors>
+    <Product>Landis.Extension.SOSIELHuman-v2</Product>
+    <Copyright>Landis-II-Foundation</Copyright>
+    <Version>2.0</Version>
+    <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
+    <Description>SOSIEL Human Extension</Description>
+    <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
+    <FileVersion>7.0.0.0</FileVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-    <PrimaryVersionType>AssemblyVersionAttribute</PrimaryVersionType>
-    <UpdateAssemblyVersion>True</UpdateAssemblyVersion>
-    <UpdateAssemblyFileVersion>False</UpdateAssemblyFileVersion>
-    <UpdateAssemblyInfoVersion>False</UpdateAssemblyInfoVersion>
-    <AssemblyVersionSettings>None.None.Increment.DeltaDayStamp</AssemblyVersionSettings>
-    <AssemblyInfoFilePath>AssemblyInfo.cs</AssemblyInfoFilePath>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Algorithm\IAlgorithm.cs" />
-    <Compile Include="Algorithm\LuhyLiteImplementation.cs" />
-    <Compile Include="Algorithm\SosielAlgorithm.cs" />
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="Configuration\AgentStateConfiguration.cs" />
-    <Compile Include="Configuration\AlgorithmConfiguration.cs" />
-    <Compile Include="Configuration\ConfigurationModel.cs" />
-    <Compile Include="Configuration\ConfigurationParser.cs" />
-    <Compile Include="Configuration\GoalStateConfiguration.cs" />
-    <Compile Include="Configuration\InitialStateConfiguration.cs" />
-    <Compile Include="Entities\AgentList.cs" />
-    <Compile Include="Entities\AgentPrototype.cs" />
-    <Compile Include="Entities\AgentState.cs" />
-    <Compile Include="Entities\GoalState.cs" />
-    <Compile Include="Entities\IAgent.cs" />
-    <Compile Include="Entities\RuleHistory.cs" />
-    <Compile Include="Entities\TakenAction.cs" />
-    <Compile Include="Enums\ActionTaking.cs" />
-    <Compile Include="Enums\AnticipatedDirection.cs" />
-    <Compile Include="Enums\ConsequentRelationship.cs" />
-    <Compile Include="Environments\ICloneable.cs" />
-    <Compile Include="Exceptions\SosielAlgorithmException.cs" />
-    <Compile Include="Exceptions\UnknownVariableException.cs" />
-    <Compile Include="Exceptions\InputParameterException.cs" />
-    <Compile Include="Entities\Agent.cs" />
-    <Compile Include="Entities\Goal.cs" />
-    <Compile Include="Configuration\ProcessesConfiguration.cs" />
-    <Compile Include="Entities\Rule.cs" />
-    <Compile Include="Entities\RuleAntecedentPart.cs" />
-    <Compile Include="Entities\RuleConsequent.cs" />
-    <Compile Include="Entities\RuleLayer.cs" />
-    <Compile Include="Entities\RuleLayerConfiguration.cs" />
-    <Compile Include="Entities\RuleSet.cs" />
-    <Compile Include="Entities\RuleSetConfiguration.cs" />
-    <Compile Include="Enums\CognitiveLevel.cs" />
-    <Compile Include="Helpers\AntecedentBuilder.cs" />
-    <Compile Include="Helpers\IEnumerableHelper.cs" />
-    <Compile Include="Helpers\RandomizeHelper.cs" />
-    <Compile Include="Helpers\VariablesUsedInCode.cs" />
-    <Compile Include="Helpers\WriteToCSVHelper.cs" />
-    <Compile Include="Output\FERuleUsageOutput.cs" />
-    <Compile Include="Output\HMRuleUsageOutput.cs" />
-    <Compile Include="Output\FEValuesOutput.cs" />
-    <Compile Include="PartialDisturbance.cs" />
-    <Compile Include="PlugIn.cs" />
-    <Compile Include="ParameterParser.cs" />
-    <Compile Include="Parameters.cs" />
-    <Compile Include="Processes\ActionSelection.cs" />
-    <Compile Include="Processes\ActionTaking.cs" />
-    <Compile Include="Processes\AnticipatoryLearning.cs" />
-    <Compile Include="Processes\CounterfactualThinking.cs" />
-    <Compile Include="Processes\Innovation.cs" />
-    <Compile Include="Processes\SocialLearning.cs" />
-    <Compile Include="Processes\VolatileProcess.cs" />
-    <Compile Include="Randoms\LinearUniformRandom.cs" />
-    <Compile Include="Randoms\NormalDistributionRandom.cs" />
-    <Compile Include="Randoms\PowerLawRandom.cs" />
-    <Compile Include="SiteVars.cs" />
+    <Compile Remove="AllowHarvestSiteVar.cs" />
+    <Compile Remove="LandUse.cs" />
+    <Compile Remove="LandUseRegistry.cs" />
   </ItemGroup>
+
   <ItemGroup>
-    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\packages\CsvHelper.2.16.0.0\lib\net40\CsvHelper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Edu.Wisc.Forest.Flel.Util, Version=1.1.400.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Edu.Wisc.Forest.Flel.Util.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Core, Version=6.1.6347.24528, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib-NET4-dlls\Landis.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Library.AgeOnlyCohorts, Version=2.1.5520.27591, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Landis.Library.AgeOnlyCohorts.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Library.BiomassCohorts-v2, Version=1.3.6347.13889, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib-NET4-dlls\Landis.Library.BiomassCohorts-v2.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Library.BiomassHarvest-v2, Version=1.1.6347.15733, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Landis.Library.BiomassHarvest-v2.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Library.Cohorts, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Landis.Library.Cohorts.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Library.SiteHarvest-v1, Version=1.0.5688.27841, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Landis.Library.SiteHarvest-v1.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Library.Succession, Version=4.0.6347.14299, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib-NET4-dlls\Landis.Library.Succession.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.SpatialModeling, Version=1.0.4815.34359, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\Landis.SpatialModeling.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.10.0.2\lib\net40\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
+    <PackageReference Include="CsvHelper" Version="7.1.1" />
+    <PackageReference Include="Landis.Core" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
   </ItemGroup>
+
   <ItemGroup>
-    <Content Include="configuration.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup />
-  <ItemDefinitionGroup>
-    <Reference>
-      <!-- Do not copy any of referenced assemblies to the output directory during a build.
-	       We only want the libraries that are fetched as NuGet packages to be copied to
-		   that directory.  In order to make it easier to stage them (without dealing without
-		   the version #s in their package paths -->
-      <Private>False</Private>
+    <Reference Include="CsvHelper">
+      <HintPath>lib\CsvHelper.dll</HintPath>
     </Reference>
-  </ItemDefinitionGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(ProjectDir)\WhatsNew.txt" "$(TargetDir)"
-call $(ProjectDir)\copy-to-extensions.cmd $(ProjectDir)bin\$(Configuration) $(ProjectDir)
-</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>xcopy /Q /Y $(ProjectDir)\lib-NET4-dlls\*.* $(ProjectDir)bin\$(Configuration)</PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+    <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
+      <HintPath>lib\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Biomass-v2">
+      <HintPath>lib\Landis.Library.Biomass-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.BiomassCohorts-v3">
+      <HintPath>lib\Landis.Library.BiomassCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.BiomassHarvest-v3">
+      <HintPath>lib\Landis.Library.BiomassHarvest-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Cohorts-v2">
+      <HintPath>lib\Landis.Library.Cohorts-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Metadata-v2">
+      <HintPath>lib\Landis.Library.Metadata-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Succession-v6">
+      <HintPath>lib\Landis.Library.Succession-v6.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.SiteHarvest-v2">
+      <HintPath>lib\Landis.Library.SiteHarvest-v2.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="configuration.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+ 
 </Project>

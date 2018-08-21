@@ -1,6 +1,6 @@
 ﻿// This file is part of the Social Human extension for LANDIS-II.
 
-using Edu.Wisc.Forest.Flel.Util;
+using Landis.Utilities;
 
 namespace Landis.Extension.SOSIELHuman
 {
