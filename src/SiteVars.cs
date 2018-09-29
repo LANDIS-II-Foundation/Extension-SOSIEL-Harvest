@@ -13,8 +13,6 @@ namespace Landis.Extension.SOSIELHuman
 
         public static void Initialize()
         {
-            //foreach (ActiveSite site in Model.Core.Landscape)
-              //  SiteVars.Biomass[site] = 200;
 
             biomassCohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
 
