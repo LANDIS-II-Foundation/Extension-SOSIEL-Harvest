@@ -56,9 +56,6 @@
     <Reference Include="Landis.Library.Succession-v6">
       <HintPath>lib\Landis.Library.Succession-v6.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Library.SiteHarvest-v2">
-      <HintPath>lib\Landis.Library.SiteHarvest-v2.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <ItemGroup>

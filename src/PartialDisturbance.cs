@@ -1,5 +1,4 @@
-//  Copyright 2006-2011 University of Wisconsin, Portland State University
-//  Authors:  Jane Foster, Robert M. Scheller
+//  Authors:  Various
 
 using Landis.Core;
 using Landis.Library.BiomassCohorts;
@@ -19,7 +18,7 @@ namespace Landis.Extension.SOSIELHuman
         private static PartialDisturbance singleton;
 
         private static ActiveSite currentSite;
-        private static double siteMortality;
+        private static double fractionMortality = 0.0;  //assume same fraction applied to all cohorts
 
         //---------------------------------------------------------------------
 
@@ -62,12 +61,12 @@ namespace Landis.Extension.SOSIELHuman
             //double percentMortality = 0.0;
             int sppIndex = cohort.Species.Index;
 
-            if (siteMortality > 0.0)
+            if (fractionMortality > 0.0)
             {
-                biomassMortality += (int)((double)cohort.Biomass * siteMortality);
+                biomassMortality += (int)((double)cohort.Biomass * fractionMortality);
                 // PlugIn.ModelCore.UI.WriteLine("biomassMortality={0}, cohort.Biomass={1}, percentMortality={2:0.00}.", biomassMortality, cohort.Biomass, percentMortality);
 
-            }    
+            }
 
             if (biomassMortality > cohort.Biomass)
                 biomassMortality = cohort.Biomass;
@@ -95,8 +94,10 @@ namespace Landis.Extension.SOSIELHuman
         {
             currentSite = site;
 
-            siteMortality = percentMortality;
-            
+            //PlugIn.ModelCore.UI.WriteLine("   ReduceCohortBiomass: Fraction Mortality = {0}, Percent Mortality = {1}", fractionMortality, percentMortality);
+            fractionMortality = percentMortality;
+            //PlugIn.ModelCore.UI.WriteLine("   ReduceCohortBiomass: Fraction Mortality = {0}, Percent Mortality = {1}", fractionMortality, percentMortality);
+
             SiteVars.Cohorts[site].ReduceOrKillBiomassCohorts(singleton);
         }
     }

@@ -1,0 +1,10 @@
+LandisData  "SOSIEL Human"
+
+
+>>------------------
+>> REQUIRED INPUTS
+>>------------------
+
+Timestep  			10
+
+InputJson			configuration.json

@@ -9,6 +9,7 @@ namespace Landis.Extension.SOSIELHuman
     public class SiteVars
     {
         private static ISiteVar<ISiteCohorts> biomassCohorts;
+        public static ISiteVar<string> PrescriptionName { get; set; }
         //---------------------------------------------------------------------
 
         public static void Initialize()
@@ -21,6 +22,10 @@ namespace Landis.Extension.SOSIELHuman
                 string mesg = string.Format("Cohorts are empty.  Please double-check that this extension is compatible with your chosen succession extension.");
                 throw new System.ApplicationException(mesg);
             }
+
+            PrescriptionName = PlugIn.ModelCore.Landscape.NewSiteVar<string>();
+            PlugIn.ModelCore.RegisterSiteVar(SiteVars.PrescriptionName, "Harvest.PrescriptionName");
+            SiteVars.PrescriptionName.SiteValues = "SOSIEL";
 
         }
 

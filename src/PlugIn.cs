@@ -65,7 +65,7 @@ namespace Landis.Extension.SOSIELHuman
             ModelCore.UI.WriteLine("  Loading parameters from {0}", dataFile);
 
             //Parse Landis parameters here
-            ParameterParser parser = new ParameterParser(ModelCore.Species);
+            ParameterParser parser = new ParameterParser(); // ModelCore.Species);
             parameters = Landis.Data.Load<Parameters>(dataFile, parser);
 
 
@@ -77,7 +77,7 @@ namespace Landis.Extension.SOSIELHuman
         public override void Initialize()
         {
 #if DEBUG
-            Debugger.Launch();
+            //Debugger.Launch();
 #endif
 
             ModelCore.UI.WriteLine("Initializing {0}...", Name);
@@ -112,7 +112,7 @@ namespace Landis.Extension.SOSIELHuman
         public override void Run()
         {
 #if DEBUG
-            Debugger.Launch();
+            //Debugger.Launch();
 #endif
 
             //run SOSIEL algorithm

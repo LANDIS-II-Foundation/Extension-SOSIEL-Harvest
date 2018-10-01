@@ -18,7 +18,7 @@ namespace Landis.Extension.SOSIELHuman
         public static bool Enabled { get; private set; }
         private static StreamWriter logFile;
         private static readonly ILog log = LogManager.GetLogger(typeof(SiteLog));
-        private static readonly bool isDebugEnabled = log.IsDebugEnabled;
+        //private static readonly bool isDebugEnabled = log.IsDebugEnabled;
 
         //---------------------------------------------------------------------
 
@@ -39,7 +39,7 @@ namespace Landis.Extension.SOSIELHuman
             logFile.WriteLine();
             Enabled = true;
 
-            SiteBiomass.ResetHarvestTotals();
+            //SiteBiomass.ResetHarvestTotals();
         }
 
         //---------------------------------------------------------------------

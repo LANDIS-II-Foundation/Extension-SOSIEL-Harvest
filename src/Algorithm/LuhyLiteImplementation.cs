@@ -480,6 +480,7 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
         {
             double initialBiomass = biomass[site];
 
+            //PlugIn.ModelCore.UI.WriteLine("   Percent Reduction = {0}", reductionPercent);
             PartialDisturbance.ReduceCohortBiomass(site, reductionPercent);
 
             //calculate new biomass value

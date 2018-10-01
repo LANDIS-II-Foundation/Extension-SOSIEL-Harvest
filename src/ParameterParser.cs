@@ -2,8 +2,8 @@
 
 using Landis.Utilities;
 using Landis.Core;
-using Landis.Library.BiomassHarvest;
-using Landis.Library.SiteHarvest;
+//using Landis.Library.BiomassHarvest;
+//using Landis.Library.SiteHarvest;
 using Landis.Library.Succession;
 using System.Collections.Generic;
 
@@ -14,7 +14,7 @@ namespace Landis.Extension.SOSIELHuman
     /// a text file.
     /// </summary>
     public class ParameterParser
-        : BasicParameterParser<Parameters>
+        : TextParser<Parameters> //BasicParameterParser<Parameters>
     {
 
         //---------------------------------------------------------------------
@@ -31,8 +31,8 @@ namespace Landis.Extension.SOSIELHuman
         /// <summary>
         /// Initializes a new instance.
         /// </summary>
-        public ParameterParser(ISpeciesDataset speciesDataset)
-            : base(speciesDataset, false)
+        public ParameterParser()//ISpeciesDataset speciesDataset)
+            //: base(speciesDataset, false)
         {
         }
 

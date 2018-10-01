@@ -1,0 +1,16 @@
+LandisData  "Output Biomass Reclass"
+
+Timestep   15
+
+
+ReclassMaps
+
+>> Map Name    Forest Type    Species
+>> --------    -------------  -------
+   reclass1 -> MapleHardwood  acersacc abiebals acerrubr pinubank
+               NorthernPines  pinubank pinuresi pinustro
+               Oaks           querelli querrubr
+	       Fir	      abiebals
+              
+   
+MapFileNames   outputs/biomass-reclass/biomass-reclass-{reclass-map-name}-{timestep}.img
