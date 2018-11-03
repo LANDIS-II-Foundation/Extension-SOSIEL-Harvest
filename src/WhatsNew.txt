@@ -1,3 +1,9 @@
+Integration 1.0.7.6841 2018-09-24
+
+New features:
+ - Added 'MinReductionPercentage' and 'MaxReductionPercentage' outputs
+
+
 Integration 1.0.6.6374 2017-06-13
 
 New features:

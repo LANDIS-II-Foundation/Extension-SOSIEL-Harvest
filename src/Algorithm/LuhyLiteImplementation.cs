@@ -391,6 +391,12 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
                     double averageReductionPercentage = agentState.TakenActions.Values.SelectMany(tal => tal)
                         .Where(ta => ta.VariableName == VariablesUsedInCode.ReductionPercentage).Average(ta => (double)ta.Value);
 
+                    double minReductionPercentage = agentState.TakenActions.Values.SelectMany(tal => tal)
+                        .Where(ta => ta.VariableName == VariablesUsedInCode.ReductionPercentage).Min(ta => (double)ta.Value);
+
+                    double maxReductionPercentage = agentState.TakenActions.Values.SelectMany(tal => tal)
+                        .Where(ta => ta.VariableName == VariablesUsedInCode.ReductionPercentage).Max(ta => (double)ta.Value);
+
                     double profit = agent[VariablesUsedInCode.Profit];
 
                     double averageBiomass = agent[VariablesUsedInCode.AverageBiomass];
@@ -400,6 +406,8 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
                         Iteration = iteration,
                         AverageBiomass = averageBiomass,
                         AverageReductionPercentage = averageReductionPercentage,
+                        MinReductionPercentage = minReductionPercentage,
+                        MaxReductionPercentage = maxReductionPercentage,
                         BiomassReduction = profit
                     };
 
