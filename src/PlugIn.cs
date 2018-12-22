@@ -2,17 +2,16 @@
 
 using Landis.Core;
 using Landis.Library.BiomassCohorts;
-using Landis.Library.Succession;
 using Landis.SpatialModeling;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
+using Landis.Extension.SOSIELHuman.Algorithm;
 
 namespace Landis.Extension.SOSIELHuman
 {
     using Configuration;
-    using Algorithm;
+    //using Algorithm;
     using System;
 
     public class PlugIn
@@ -28,7 +27,7 @@ namespace Landis.Extension.SOSIELHuman
         private ConfigurationModel configuration;
 
 
-        private IAlgorithm luhyLite;
+        private LuhyLiteImplementation luhyLite;
 
 
         private static ICore modelCore;
@@ -77,7 +76,7 @@ namespace Landis.Extension.SOSIELHuman
         public override void Initialize()
         {
 #if DEBUG
-            //Debugger.Launch();
+            Debugger.Launch();
 #endif
 
             ModelCore.UI.WriteLine("Initializing {0}...", Name);
@@ -112,7 +111,7 @@ namespace Landis.Extension.SOSIELHuman
         public override void Run()
         {
 #if DEBUG
-            //Debugger.Launch();
+            Debugger.Launch();
 #endif
 
             //run SOSIEL algorithm

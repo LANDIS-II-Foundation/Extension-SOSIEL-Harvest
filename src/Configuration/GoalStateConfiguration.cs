@@ -18,5 +18,13 @@ namespace Landis.Extension.SOSIELHuman.Configuration
 
         [JsonRequired]
         public double Value { get; set; }
+
+        public bool Randomness { get; set; }
+
+        public double RandomFrom { get; set; }
+
+        public double RandomTo { get; set; }
+
+        public string BasedOn { get; set; }
     }
 }

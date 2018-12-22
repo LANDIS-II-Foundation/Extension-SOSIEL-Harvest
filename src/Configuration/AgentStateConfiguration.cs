@@ -1,16 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using System.Threading.Tasks;
-
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Landis.Extension.SOSIELHuman.Configuration
 {
-    using Enums;
-
-
     /// <summary>
     /// Agent state configuration model. Used to parse section "InitialState.AgentsState".
     /// </summary>
@@ -28,19 +20,15 @@ namespace Landis.Extension.SOSIELHuman.Configuration
         [JsonRequired]
         public Dictionary<string, Dictionary<string, double>> AnticipatedInfluenceState { get; set; }
 
+        public Dictionary<string, Dictionary<string, string>> AnticipatedInfluenceTransform { get; set; }
+
         [JsonRequired]
-        public string[] AssignedRules { get; set; }
+        public string[] AssignedDecisionOptions { get; set; }
 
         [JsonRequired]
         public string[] AssignedGoals { get; set; }
 
         [JsonRequired]
-        public string[] ActivatedRulesOnFirstIteration { get; set; }
-        
-
         public Dictionary<string, GoalStateConfiguration> GoalsState { get; set; }
-
-        
-        public string[] SocialNetwork { get; set; }
     }
 }
