@@ -15,6 +15,10 @@ namespace Landis.Extension.SOSIELHuman.Output
 
         public double AverageReductionPercentage { get; set; }
 
+        public double MinReductionPercentage { get; set; }
+
+        public double MaxReductionPercentage { get; set; }
+
         public double BiomassReduction { get; set; }
 
         //public double Profit { get; set; }

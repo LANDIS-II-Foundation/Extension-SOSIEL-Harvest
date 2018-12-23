@@ -4,9 +4,6 @@ using Landis.Core;
 using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
 
-using System.Collections.Generic;
-using System;
-
 namespace Landis.Extension.SOSIELHuman
 {
     /// <summary>

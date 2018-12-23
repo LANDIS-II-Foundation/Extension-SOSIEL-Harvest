@@ -6,7 +6,7 @@
 #define AppURL "http://www.landis-ii.org/"
 
 ; Build directory
-#define BuildDir "..\..\src\bin\Debug\netstandard2.0"
+#define BuildDir "..\..\src\bin\Release\netstandard2.0"
 
 ; LANDIS-II installation directories
 #define ExtDir "C:\Program Files\LANDIS-II-v7\extensions"
@@ -31,7 +31,7 @@ DefaultDirName={pf}\{#ExtensionName}
 DisableDirPage=yes
 DefaultGroupName={#ExtensionName}
 DisableProgramGroupPage=yes
-LicenseFile=LANDIS-II_Binary_license.rtf
+LicenseFile=THE SOSIEL HUMAN EXTENSION (SHE) LICENSE AGREEMENT.rtf
 OutputDir={#SourcePath}
 OutputBaseFilename={#CoreRelease} {#ExtensionName} {#AppVersion}-setup
 Compression=lzma
@@ -46,19 +46,19 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 ; NB: Do not put an additional version number in the file name of this .dll
 ; (The name of this .dll is defined in the extension's \src\*.csproj file)
 Source: {#BuildDir}\Landis.Extension.SOSIELHuman-v2.dll; DestDir: {#ExtDir}; Flags: replacesameversion
-Source: {#BuildDir}\Landis.Extension.SOSIELHuman-v2.pdb; DestDir: {#ExtDir}; Flags: replacesameversion
+Source: {#BuildDir}\SOSIEL.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 
 ; Requisite auxiliary libraries
 ; NB. These libraries are used by other extensions and thus are never uninstalled.
 Source: {#BuildDir}\Landis.Library.AgeOnlyCohorts-v3.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
 Source: {#BuildDir}\Landis.Library.BiomassCohorts-v3.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
 Source: {#BuildDir}\Landis.Library.BiomassHarvest-v3.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
-Source: {#BuildDir}\Landis.Library.Biomass-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
+;Source: {#BuildDir}\Landis.Library.Biomass-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
 Source: {#BuildDir}\Landis.Library.Cohorts-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
-Source: {#BuildDir}\Landis.Library.Metadata-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
-Source: {#BuildDir}\Landis.Library.SiteHarvest-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
-Source: ..\..\src\lib\CsvHelper.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
-Source: ..\..\src\lib\Newtonsoft.Json.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
+;Source: {#BuildDir}\Landis.Library.Metadata-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
+;Source: {#BuildDir}\Landis.Library.SiteHarvest-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
+Source: {#BuildDir}\CsvHelper.dll; DestDir: {#ExtDir}; Flags: replacesameversion
+Source: {#BuildDir}\Newtonsoft.Json.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 
 ; Complete example for testing the extension
 ; Source: ..\examples\*.txt; DestDir: {#AppDir}\examples\{#ExtensionName}; Flags: replacesameversion

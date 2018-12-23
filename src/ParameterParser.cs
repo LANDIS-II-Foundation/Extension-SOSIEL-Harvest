@@ -1,11 +1,6 @@
 // This file is part of the Social Human extension for LANDIS-II.
 
 using Landis.Utilities;
-using Landis.Core;
-//using Landis.Library.BiomassHarvest;
-//using Landis.Library.SiteHarvest;
-using Landis.Library.Succession;
-using System.Collections.Generic;
 
 namespace Landis.Extension.SOSIELHuman
 {

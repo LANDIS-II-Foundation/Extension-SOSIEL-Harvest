@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Newtonsoft.Json;
+using SOSIEL.Entities;
 
 namespace Landis.Extension.SOSIELHuman.Configuration
 {
-    using Entities;
-
     /// <summary>
     /// Main configuration model.
     /// </summary>
@@ -21,6 +20,5 @@ namespace Landis.Extension.SOSIELHuman.Configuration
 
         [JsonRequired]
         public InitialStateConfiguration InitialState { get; set; }
-
     }
 }

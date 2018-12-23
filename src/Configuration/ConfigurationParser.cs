@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
 using System.IO;
-
+using System.Reflection;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
-
-using System.Reflection;
 
 namespace Landis.Extension.SOSIELHuman.Configuration
 {
@@ -24,7 +19,7 @@ namespace Landis.Extension.SOSIELHuman.Configuration
 
     public static class ConfigurationParser
     {
-        
+
 
         /// <summary>
         /// Contract resolver for setting properties with private set part. 
@@ -58,7 +53,7 @@ namespace Landis.Extension.SOSIELHuman.Configuration
             {
                 if (reader.TokenType == JsonToken.Integer)
                 {
-                    return Convert.ToInt32(reader.Value);
+                    return Convert.ToInt32((object)reader.Value);
                 }
 
                 return reader.Value;
@@ -98,6 +93,4 @@ namespace Landis.Extension.SOSIELHuman.Configuration
             return json.ToObject<ConfigurationModel>(serializer);
         }
     }
-
-
 }
