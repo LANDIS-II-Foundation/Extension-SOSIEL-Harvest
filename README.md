@@ -1,4 +1,4 @@
-# Extension-SOSIEL-Human 2.0
+# Extension-SOSIEL-Human
 
 Changes to this extension are governed by the [**Repository Rules**](https://sites.google.com/site/landismodel/developers) from the Technical Advisory Committee.
 
