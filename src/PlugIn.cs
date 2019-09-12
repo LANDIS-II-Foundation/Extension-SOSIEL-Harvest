@@ -26,7 +26,7 @@ namespace Landis.Extension.SOSIELHuman
 
         private ConfigurationModel configuration;
 
-
+        private AlgorithmModel luhyModel;
         private LuhyLiteImplementation luhyLite;
 
 
@@ -59,6 +59,10 @@ namespace Landis.Extension.SOSIELHuman
         public override void LoadParameters(string dataFile,
                                             ICore mCore)
         {
+#if DEBUG
+            Debugger.Launch();
+#endif
+
             modelCore = mCore;
 
             ModelCore.UI.WriteLine("  Loading parameters from {0}", dataFile);
@@ -94,9 +98,10 @@ namespace Landis.Extension.SOSIELHuman
             //create dictionary 
             projectedBiomass = ModelCore.Landscape.ToDictionary(activeSite => activeSite, activeSite => 0d);
 
+            luhyModel = new AlgorithmModel();
             luhyLite = new LuhyLiteImplementation(iterations, configuration, ModelCore.Landscape, projectedBiomass);
 
-            luhyLite.Initialize();
+            luhyLite.Initialize(luhyModel);
 
 
             //remove old output files
@@ -115,7 +120,7 @@ namespace Landis.Extension.SOSIELHuman
 #endif
 
             //run SOSIEL algorithm
-            luhyLite.RunIteration();
+            luhyLite.Run(luhyModel);
 
             iteration++;
         }

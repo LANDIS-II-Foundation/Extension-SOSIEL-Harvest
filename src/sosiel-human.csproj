@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\SOSIEL EX1\SOSIEL EX1\SOSIEL\SOSIEL.csproj" />
+    <ProjectReference Include="..\..\..\The-SOSIEL-Platform-v2.0\SOSIEL EX1\SOSIEL\SOSIEL.csproj" />
   </ItemGroup>
 
   <ItemGroup>

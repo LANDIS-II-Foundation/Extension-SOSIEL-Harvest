@@ -56,7 +56,11 @@
           "FocalValue": 0,
           "ChangeFocalValueOnPrevious": true,
           "FocalValueReference": "",
-          "IsCommulative": false
+          "IsCommulative": "false",
+          "MaxGoalValue": 0,
+          "MinGoalValue": 0,
+          "MaxGoalReferenceVariable": "",
+          "MinGoalReferenceVariable": ""
         },
         {
           "Name": "G2",
@@ -64,7 +68,11 @@
           "ReferenceVariable": "AverageBiomass",
           "FocalValue": 10400,
           "FocalValueReference": "",
-          "IsCommulative": false
+          "IsCommulative": false,
+          "MaxGoalValue": 0,
+          "MinGoalValue": 0,
+          "MaxGoalReferenceVariable": "",
+          "MinGoalReferenceVariable": ""
         }
       ],
 
@@ -76,6 +84,7 @@
               "Modifiable": true,
               "MaxNumberOfDecisionOptions": 3600,
               "ConsequentValueInterval": [ 0, 100 ],
+              "ConsequentPrecisionDigitsAfterDecimalPoint": 2,
               "MinConsequentReference": "",
               "MaxConsequentReference": "",
               "ConsequentRelationshipSign": {
