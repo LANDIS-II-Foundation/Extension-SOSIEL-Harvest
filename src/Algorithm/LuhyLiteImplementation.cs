@@ -17,14 +17,10 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
     using Configuration;
     using Output;
 
-    public class LuhyLiteImplementation : SosielAlgorithm<ActiveSite>, IAlgorithm
+    public class LuhyLiteImplementation : SosielAlgorithm<ActiveSite>, IAlgorithm<AlgorithmModel>
     {
         public string Name { get { return "LuhyLiteImplementation"; } }
-        public string Run()
-        {
-            throw new NotImplementedException();
-        }
-
+        
         private ConfigurationModel configuration;
 
         private ActiveSite[] activeSites;
@@ -192,7 +188,7 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
         /// <summary>
         /// Executes algorithm initialization
         /// </summary>
-        public void Initialize()
+        public void Initialize(AlgorithmModel data)
         {
             InitializeAgents();
 
@@ -213,9 +209,11 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
         /// <summary>
         /// Runs as many internal iterations as passed to the constructor
         /// </summary>
-        public void RunIteration()
+        public AlgorithmModel Run(AlgorithmModel data)
         {
             RunSosiel(activeSites);
+
+            return data;
         }
 
         /// <summary>
