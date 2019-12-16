@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Landis.Extension.SOSIELHuman.Algorithm
+﻿namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
     /// <summary>
     /// The model used to pass external data.

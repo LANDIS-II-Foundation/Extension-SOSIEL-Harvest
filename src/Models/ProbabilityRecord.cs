@@ -1,6 +1,6 @@
 ﻿using CsvHelper.Configuration;
 
-namespace Landis.Extension.SOSIELHuman.Models
+namespace Landis.Extension.SOSIELHarvest.Models
 {
     /// <summary>
     /// Model for parsing probability table file.

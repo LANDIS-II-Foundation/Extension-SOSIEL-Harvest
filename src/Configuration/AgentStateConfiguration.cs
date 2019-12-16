@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace Landis.Extension.SOSIELHuman.Configuration
+namespace Landis.Extension.SOSIELHarvest.Configuration
 {
     /// <summary>
     /// Agent state configuration model. Used to parse section "InitialState.AgentsState".

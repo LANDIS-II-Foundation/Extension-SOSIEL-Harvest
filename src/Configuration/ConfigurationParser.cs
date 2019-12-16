@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
-namespace Landis.Extension.SOSIELHuman.Configuration
+namespace Landis.Extension.SOSIELHarvest.Configuration
 {
     static class MemberInfoExtensions
     {

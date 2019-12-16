@@ -1,6 +1,6 @@
 ﻿using SOSIEL.Helpers;
 
-namespace Landis.Extension.SOSIELHuman.Algorithm
+namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
     /// <summary>
     /// Contains variable names used in code.

@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Landis.Extension.SOSIELHuman.Configuration
+namespace Landis.Extension.SOSIELHarvest.Configuration
 {
     /// <summary>
     /// Initial state configuration model. Used to parse section "InitialState".

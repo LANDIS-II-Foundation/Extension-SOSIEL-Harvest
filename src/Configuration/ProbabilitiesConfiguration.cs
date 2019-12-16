@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace Landis.Extension.SOSIELHuman.Configuration
+namespace Landis.Extension.SOSIELHarvest.Configuration
 {
     /// <summary>
     /// Probabilities configuration model. Used to parse section "ProbabilitiesConfiguration".

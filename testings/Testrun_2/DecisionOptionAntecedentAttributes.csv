@@ -1,0 +1,3 @@
+DecisionOption,AntecedentVariable,AntecedentOperator,AntecedentValue,AntecedentReference
+MM1-1_DO1,ManageAreaBiomass,>,0,
+MM2-1_DO1,ManageAreaBiomass,>,0,

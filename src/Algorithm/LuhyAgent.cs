@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Landis.Extension.SOSIELHuman.Configuration;
+using Landis.Extension.SOSIELHarvest.Configuration;
 using SOSIEL.Entities;
 using SOSIEL.Helpers;
 using SOSIEL.Randoms;
 
-namespace Landis.Extension.SOSIELHuman.Algorithm
+namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
     /// <summary>
     /// Luhy agent model

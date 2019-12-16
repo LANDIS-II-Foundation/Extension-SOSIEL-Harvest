@@ -2,7 +2,7 @@
 
 using Landis.SpatialModeling;
 
-namespace Landis.Extension.SocialHuman
+namespace Landis.Extension.SOSIELHarvest
 {
     public class MapPixel : Pixel
     {

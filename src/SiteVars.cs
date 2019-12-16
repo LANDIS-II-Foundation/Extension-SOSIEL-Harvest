@@ -1,10 +1,9 @@
 // This file is part of the Social Human extension for LANDIS-II.
 
-using Landis.Core;
-using Landis.SpatialModeling;
 using Landis.Library.BiomassCohorts;
+using Landis.SpatialModeling;
 
-namespace Landis.Extension.SOSIELHuman
+namespace Landis.Extension.SOSIELHarvest
 {
     public class SiteVars
     {
@@ -24,7 +23,7 @@ namespace Landis.Extension.SOSIELHuman
             }
 
             PrescriptionName = PlugIn.ModelCore.Landscape.NewSiteVar<string>();
-            PlugIn.ModelCore.RegisterSiteVar(SiteVars.PrescriptionName, "Harvest.PrescriptionName");
+            //PlugIn.ModelCore.RegisterSiteVar(SiteVars.PrescriptionName, "Harvest.PrescriptionName");
             SiteVars.PrescriptionName.SiteValues = "SOSIEL";
 
         }

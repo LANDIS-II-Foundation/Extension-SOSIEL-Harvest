@@ -1,34 +1,41 @@
 ﻿// This file is part of SHE for LANDIS-II.
 
-using Landis.Core;
-using Landis.Library.BiomassCohorts;
-using Landis.SpatialModeling;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Landis.Extension.SOSIELHuman.Algorithm;
+using System.Reflection;
+using Landis.Core;
+using Landis.Extension.SOSIELHarvest.Algorithm;
+using Landis.Extension.SOSIELHarvest.Configuration;
+using Landis.Extension.SOSIELHarvest.Input;
+using Landis.Library.BiomassCohorts;
+using Landis.Library.HarvestManagement;
+using Landis.SpatialModeling;
+using Landis.Utilities;
+using SOSIEL.Configuration;
+using SOSIEL.Entities;
+using SOSIEL.Enums;
 
-namespace Landis.Extension.SOSIELHuman
+namespace Landis.Extension.SOSIELHarvest
 {
-    using Configuration;
-    //using Algorithm;
-    using System;
-
-    public class PlugIn
-        : Landis.Core.ExtensionMain
+    public class PlugIn : ExtensionMain
     {
-
         public static readonly ExtensionType ExtType = new ExtensionType("disturbance:harvest");
-        public static readonly string ExtensionName = "SOSIEL Human";
 
-        private Parameters parameters;
+        public static readonly string ExtensionName = "SOSIEL Harvest";
 
+        private SheParameters _sheParameters;
+        private SosielParameters _sosielParameters;
+        private BiomassHarvest.Parameters _biomassHarvestParameters;
 
-        private ConfigurationModel configuration;
+        private ConfigurationModel _configuration;
 
         private AlgorithmModel luhyModel;
         private LuhyLiteImplementation luhyLite;
-
+        private BiomassHarvest.PlugIn _biomassHarvest;
+        private IManagementAreaDataset _biomassHarvestAreas;
+        
 
         private static ICore modelCore;
 
@@ -47,82 +54,134 @@ namespace Landis.Extension.SOSIELHuman
 
         //---------------------------------------------------------------------
 
-        public static ICore ModelCore
-        {
-            get
-            {
-                return modelCore;
-            }
-        }
+        public static ICore ModelCore => modelCore;
         //---------------------------------------------------------------------
 
-        public override void LoadParameters(string dataFile,
-                                            ICore mCore)
+        public override void LoadParameters(string dataFile, ICore mCore)
         {
 #if DEBUG
             Debugger.Launch();
 #endif
-
             modelCore = mCore;
 
             ModelCore.UI.WriteLine("  Loading parameters from {0}", dataFile);
+            var sheParameterParser = new SheParameterParser();
+            _sheParameters = Data.Load(dataFile, sheParameterParser);
 
-            //Parse Landis parameters here
-            ParameterParser parser = new ParameterParser(); // ModelCore.Species);
-            parameters = Landis.Data.Load<Parameters>(dataFile, parser);
+            ModelCore.UI.WriteLine("  Loading parameters from {0}", _sheParameters.SosielInitializationFileName);
+            var sosielParameterParser = new SosielParameterParser();
+            _sosielParameters = Data.Load(_sheParameters.SosielInitializationFileName, sosielParameterParser);
 
-
-
+            if (_sheParameters.Mode == 2)
+            {
+                ModelCore.UI.WriteLine("  Loading parameters from {0}", _sheParameters.BiomassHarvestInitializationFileName);
+                _biomassHarvest = new BiomassHarvest.PlugIn();
+                _biomassHarvest.LoadParameters(_sheParameters.BiomassHarvestInitializationFileName, ModelCore);
+            }
         }
 
         //---------------------------------------------------------------------
 
         public override void Initialize()
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
-
-            ModelCore.UI.WriteLine("Initializing {0}...", Name);
+            ModelCore.UI.WriteLine("Initializing {0}...", Name); 
             SiteVars.Initialize();
 
-            Timestep = parameters.Timestep;
+            Timestep = _sheParameters.Timestep;
 
-            // Read in (input) Agent Configuration Json File here:
-            ModelCore.UI.WriteLine("  Loading agent parameters from {0}", parameters.InputJson);
-            configuration = ConfigurationParser.ParseConfiguration(parameters.InputJson);
-
-
-            //create algorithm instance
-            int iterations = 1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
-            //create dictionary 
-            projectedBiomass = ModelCore.Landscape.ToDictionary(activeSite => activeSite, activeSite => 0d);
-
-            luhyModel = new AlgorithmModel();
-            luhyLite = new LuhyLiteImplementation(iterations, configuration, ModelCore.Landscape, projectedBiomass);
-
-            luhyLite.Initialize(luhyModel);
-
-
-            //remove old output files
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
-
-            foreach (System.IO.FileInfo fi in di.GetFiles("SOSIELHuman_*.csv"))
+            _configuration = new ConfigurationModel
             {
-                fi.Delete();
+                AlgorithmConfiguration = new AlgorithmConfiguration
+                {
+                    CognitiveLevel = CognitiveLevel.CL4,
+                    DemographicConfiguration = new DemographicProcessesConfiguration
+                    {
+                        AdoptionProbability = _sosielParameters.Demographic.AdoptionProbability,
+                        BirthProbability = _sosielParameters.Demographic.BirthProbability,
+                        DeathProbability = _sosielParameters.Demographic.DeathProbability,
+                        HomosexualTypeRate = _sosielParameters.Demographic.HomosexualTypeRate,
+                        MinimumAgeForHouseholdHead = _sosielParameters.Demographic.MinimumAgeForHouseholdHead,
+                        PairingAgeMax = _sosielParameters.Demographic.PairingAgeMax,
+                        PairingAgeMin = _sosielParameters.Demographic.PairingAgeMin,
+                        PairingProbability = _sosielParameters.Demographic.PairingProbability, 
+                        SexualOrientationRate = _sosielParameters.Demographic.SexualOrientationRate,
+                        YearsBetweenBirths = _sosielParameters.Demographic.YearsBetweenBirths,
+                        MaximumAge = _sosielParameters.Demographic.MaximumAge
+                    },
+                    ProbabilitiesConfiguration = _sosielParameters.Probabilities.Select( p => new ProbabilitiesConfiguration
+                    {
+                        FilePath = p.FileName,
+                        Variable = p.VariableParameter,
+                        VariableType = p.VariableType,
+                        WithHeader = !p.IgnoreFirstLine
+                    }).ToArray(),
+                    UseDimographicProcesses = _sosielParameters.Demographic.DemographicChange
+                }
+            };
+
+            //// Read in (input) Agent Configuration Json File here:
+            //ModelCore.UI.WriteLine("  Loading agent parameters from {0}", parameters.InputJson);
+            //configuration = ConfigurationParser.ParseConfiguration(parameters.InputJson);
+
+            //configuration = new ConfigurationModel() { AlgorithmConfiguration = new AlgorithmConfiguration() { } }
+
+
+            ////create algorithm instance
+            //int iterations = 1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
+            ////create dictionary 
+            //projectedBiomass = ModelCore.Landscape.ToDictionary(activeSite => activeSite, activeSite => 0d);
+
+            //luhyModel = new AlgorithmModel();
+            //luhyLite = new LuhyLiteImplementation(iterations, configuration, ModelCore.Landscape, projectedBiomass);
+
+            //luhyLite.Initialize(luhyModel);
+
+
+            ////remove old output files
+            //System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
+
+            //foreach (System.IO.FileInfo fi in di.GetFiles("SOSIELHuman_*.csv"))
+            //{
+            //    fi.Delete();
+            //}
+
+            if (_sheParameters.Mode == 2)
+            {
+                _biomassHarvest.Initialize();
+
+                var biomassHarvestPluginType = _biomassHarvest.GetType();
+                var prescriptionField = biomassHarvestPluginType.GetField("managementAreas", BindingFlags.Instance | BindingFlags.NonPublic);
+                if (prescriptionField == null)
+                    throw new Exception();
+                _biomassHarvestAreas = (IManagementAreaDataset)prescriptionField.GetValue(_biomassHarvest);
+
+                var parametersField = biomassHarvestPluginType.GetField("parameters", BindingFlags.Static | BindingFlags.NonPublic);
+                if (parametersField == null)
+                    throw new Exception();
+                _biomassHarvestParameters = (BiomassHarvest.Parameters)parametersField.GetValue(_biomassHarvest);
             }
         }
 
         public override void Run()
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
-
             //run SOSIEL algorithm
-            luhyLite.Run(luhyModel);
+            //luhyLite.Run(luhyModel);
+
+            if (_sheParameters.Mode == 2)
+                _biomassHarvest.Run();
 
             iteration++;
+        }
+
+        private void ChangePrescription()
+        {
+            foreach (var biomassHarvestArea in _biomassHarvestAreas)
+            {
+                biomassHarvestArea.Prescriptions.Clear();
+                var prescription = _biomassHarvestParameters.Prescriptions.First(p => p.Name.Equals("MM2_DO2"));
+                biomassHarvestArea.ApplyPrescription(prescription, new Percentage(0.2), new Percentage(1), 0, 100);
+                biomassHarvestArea.FinishInitialization();
+            }
         }
 
         //---------------------------------------------------------------------

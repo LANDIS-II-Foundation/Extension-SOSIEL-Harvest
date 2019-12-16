@@ -1,6 +1,6 @@
 ﻿using SOSIEL.Helpers;
 
-namespace Landis.Extension.SOSIELHuman.Algorithm
+namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
     public class AlgorithmProbabilityTables : SosielProbabilityTables
     {

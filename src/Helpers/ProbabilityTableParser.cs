@@ -1,9 +1,9 @@
 ﻿using System.Linq;
-using Landis.Extension.SOSIELHuman.Models;
+using Landis.Extension.SOSIELHarvest.Models;
 using SOSIEL.Entities;
 using SOSIEL.Helpers;
 
-namespace Landis.Extension.SOSIELHuman.Helpers
+namespace Landis.Extension.SOSIELHarvest.Helpers
 {
     public static class ProbabilityTableParser
     {

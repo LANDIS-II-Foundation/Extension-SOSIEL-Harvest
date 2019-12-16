@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Landis.Extension.SOSIELHuman.Helpers
+namespace Landis.Extension.SOSIELHarvest.Helpers
 {
     public static class VariableTypeHelper
     {

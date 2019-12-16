@@ -1,7 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Landis.Extension.SOSIELHuman.Helpers;
+using Landis.Extension.SOSIELHarvest.Configuration;
+using Landis.Extension.SOSIELHarvest.Helpers;
+using Landis.Extension.SOSIELHarvest.Output;
 using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
 using SOSIEL.Algorithm;
@@ -11,12 +12,8 @@ using SOSIEL.Exceptions;
 using SOSIEL.Helpers;
 using SOSIEL.Processes;
 
-
-namespace Landis.Extension.SOSIELHuman.Algorithm
+namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
-    using Configuration;
-    using Output;
-
     public class LuhyLiteImplementation : SosielAlgorithm<ActiveSite>, IAlgorithm<AlgorithmModel>
     {
         public string Name { get { return "LuhyLiteImplementation"; } }

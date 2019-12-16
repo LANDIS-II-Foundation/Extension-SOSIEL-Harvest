@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-
-namespace Landis.Extension.SOSIELHuman.Output
+﻿namespace Landis.Extension.SOSIELHarvest.Output
 {
     public class FEDOUsageOutput
     {

@@ -1,0 +1,3 @@
+Time,ManagementArea,Prescription,HarvestedSites,TotalCohortsCompleteHarvest,TotalCohortsPartialHarvest,TotalBiomassHarvested,CohortsHarvested_confsens,CohortsHarvested_confrslt,CohortsHarvested_brdlsens,CohortsHarvested_brdlrslt,BiomassHarvestedMg_confsens,BiomassHarvestedMg_confrslt,BiomassHarvestedMg_brdlsens,BiomassHarvestedMg_brdlrslt,
+10, 1, MM1-1_DO1, 4600, 0, 26478, 212146.3, 8403, 9182, 6030, 2863, 69815.57, 78505.3700000001, 55723.25, 8102.11, 
+10, 1, MM2-1_DO1, 5092, 0, 17714, 66052.68, 2943, 2462, 4987, 7322, 10534.97, 11513.96, 20527.56, 23476.19, 

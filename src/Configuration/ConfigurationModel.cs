@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
+﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using SOSIEL.Entities;
 
-namespace Landis.Extension.SOSIELHuman.Configuration
+namespace Landis.Extension.SOSIELHarvest.Configuration
 {
     /// <summary>
     /// Main configuration model.

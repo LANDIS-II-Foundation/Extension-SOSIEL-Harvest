@@ -3,7 +3,7 @@ using SOSIEL.Configuration;
 using SOSIEL.Enums;
 using SOSIEL.Exceptions;
 
-namespace Landis.Extension.SOSIELHuman.Configuration
+namespace Landis.Extension.SOSIELHarvest.Configuration
 {
     /// <summary>
     /// Algorithm configuration model. Used to parse section "AlgorithmConfiguration".

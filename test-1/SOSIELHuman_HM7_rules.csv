@@ -1,3 +1,0 @@
-Iteration,ActivatedRuleValues,ActivatedRules,TotalNumberOfRules,NotActivatedRules
-1,10000,RS1_L1_R7,2,RS1_L1_R1
-2,10000,RS1_L1_R7,4,"RS1_L1_R1,RS1_L1_R5,RS1_L1_R6"
