@@ -69,7 +69,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             initialState.AgentsState.GroupBy(state => state.PrototypeOfAgent).ForEach((agentStateGroup) =>
             {
                 AgentPrototype prototype = agentPrototypes[agentStateGroup.Key];
-                var mentalProto = prototype.MentalProto;
+                var mentalProto = prototype.MentalProto; //do not remove
                 int index = 1;
 
                 agentStateGroup.ForEach((agentState) =>
@@ -81,25 +81,25 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
                         agents.Add(agent);
 
-                        if (prototype.NamePrefix == "HM")
-                        {
-                            networks.AddToDictionary((string) agent[AlgorithmVariables.Household], agent);
-                            networks.AddToDictionary((string) agent[AlgorithmVariables.NuclearFamily], agent);
+                        //if (prototype.NamePrefix == "HM")
+                        //{
+                        //    networks.AddToDictionary((string) agent[AlgorithmVariables.Household], agent);
+                        //    networks.AddToDictionary((string) agent[AlgorithmVariables.NuclearFamily], agent);
 
-                            if (agent.ContainsVariable(AlgorithmVariables.ExternalRelations))
-                            {
-                                var externals = (string) agent[AlgorithmVariables.ExternalRelations];
+                        //    if (agent.ContainsVariable(AlgorithmVariables.ExternalRelations))
+                        //    {
+                        //        var externals = (string) agent[AlgorithmVariables.ExternalRelations];
 
-                                foreach (var en in externals.Split(';'))
-                                {
-                                    networks.AddToDictionary(en, agent);
-                                }
-                            }
+                        //        foreach (var en in externals.Split(';'))
+                        //        {
+                        //            networks.AddToDictionary(en, agent);
+                        //        }
+                        //    }
 
-                            //household and extended family are the same at the beginning
-                            agent[AlgorithmVariables.ExtendedFamily] = new List<string>()
-                                {(string) agent[AlgorithmVariables.Household]};
-                        }
+                        //    //household and extended family are the same at the beginning
+                        //    agent[AlgorithmVariables.ExtendedFamily] = new List<string>()
+                        //        {(string) agent[AlgorithmVariables.Household]};
+                        //}
 
                         index++;
                     }
@@ -107,16 +107,16 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             });
 
             //convert temp networks to list of connetcted agents
-            networks.ForEach(kvp =>
-            {
-                var connectedAgents = kvp.Value;
+            //networks.ForEach(kvp =>
+            //{
+            //    var connectedAgents = kvp.Value;
 
-                connectedAgents.ForEach(agent =>
-                {
-                    agent.ConnectedAgents.AddRange(connectedAgents.Where(a => a != agent).Except(agent.ConnectedAgents));
-                });
+            //    connectedAgents.ForEach(agent =>
+            //    {
+            //        agent.ConnectedAgents.AddRange(connectedAgents.Where(a => a != agent).Except(agent.ConnectedAgents));
+            //    });
 
-            });
+            //});
 
 
             agentList = new AgentList(agents, agentPrototypes.Select(kvp => kvp.Value).ToList());
@@ -223,24 +223,26 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             //----
             //set default values which were not defined in configuration file
+
+
             var feAgents = agentList.GetAgentsWithPrefix("FE");
 
             feAgents.ForEach(agent =>
             {
-                agent[AlgorithmVariables.Profit] = 0d;
+                //agent[AlgorithmVariables.Profit] = 0d;
             });
 
 
 
-            var hmAgents = agentList.GetAgentsWithPrefix("HM");
+            //var hmAgents = agentList.GetAgentsWithPrefix("HM");
 
-            hmAgents.ForEach(agent =>
-            {
+            //hmAgents.ForEach(agent =>
+            //{
 
-                agent[AlgorithmVariables.AgentIncome] = 0d;
-                agent[AlgorithmVariables.AgentExpenses] = 0d;
-                agent[AlgorithmVariables.AgentSavings] = 0d;
-            });
+            //    agent[AlgorithmVariables.AgentIncome] = 0d;
+            //    agent[AlgorithmVariables.AgentExpenses] = 0d;
+            //    agent[AlgorithmVariables.AgentSavings] = 0d;
+            //});
 
         }
 

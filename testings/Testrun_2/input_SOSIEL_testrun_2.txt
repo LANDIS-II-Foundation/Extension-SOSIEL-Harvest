@@ -84,11 +84,11 @@ AgentArchetypeAttributes
 >> Description
 >>
 >>
->> ----------		----------		----------
->> Archetype		Site 			Goal importance
->> name            	orientied		adjusting
->> ----------           ----------              ----------   	  
-   ForestManager	yes			yes
+>> ----------		---------			----------		----------
+>> Archetype		Archetype			Site 			Goal importance
+>> name            	prefix				orientied		adjusting
+>> ----------       ----------    		----------      ----------   	  
+   ForestManager	FM					yes				yes
 
 
    
