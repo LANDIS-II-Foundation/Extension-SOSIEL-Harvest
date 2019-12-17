@@ -9,6 +9,7 @@ using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Input;
+using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Library.BiomassCohorts;
 using Landis.Library.HarvestManagement;
 using Landis.SpatialModeling;
@@ -72,12 +73,39 @@ namespace Landis.Extension.SOSIELHarvest
             var sosielParameterParser = new SosielParameterParser();
             _sosielParameters = Data.Load(_sheParameters.SosielInitializationFileName, sosielParameterParser);
 
+
+            //todo convert SosielParameters to Configuration models, we need create all possible sections of configuration.json, all another sections should initialize later
+            //todo parse agent variables
+            var agentVariables = ParseAgentVariables(_sosielParameters.AgentVariables, "1");
+
+            
             if (_sheParameters.Mode == 2)
             {
                 ModelCore.UI.WriteLine("  Loading parameters from {0}", _sheParameters.BiomassHarvestInitializationFileName);
                 _biomassHarvest = new BiomassHarvest.PlugIn();
                 _biomassHarvest.LoadParameters(_sheParameters.BiomassHarvestInitializationFileName, ModelCore);
             }
+        }
+
+        private Dictionary<string, dynamic> ParseAgentVariables(List<AgentVariable> sosielParametersAgentVariables, string agent)
+        {
+            var variables = new Dictionary<string, dynamic>();
+
+            foreach (var variable in sosielParametersAgentVariables.Where(p=> p.Agent == agent))
+            {
+                var parsedValue = default(dynamic);
+
+                switch (variable.VariableType)
+                {
+                    case "Integer":
+                        parsedValue = int.Parse(variable.VariableValue);
+                        break;
+                }
+
+                variables.Add(variable.VariableName, parsedValue);
+            }
+
+            return variables;
         }
 
         //---------------------------------------------------------------------
