@@ -1,2 +1,2 @@
 Agent,DecisionOptions
-1,MM1-1_DO1<G1<0>G2<0>>|MM2-1_DO1<G1<0>G2<0>>
+1,MM1-1_DO1<G1<0>&G2<0>>|MM2-1_DO1<G1<0>&G2<0>>

@@ -41,12 +41,12 @@ ProbabilityAttributes
 
 GoalAttributes
 >> The number of possible goals (rows) is unlimited.
->> ----     --------              -----------------               --------------     ----------
->> Goal     Goal                  Reference                       Change focal       Is
->>          tendency              variable                        value on prior     cumulative
->> ----     --------              -----------------               --------------     ----------
-   G1       Maximize              ManageAreaHarvested             no                 no
-   G2       MaintainAboveValue    ManageAreaMaturityProportion    no                 no 
+>> 	---------	----     --------              -----------------               --------------     ----------
+>> 	Agent		Goal     Goal                  Reference                       Change focal       Is
+>> 	Archetype	         tendency              variable                        value on prior     cumulative
+>> 	---------	----     --------              -----------------               --------------     ----------
+	1		G1       Maximize              ManageAreaHarvested             no                 no
+	2		G2       MaintainAboveValue    ManageAreaMaturityProportion    no                 no 
 
 
 
@@ -55,15 +55,15 @@ MentalModelAttributes
 >> goals (columns) is limited to the number of goals in the GoalAttributes table. This table
 >> also associates mental models with goals. For this reason, use "--" in cases when a mental
 >> model skips a goal.
->> ----------------------------------------------------------------------------------------------------------------------------------
->> Mental           Modifiable     Maximum number of     Decision option       Assosiated with     Consequent value     Consequent     		 
->> (sub-)model                     decision options      goal relationship     goals          	   range		round
->> ----------------------------------------------------------------------------------------------------------------------------------
-   MM1-1            no             10                    positive	       G1
-   MM1-1            no             10                    negative              G2
+>> -----------------------------------------------------------------------------------------------------------------------------------------------
+>> Agent		Mental           Modifiable     Maximum number of     Decision option       Assosiated with     Consequent value     Consequent     		 
+>> Archetype		(sub-)model                     decision options      goal relationship     goals          	   range		round
+>> ----------------------------------------------------------------------------------------------------------------------------------------------
+    1			MM1-1            no             10                    positive	       	    G1
+    2			MM1-1            no             10                    negative              G2
 
-   MM2-1            yes            10                    negative	       G1
-   MM2-1            yes            10                    positive              G2
+    1			MM2-1            yes            10                    negative	       	    G1
+    2			MM2-1            yes            10                    positive              G2
      
 
 >> The number of possible decision options (rows) is unlimited, as long as each is associated with
