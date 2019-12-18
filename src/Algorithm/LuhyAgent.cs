@@ -12,29 +12,29 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
     /// Luhy agent model
     /// </summary>
     /// <seealso cref="SOSIEL.Entities.Agent" />
-    public sealed class LuhyAgent : SOSIEL.Entities.Agent
+    public sealed class LuhyAgent : Agent
     {
         public AgentStateConfiguration AgentStateConfiguration { get; private set; }
 
-        public override SOSIEL.Entities.Agent Clone()
+        public override Agent Clone()
         {
             LuhyAgent agent = (LuhyAgent)base.Clone();
 
             return agent;
         }
 
-        public override SOSIEL.Entities.Agent CreateChild(string gender)
+        public override Agent CreateChild(string gender)
         {
             LuhyAgent child = (LuhyAgent)base.CreateChild(gender);
 
-            child[AlgorithmVariables.AgentIncome] = 0;
-            child[AlgorithmVariables.AgentExpenses] = 0;
-            child[AlgorithmVariables.AgentSavings] = 0;
+            //child[AlgorithmVariables.AgentIncome] = 0;
+            //child[AlgorithmVariables.AgentExpenses] = 0;
+            //child[AlgorithmVariables.AgentSavings] = 0;
 
             return child;
         }
 
-        protected override SOSIEL.Entities.Agent CreateInstance()
+        protected override Agent CreateInstance()
         {
             return new LuhyAgent();
         }
@@ -73,29 +73,29 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
                 double importance = configuration.Importance;
 
-                if (configuration.Randomness)
-                {
-                    if (string.IsNullOrEmpty(configuration.BasedOn))
-                    {
-                        var from = (int)(configuration.RandomFrom * 10);
-                        var to = (int)(configuration.RandomTo * 10);
+                //if (configuration.Randomness)
+                //{
+                //    if (string.IsNullOrEmpty(configuration.BasedOn))
+                //    {
+                //        var from = (int)(configuration.RandomFrom * 10);
+                //        var to = (int)(configuration.RandomTo * 10);
 
-                        importance = GenerateImportance(agent, configuration.RandomFrom, configuration.RandomTo);
-                    }
-                    else
-                    {
-                        var anotherGoalImportance = agent.InitialGoalStates[agent.AssignedGoals.FirstOrDefault(g => g.Name == configuration.BasedOn)]
-                            .Importance;
+                //        importance = GenerateImportance(agent, configuration.RandomFrom, configuration.RandomTo);
+                //    }
+                //    else
+                //    {
+                //        var anotherGoalImportance = agent.InitialGoalStates[agent.AssignedGoals.FirstOrDefault(g => g.Name == configuration.BasedOn)]
+                //            .Importance;
 
-                        importance = Math.Round(1 - anotherGoalImportance, 2);
-                    }
-                }
+                //        importance = Math.Round(1 - anotherGoalImportance, 2);
+                //    }
+                //}
 
                 GoalState goalState = new GoalState(configuration.Value, goal.FocalValue, importance);
 
                 agent.InitialGoalStates.Add(goal, goalState);
 
-                agent[string.Format("{0}_Importance", goal.Name)] = importance;
+                //agent[string.Format("{0}_Importance", goal.Name)] = importance;
             });
 
             //initializes initial anticipated influence for each kh and goal assigned to the agent
@@ -124,33 +124,33 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             });
 
 
-            InitializeDynamicvariables(agent);
+            InitializeDynamicVariables(agent);
 
             agent.AgentStateConfiguration = agentConfiguration;
 
             return agent;
         }
 
-        private static void InitializeDynamicvariables(LuhyAgent agent)
+        private static void InitializeDynamicVariables(LuhyAgent agent)
         {
             agent[AlgorithmVariables.IsActive] = true;
         }
 
-        private static double GenerateImportance(LuhyAgent agent, double min, double max)
-        {
-            double rand;
+        //private static double GenerateImportance(LuhyAgent agent, double min, double max)
+        //{
+        //    double rand;
 
-            if (agent.ContainsVariable(AlgorithmVariables.Mean) && agent.ContainsVariable(AlgorithmVariables.StdDev))
-                rand = NormalDistributionRandom.GetInstance.Next(agent[AlgorithmVariables.Mean], agent[AlgorithmVariables.StdDev]);
-            else
-                rand = NormalDistributionRandom.GetInstance.Next();
+        //    if (agent.ContainsVariable(AlgorithmVariables.Mean) && agent.ContainsVariable(AlgorithmVariables.StdDev))
+        //        rand = NormalDistributionRandom.GetInstance.Next(agent[AlgorithmVariables.Mean], agent[AlgorithmVariables.StdDev]);
+        //    else
+        //        rand = NormalDistributionRandom.GetInstance.Next();
 
-            rand = Math.Round(rand, 1, MidpointRounding.AwayFromZero);
+        //    rand = Math.Round(rand, 1, MidpointRounding.AwayFromZero);
 
-            if (rand < min || rand > max)
-                return GenerateImportance(agent, min, max);
+        //    if (rand < min || rand > max)
+        //        return GenerateImportance(agent, min, max);
 
-            return rand;
-        }
+        //    return rand;
+        //}
     }
 }
