@@ -33,10 +33,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\The-SOSIEL-Platform-v2.0\SOSIEL EX1\SOSIEL\SOSIEL.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="Landis.Extension.BiomassHarvest-v4">
       <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Extension.BiomassHarvest-v4.dll</HintPath>
     </Reference>
@@ -50,7 +46,10 @@
       <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.Cohorts-v2.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.HarvestManagement-v4">
-      <HintPath>..\..\Extension-Biomass-Harvest\src\bin\Debug\netstandard2.0\Landis.Library.HarvestManagement-v4.dll</HintPath>
+      <HintPath>lib\Landis.Library.HarvestManagement-v4.dll</HintPath>
+    </Reference>
+    <Reference Include="SOSIEL">
+      <HintPath>..\..\..\Platform-SOSIEL\SOSIEL EX1\SOSIEL\bin\Release\netstandard2.0\SOSIEL.dll</HintPath>
     </Reference>
   </ItemGroup>
 

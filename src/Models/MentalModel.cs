@@ -2,6 +2,8 @@
 {
     public class MentalModel
     {
+        public string AgentArchetype { get; set; }
+
         public string Name { get; set; }
 
         public bool Modifiable { get; set; }

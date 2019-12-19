@@ -2,6 +2,8 @@
 {
     public class Goal
     {
+        public string AgentArchetype { get; set; }
+
         public string Name { get; set; }
 
         public string GoalTendency { get; set; }

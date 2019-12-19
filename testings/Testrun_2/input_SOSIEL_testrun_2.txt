@@ -55,10 +55,10 @@ MentalModelAttributes
 >> goals (columns) is limited to the number of goals in the GoalAttributes table. This table
 >> also associates mental models with goals. For this reason, use "--" in cases when a mental
 >> model skips a goal.
->> -----------------------------------------------------------------------------------------------------------------------------------------------
+>> ----------------------------------------------------------------------------------------------------------------------------------------------------
 >> Agent		Mental           Modifiable     Maximum number of     Decision option       Assosiated with     Consequent value     Consequent     		 
 >> Archetype		(sub-)model                     decision options      goal relationship     goals          	   range		round
->> ----------------------------------------------------------------------------------------------------------------------------------------------
+>> ----------------------------------------------------------------------------------------------------------------------------------------------------
     1			MM1-1            no             10                    positive	       	    G1
     2			MM1-1            no             10                    negative              G2
 
@@ -84,11 +84,11 @@ AgentArchetypeAttributes
 >> Description
 >>
 >>
->> ----------		---------			----------		----------
->> Archetype		Archetype			Site 			Goal importance
->> name            	prefix				orientied		adjusting
->> ----------       ----------    		----------      ----------   	  
-   ForestManager	FM					yes				yes
+>> ----------		---------	----------	----------
+>> Archetype		Archetype	Site 		Goal importance
+>> name            	prefix		orientied	adjusting
+>> ----------       	----------    	----------      ----------   	  
+   ForestManager	FM		yes		yes
 
 
    

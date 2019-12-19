@@ -2,7 +2,9 @@
 {
     public class AgentArchetype
     {
-        public string Name { get; set; }
+        public string ArchetypeName { get; set; }
+
+        public string ArchetypePrefix { get; set; }
 
         public bool SiteOriented { get; set; }
 

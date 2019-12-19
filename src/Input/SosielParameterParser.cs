@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using CsvHelper;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
@@ -140,6 +141,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             GetNextLine();
 
+            var agentArchetype = new InputVar<string>("AgentArchetype");
             var goalName = new InputVar<string>("Goal");
             var goalTendency = new InputVar<string>("GoalTendency");
             var referenceVariable = new InputVar<string>("ReferenceVariable");
@@ -151,6 +153,9 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 var goal = new Goal();
 
                 var currentLine = new StringReader(CurrentLine);
+
+                ReadValue(agentArchetype, currentLine);
+                goal.AgentArchetype = agentArchetype.Value;
 
                 ReadValue(goalName, currentLine);
                 goal.Name = goalName.Value;
@@ -184,6 +189,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             GetNextLine();
 
+            var agentArchetype = new InputVar<string>("AgentArchetype");
             var name = new InputVar<string>("Name");
             var modifiable = new InputVar<bool>("Modifiable");
             var maxNumberOfDesignOptions = new InputVar<int>("MaxNumberOfDesignOptions");
@@ -197,6 +203,9 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 var mentalModel = new MentalModel();
 
                 var stringReader = new StringReader(CurrentLine);
+
+                ReadValue(agentArchetype, stringReader);
+                mentalModel.AgentArchetype = agentArchetype.Value;
 
                 ReadValue(name, stringReader);
                 mentalModel.Name = name.Value;
@@ -277,6 +286,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             GetNextLine();
 
             var archetypeName = new InputVar<string>("ArchetypeName");
+            var archetypePrefix = new InputVar<string>("ArchetypePrefix");
             var siteOriented = new InputVar<bool>("SiteOriented");
             var goalImportanceAdjusting = new InputVar<bool>("GoalImportanceAdjusting");
 
@@ -287,7 +297,10 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 var currentLine = new StringReader(CurrentLine);
 
                 ReadValue(archetypeName, currentLine);
-                agentArchetype.Name = archetypeName.Value;
+                agentArchetype.ArchetypeName = archetypeName.Value;
+
+                ReadValue(archetypePrefix, currentLine);
+                agentArchetype.ArchetypePrefix = archetypePrefix.Value;
 
                 ReadValue(siteOriented, currentLine);
                 agentArchetype.SiteOriented = siteOriented.Value;
