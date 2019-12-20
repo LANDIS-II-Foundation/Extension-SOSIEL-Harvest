@@ -54,7 +54,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         {
             var agents = new List<IAgent>();
 
-            Dictionary<string, AgentPrototype> agentPrototypes = configuration.AgentConfiguration;
+            Dictionary<string, AgentArchetype> agentPrototypes = configuration.AgentConfiguration;
 
             if (agentPrototypes.Count == 0)
             {
@@ -68,15 +68,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             //create agents, groupby is used for saving agents numeration, e.g. FE1, HM1. HM2 etc
             initialState.AgentsState.GroupBy(state => state.PrototypeOfAgent).ForEach((agentStateGroup) =>
             {
-                AgentPrototype prototype = agentPrototypes[agentStateGroup.Key];
-                var mentalProto = prototype.MentalProto; //do not remove
+                AgentArchetype archetype = agentPrototypes[agentStateGroup.Key];
+                var mentalProto = archetype.MentalProto; //do not remove
                 int index = 1;
 
                 agentStateGroup.ForEach((agentState) =>
                 {
                     for (int i = 0; i < agentState.NumberOfAgents; i++)
                     {
-                        Agent agent = LuhyAgent.CreateAgent(agentState, prototype);
+                        Agent agent = LuhyAgent.CreateAgent(agentState, archetype);
                         agent.SetId(index);
 
                         agents.Add(agent);
@@ -165,7 +165,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             agentList.Agents.ForEach(agent =>
             {
                 //creates empty agent state
-                AgentState<ActiveSite> agentState = AgentState<ActiveSite>.Create(agent.Prototype.IsSiteOriented);
+                AgentState<ActiveSite> agentState = AgentState<ActiveSite>.Create(agent.Archetype.IsSiteOriented);
 
                 //copy generated goal importance
                 agent.InitialGoalStates.ForEach(kvp =>
@@ -269,14 +269,14 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             //calculate tourism value
             double averageBiomass = biomass.Values.Average();
 
-            var fePrototypes = agentList.GetPrototypesWithPrefix("FE");
+            var fePrototypes = agentList.GetArchetypesWithPrefix("FE");
 
             fePrototypes.ForEach(feProt =>
             {
                 feProt[AlgorithmVariables.AverageBiomass] = averageBiomass;
             });
 
-            var hmPrototypes = agentList.GetPrototypesWithPrefix("HM");
+            var hmPrototypes = agentList.GetArchetypesWithPrefix("HM");
 
             hmPrototypes.ForEach(hmProt =>
             {
@@ -462,7 +462,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             base.Maintenance();
 
             //clean up unassigned rules
-            agentList.Prototypes.ForEach(prototype =>
+            agentList.Archetypes.ForEach(prototype =>
             {
                 IEnumerable<IAgent> agents = agentList.GetAgentsWithPrefix(prototype.NamePrefix);
 

@@ -73,39 +73,12 @@ namespace Landis.Extension.SOSIELHarvest
             var sosielParameterParser = new SosielParameterParser();
             _sosielParameters = Data.Load(_sheParameters.SosielInitializationFileName, sosielParameterParser);
 
-
-            //todo convert SosielParameters to Configuration models, we need create all possible sections of configuration.json, all another sections should initialize later
-            //todo parse agent variables
-            var agentVariables = ParseAgentVariables(_sosielParameters.AgentVariables, "1");
-
-            
             if (_sheParameters.Mode == 2)
             {
                 ModelCore.UI.WriteLine("  Loading parameters from {0}", _sheParameters.BiomassHarvestInitializationFileName);
                 _biomassHarvest = new BiomassHarvest.PlugIn();
                 _biomassHarvest.LoadParameters(_sheParameters.BiomassHarvestInitializationFileName, ModelCore);
             }
-        }
-
-        private Dictionary<string, dynamic> ParseAgentVariables(List<AgentVariable> sosielParametersAgentVariables, string agent)
-        {
-            var variables = new Dictionary<string, dynamic>();
-
-            foreach (var variable in sosielParametersAgentVariables.Where(p=> p.Agent == agent))
-            {
-                var parsedValue = default(dynamic);
-
-                switch (variable.VariableType)
-                {
-                    case "Integer":
-                        parsedValue = int.Parse(variable.VariableValue);
-                        break;
-                }
-
-                variables.Add(variable.VariableName, parsedValue);
-            }
-
-            return variables;
         }
 
         //---------------------------------------------------------------------
@@ -117,35 +90,7 @@ namespace Landis.Extension.SOSIELHarvest
 
             Timestep = _sheParameters.Timestep;
 
-            _configuration = new ConfigurationModel
-            {
-                AlgorithmConfiguration = new AlgorithmConfiguration
-                {
-                    CognitiveLevel = CognitiveLevel.CL4,
-                    DemographicConfiguration = new DemographicProcessesConfiguration
-                    {
-                        AdoptionProbability = _sosielParameters.Demographic.AdoptionProbability,
-                        BirthProbability = _sosielParameters.Demographic.BirthProbability,
-                        DeathProbability = _sosielParameters.Demographic.DeathProbability,
-                        HomosexualTypeRate = _sosielParameters.Demographic.HomosexualTypeRate,
-                        MinimumAgeForHouseholdHead = _sosielParameters.Demographic.MinimumAgeForHouseholdHead,
-                        PairingAgeMax = _sosielParameters.Demographic.PairingAgeMax,
-                        PairingAgeMin = _sosielParameters.Demographic.PairingAgeMin,
-                        PairingProbability = _sosielParameters.Demographic.PairingProbability, 
-                        SexualOrientationRate = _sosielParameters.Demographic.SexualOrientationRate,
-                        YearsBetweenBirths = _sosielParameters.Demographic.YearsBetweenBirths,
-                        MaximumAge = _sosielParameters.Demographic.MaximumAge
-                    },
-                    ProbabilitiesConfiguration = _sosielParameters.Probabilities.Select( p => new ProbabilitiesConfiguration
-                    {
-                        FilePath = p.FileName,
-                        Variable = p.VariableParameter,
-                        VariableType = p.VariableType,
-                        WithHeader = !p.IgnoreFirstLine
-                    }).ToArray(),
-                    UseDimographicProcesses = _sosielParameters.Demographic.DemographicChange
-                }
-            };
+            _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
 
             //// Read in (input) Agent Configuration Json File here:
             //ModelCore.UI.WriteLine("  Loading agent parameters from {0}", parameters.InputJson);
