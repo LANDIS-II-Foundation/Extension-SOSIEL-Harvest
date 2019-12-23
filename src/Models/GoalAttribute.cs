@@ -1,6 +1,6 @@
 ﻿namespace Landis.Extension.SOSIELHarvest.Models
 {
-    public class Goal
+    public class GoalAttribute
     {
         public string AgentArchetype { get; set; }
 

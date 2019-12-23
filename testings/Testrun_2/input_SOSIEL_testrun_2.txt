@@ -58,12 +58,11 @@ MentalModelAttributes
 >> ----------------------------------------------------------------------------------------------------------------------------------------------------
 >> Archetype		Mental           Modifiable     Maximum number of     Decision option       Assosiated with     Consequent value     Consequent     		 
 >> name			(sub-)model                     decision options      goal relationship     goals          	   range		round
+									      (required if 
+									      modifiable yes)
 >> ----------------------------------------------------------------------------------------------------------------------------------------------------
-    ForestManager	MM1-1            no             10                    positive	       	    G1
-    ForestManager	MM1-1            no             10                    negative              G2
-
-    ForestManager	MM2-1            yes            10                    negative	       	    G1
-    ForestManager	MM2-1            yes            10                    positive              G2
+    ForestManager	MM1-1            no             10                    --	 	    G1|G2
+    ForestManager	MM2-1            yes            10                    G1<->|G2<+>	    G1|G2
      
 
 >> The number of possible decision options (rows) is unlimited, as long as each is associated with

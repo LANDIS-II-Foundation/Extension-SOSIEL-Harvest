@@ -9,7 +9,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
         public List<Probability> Probabilities { get; set; }
 
-        public List<Goal> Goals { get; set; }
+        public List<GoalAttribute> GoalAttributes { get; set; }
 
         public List<MentalModel> MentalModels { get; set; }
 

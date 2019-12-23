@@ -4,8 +4,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Extension.SOSIELHarvest.Models;
+using Landis.Utilities;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
@@ -14,6 +16,9 @@ using SOSIEL.Entities;
 using SOSIEL.Enums;
 using AgentArchetype = SOSIEL.Entities.AgentArchetype;
 using Goal = SOSIEL.Entities.Goal;
+using MentalModel = Landis.Extension.SOSIELHarvest.Models.MentalModel;
+using Object = Landis.Utilities.Object;
+using Type = System.Type;
 
 namespace Landis.Extension.SOSIELHarvest.Configuration
 {
@@ -151,13 +156,35 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         {
             var agentArchetypes = new Dictionary<string, AgentArchetype>();
 
+            var goals = ParseGoals(parameters.GoalAttributes);
+            var mentalModels = ParseMentalModels(parameters.MentalModels);
+
+            foreach (var archetype in parameters.AgentArchetypes)
+            {
+                var agentArchetype = new AgentArchetype();
+
+                agentArchetype.NamePrefix = archetype.ArchetypePrefix;
+                agentArchetype.IsSiteOriented = archetype.SiteOriented;
+                agentArchetype.UseImportanceAdjusting = archetype.GoalImportanceAdjusting;
+
+                agentArchetype.Goals = goals[archetype.ArchetypeName];
+                agentArchetype.MentalModel = mentalModels[archetype.ArchetypeName];
+
+                foreach (var agentVariable in ParseAgentVariables(parameters.AgentVariables, agent))
+                    agentArchetype.CommonVariables.Add(agentVariable.Key, agentVariable.Value);
+
+
+                
+                agentArchetypes[archetype.ArchetypeName] = agentArchetype;
+            }
+
             var agents = parameters.AgentGoalAttributes.Select(ag => ag.Agent).Distinct();
 
             foreach (var agent in agents)
             {
                 var agentArchetype = new AgentArchetype();
 
-                foreach (var goal in ParseAgentGoals(parameters.AgentGoalAttributes.First(ag=> ag.Agent.Equals(agent))))
+                foreach (var goal in ParseAgentGoals(parameters.AgentGoalAttributes.First(ag => ag.Agent.Equals(agent))))
                     agentArchetype.Goals.Add(goal);
 
                 foreach (var agentVariable in ParseAgentVariables(parameters.AgentVariables, agent))
@@ -191,6 +218,111 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             }
 
             return variables;
+        }
+
+        private static Dictionary<string, List<Goal>> ParseGoals(List<GoalAttribute> goalAttributes)
+        {
+            var dictionary = new Dictionary<string, List<Goal>>();
+
+            foreach (var archetypeGoals in goalAttributes.GroupBy(ga => ga.AgentArchetype))
+            {
+                var goals = new List<Goal>(goalAttributes.Count);
+
+                foreach (var archetypeGoal in archetypeGoals)
+                {
+                    var goal = new Goal
+                    {
+                        Name = archetypeGoal.Name,
+                        ReferenceVariable = archetypeGoal.ReferenceVariable,
+                        Tendency = archetypeGoal.GoalTendency,
+                        IsCumulative = archetypeGoal.IsCumulative,
+                        ChangeFocalValueOnPrevious = archetypeGoal.ChangeValueOnPrior,
+                        //FocalValue =  now it is agent specific value if i'm not mistaken
+                    };
+
+                    goals.Add(goal);
+                }
+
+                dictionary.Add(archetypeGoals.Key, goals);
+            }
+
+            return dictionary;
+        }
+
+        private static Dictionary<string, Dictionary<string, MentalModelConfiguration>> ParseMentalModels(List<MentalModel> mentalModels)
+        {
+            var dictionary = new Dictionary<string, Dictionary<string, MentalModelConfiguration>>();
+
+            foreach (var archetypeMentalModels in mentalModels.GroupBy(m => m.AgentArchetype))
+            {
+                var archetypeMentalModelsDictionary = new Dictionary<string, MentalModelConfiguration>();
+
+                foreach (var mentalModel in archetypeMentalModels)
+                {
+                    var parsedName = ParseMentalModelName(mentalModel.Name);
+
+                    MentalModelConfiguration configuration;
+                    if (!archetypeMentalModelsDictionary.TryGetValue(parsedName.MentalModel.ToString(), out configuration))
+                    {
+                        configuration = new MentalModelConfiguration
+                        {
+                            AssociatedWith = mentalModel.AssociatedWithGoals.Split('|'),
+                            Layer = new Dictionary<string, DecisionOptionLayerConfiguration>()
+                        };
+
+                        archetypeMentalModelsDictionary[parsedName.MentalModel.ToString()] = configuration;
+                    }
+                    
+                    int round;
+                    int.TryParse(mentalModel.ConsequentRound, out round);
+
+                    var layer = new DecisionOptionLayerConfiguration
+                    {
+                        ConsequentPrecisionDigitsAfterDecimalPoint = round,
+                        ConsequentValueInterval = ParseRange<int>(mentalModel.ConsequentValueRange),
+                        Modifiable = mentalModel.Modifiable,
+                        MaxNumberOfDecisionOptions = mentalModel.MaxNumberOfDesignOptions,
+                        ConsequentRelationshipSign = ParseComplexValue(mentalModel.DesignOptionGoalRelationship).ToDictionary(v=>v.Key, v=>v.Value)
+                    };
+
+                    configuration.Layer[parsedName.MentalSubModel.ToString()] = layer;
+                }
+
+                dictionary[archetypeMentalModels.Key] = archetypeMentalModelsDictionary;
+            }
+
+            return dictionary;
+        }
+
+        private static (int MentalModel, int MentalSubModel) ParseMentalModelName(string mentalModelString)
+        {
+            var regex = new Regex(@"^MM(\d{1,2})-(\d{1,2})$");
+
+            var match = regex.Match(mentalModelString);
+
+            if (!match.Success && match.Groups.Count < 3)
+                throw new ArgumentException("Mental model name is not valid");
+
+            var mentalModel = int.Parse(match.Groups[1].Value);
+            var mentalSubModel = int.Parse(match.Groups[2].Value);
+
+            return (mentalModel, mentalSubModel);
+        }
+
+        private static (int MentalModel, int MentalSubModel, int DecisionOptionNumber) ParseDecisionOptionName(string decisionOptionName)
+        {
+            var regex = new Regex(@"^MM(\d{1,2})-(\d{1,2})_DO(\d{1,2})$");
+
+            var match = regex.Match(decisionOptionName);
+
+            if (!match.Success && match.Groups.Count < 4)
+                throw new ArgumentException("Decision option name is not valid");
+
+            var mentalModel = int.Parse(match.Groups[1].Value);
+            var mentalSubModel = int.Parse(match.Groups[2].Value);
+            var decisionOptionNumber = int.Parse(match.Groups[3].Value);
+
+            return (mentalModel, mentalSubModel, decisionOptionNumber);
         }
 
         private static List<Goal> ParseAgentGoals(AgentGoalAttribute agentGoalAttribute)
@@ -228,6 +360,52 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             stringValue = stringValue.Remove(stringValue.Length - 1, 1);
 
             return (T)Convert.ChangeType(stringValue, typeof(T));
+        }
+
+        private static T[] ParseRange<T>(string value)
+        {
+            if (string.IsNullOrEmpty(value))
+                return new T[] { };
+
+            var regex = new Regex(@"^(?<begin>\d+(\.\d+?))-(?<end>\d+(\.\d+)?)$");
+
+            var match = regex.Match(value);
+
+            try
+            {
+                var values = new[] { match.Groups["begin"].Value, match.Groups["end"].Value };
+                return values.Select(v => (T)Convert.ChangeType(v, typeof(T))).ToArray();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Not valid range string");
+            }
+        }
+
+        private static List<(string Key, string Value)> ParseComplexValue(string value)
+        {
+            var result = new List<(string Key, string Value)>();
+
+            if (value == "--")
+                return result;
+
+            var regex = new Regex(@"(.+)<(.+)>");
+            var pairs = value.Split('|');
+
+            foreach (var pair in pairs)
+            {
+                var match = regex.Match(pair);
+
+                if (match.Success)
+                {
+                    var key = match.Groups[1].Value;
+                    var val = match.Groups[2].Value;
+
+                    result.Add((key, val));
+                }
+            }
+
+            return result;
         }
     }
 }

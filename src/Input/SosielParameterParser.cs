@@ -18,7 +18,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             {
                 Demographic = ParseDemographic(),
                 Probabilities = ParseProbabilities(),
-                Goals = ParseGoals(),
+                GoalAttributes = ParseGoalAttributes(),
                 MentalModels = ParseMentalModels(),
                 DecisionOptionAttributes = ParseDecisionOptionAttributes(),
                 DecisionOptionAntecedentAttributes = ParseDecisionOptionAntecedentAttributes(),
@@ -132,9 +132,9 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return probabilities;
         }
 
-        private List<Goal> ParseGoals()
+        private List<GoalAttribute> ParseGoalAttributes()
         {
-            var goals = new List<Goal>();
+            var goals = new List<GoalAttribute>();
 
             while (CurrentName != "GoalAttributes")
                 GetNextLine();
@@ -150,7 +150,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             while (CurrentName != "MentalModelAttributes")
             {
-                var goal = new Goal();
+                var goal = new GoalAttribute();
 
                 var currentLine = new StringReader(CurrentLine);
 
