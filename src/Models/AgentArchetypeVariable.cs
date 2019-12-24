@@ -1,10 +1,12 @@
 ﻿namespace Landis.Extension.SOSIELHarvest.Models
 {
-    public class AgentArchetypeVariable
+    public class AgentArchetypeVariable: IVariable
     {
-        public string VariableName { get; set; }
+        public string Key => ArchetypeName;
 
         public string ArchetypeName { get; set; }
+
+        public string VariableName { get; set; }
 
         public string VariableType { get; set; }
 

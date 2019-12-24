@@ -95,11 +95,11 @@ AgentArchetypeVariables
 >> Description
 >>
 >>
->> --------   	        --------       	--------	--------		
->> Variable		Archetype	Variable	Variable 			
->> name     		name		type     	value		
->> --------   		--------	--------      	--------
-   BiomassHarvested     ForestManager   Integer         0
+>> ----------   	--------       		--------	--------		
+>> Archetype		Variable		Variable	Variable 			
+>> name     		name			type     	value		
+>> ----------   	--------		--------      	--------
+   ForestManager	BiomassHarvested        Integer         0
 
 
 

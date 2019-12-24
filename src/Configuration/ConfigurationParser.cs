@@ -158,6 +158,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
             var goals = ParseGoals(parameters.GoalAttributes);
             var mentalModels = ParseMentalModels(parameters.MentalModels);
+            var decisionOptions = ParseDecisionOptions(parameters.DecisionOptionAttributes, parameters.DecisionOptionAntecedentAttributes);
+
 
             foreach (var archetype in parameters.AgentArchetypes)
             {
@@ -170,11 +172,18 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 agentArchetype.Goals = goals[archetype.ArchetypeName];
                 agentArchetype.MentalModel = mentalModels[archetype.ArchetypeName];
 
-                foreach (var agentVariable in ParseAgentVariables(parameters.AgentVariables, agent))
+                var supportedMentalModels = agentArchetype.MentalModel.Values.Select(mm => mm.Name).ToList();
+
+                agentArchetype.DecisionOptions = decisionOptions.Keys
+                    .Where(d => supportedMentalModels.Contains(GetDecisionOptionMentalModelName(d)))
+                    .Select(k => decisionOptions[k])
+                    .ToList();
+
+
+                var variablesCollection = parameters.AgentArchetypeVariables.Cast<IVariable>().ToList();
+                foreach (var agentVariable in ParseAgentVariables(variablesCollection, agentArchetype.NamePrefix))
                     agentArchetype.CommonVariables.Add(agentVariable.Key, agentVariable.Value);
 
-
-                
                 agentArchetypes[archetype.ArchetypeName] = agentArchetype;
             }
 
@@ -194,16 +203,42 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             return agentArchetypes;
         }
 
+        private static Dictionary<string, DecisionOption> ParseDecisionOptions(List<DecisionOptionAttribute> decisionOptionAttributes, List<DecisionOptionAntecedentAttribute> decisionOptionAntecedentAttributes)
+        {
+            var decisionOptions = new Dictionary<string, DecisionOption>();
+
+            foreach (var decisionOption in decisionOptionAttributes)
+            {
+                var antecedents = decisionOptionAntecedentAttributes.Where(a => a.DecisionOption == decisionOption.DecisionOption).ToList();
+
+                var parsedName = ParseDecisionOptionName(decisionOption.DecisionOption);
+
+                var decision = new DecisionOption();
+                
+                decision.MentalModel = parsedName.MentalModel;
+                decision.DecisionOptionsLayer = parsedName.MentalSubModel;
+                decision.PositionNumber = parsedName.DecisionOptionNumber;
+
+                decision.RequiredParticipants = decisionOption.RequiredParticipants;
+                decision.Antecedent = antecedents.Select(a => new DecisionOptionAntecedentPart(a.AntecedentVariable, a.AntecedentOperator, a.AntecedentValue, a.AntecedentReference)).ToArray();
+                decision.Consequent = new DecisionOptionConsequent(decisionOption.ConsequentVariable, decisionOption.ConsequentValue, decisionOption.ConsequentValueReference);
+
+                decisionOptions.Add(decisionOption.DecisionOption, decision);
+            }
+
+            return decisionOptions;
+        }
+
         private static InitialStateConfiguration MakeInitialStateConfiguration()
         {
             throw new NotImplementedException();
         }
 
-        private static Dictionary<string, dynamic> ParseAgentVariables(List<AgentVariable> sosielParametersAgentVariables, string agent)
+        private static Dictionary<string, dynamic> ParseAgentVariables(ICollection<IVariable> configVariables, string key)
         {
             var variables = new Dictionary<string, dynamic>();
 
-            foreach (var variable in sosielParametersAgentVariables.Where(p => p.Agent == agent))
+            foreach (var variable in configVariables.Where(p => p.Key == key))
             {
                 var parsedValue = default(dynamic);
 
@@ -266,6 +301,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                     {
                         configuration = new MentalModelConfiguration
                         {
+                            Name = mentalModel.Name,
                             AssociatedWith = mentalModel.AssociatedWithGoals.Split('|'),
                             Layer = new Dictionary<string, DecisionOptionLayerConfiguration>()
                         };
@@ -323,6 +359,16 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             var decisionOptionNumber = int.Parse(match.Groups[3].Value);
 
             return (mentalModel, mentalSubModel, decisionOptionNumber);
+        }
+
+        private static string GetDecisionOptionMentalModelName(string decisionOptionName)
+        {
+            var parts = decisionOptionName.Split('_');
+
+            if (parts.Length < 2)
+                throw new ArgumentException("Decision option name is not valid");
+
+            return parts[0];
         }
 
         private static List<Goal> ParseAgentGoals(AgentGoalAttribute agentGoalAttribute)
