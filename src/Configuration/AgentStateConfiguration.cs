@@ -20,7 +20,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         [JsonRequired]
         public Dictionary<string, Dictionary<string, double>> AnticipatedInfluenceState { get; set; }
 
-        public Dictionary<string, Dictionary<string, string>> AnticipatedInfluenceTransform { get; set; }
+        //public Dictionary<string, Dictionary<string, string>> AnticipatedInfluenceTransform { get; set; }
 
         [JsonRequired]
         public string[] AssignedDecisionOptions { get; set; }

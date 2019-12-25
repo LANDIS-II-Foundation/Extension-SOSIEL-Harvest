@@ -13,12 +13,20 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         [JsonRequired]
         public double Value { get; set; }
 
-        public bool Randomness { get; set; }
+        public double FocalValue { get; set; }
 
-        public double RandomFrom { get; set; }
+        public string FocalValueReference { get; set; }
 
-        public double RandomTo { get; set; }
+        public double MinValue { get; set; }
 
-        public string BasedOn { get; set; }
+        public double MaxValue { get; set; }
+
+        //public bool Randomness { get; set; }
+
+        //public double RandomFrom { get; set; }
+
+        //public double RandomTo { get; set; }
+
+        //public string BasedOn { get; set; }
     }
 }

@@ -12,8 +12,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
         public string AntecedentOperator { get; set; }
 
-        public float AntecedentValue { get;set; }
+        public string AntecedentValue { get;set; }
 
         public string AntecedentReference { get; set; }
+
+        public string AntecedentValueType { get; set; }
     }
 }

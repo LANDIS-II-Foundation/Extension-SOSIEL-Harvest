@@ -8,8 +8,10 @@
 
         public string ConsequentVariable { get; set; }
 
-        public float ConsequentValue { get; set; }
+        public string ConsequentValue { get; set; }
 
         public string ConsequentValueReference { get; set; }
+
+        public string ConsequentValueType { get; set; }
     }
 }
