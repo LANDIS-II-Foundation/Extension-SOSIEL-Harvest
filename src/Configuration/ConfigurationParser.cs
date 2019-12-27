@@ -526,7 +526,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             var pair = list.FirstOrDefault(p => p.Contains(key));
 
             if (pair == null)
-                return default;
+                return default(T);
 
             var stringValue = pair.Remove(0, key.Length);
             stringValue = stringValue.Remove(0, 1);

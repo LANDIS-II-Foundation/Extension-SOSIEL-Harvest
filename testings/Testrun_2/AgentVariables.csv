@@ -1,3 +1,2 @@
 Agent,VariableName,VariableType,VariableValue
-1,BiomassHarvested,Double ,0
-1,IsActive,Boolean,true
+FM1,BiomassHarvested,Double ,0
