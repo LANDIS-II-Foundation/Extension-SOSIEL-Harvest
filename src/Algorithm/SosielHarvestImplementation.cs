@@ -2,7 +2,6 @@
 using System.Linq;
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
-using Landis.SpatialModeling;
 using SOSIEL.Algorithm;
 using SOSIEL.Configuration;
 using SOSIEL.Entities;
@@ -287,6 +286,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             var newDecisionOptionModel = new NewDecisionOptionModel()
             {
+                ManagementArea = site.Name,
                 Name = newDecisionOption.Id,
                 ConsequentVariable = newDecisionOption.Consequent.Param,
                 ConsequentValue = string.IsNullOrEmpty(newDecisionOption.Consequent.VariableValue)
