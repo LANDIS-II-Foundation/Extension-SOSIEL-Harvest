@@ -137,23 +137,53 @@ namespace Landis.Extension.SOSIELHarvest
         public override void Run()
         {
             //run SOSIEL algorithm
-            var model = sosielHarvest.Run(sosielHarvestModel);
-
-
-            //use model.
-            if (iteration == 1)
-            {
-                GenerateNewPrescription("newPrescription", "HarvestArea", 0.5, "MM1-1_DO1");
-                ApplyNewPrescription("newPrescription");
-            }
+            //var model = sosielHarvest.Run(sosielHarvestModel);
 
             if (_sheParameters.Mode == 2)
+            {
+                foreach (var prescription in _biomassHarvestParameters.Prescriptions)
+                {
+                    var copy = prescription.Copy();
+                }
+
                 _biomassHarvest.Run();
+
+                var results = AnalyzeHarvestResult();
+            }
 
             iteration++;
         }
 
-        private void GenerateNewPrescription(string newName, string parameter, dynamic value, string basedOn)
+        private HarvestResults AnalyzeHarvestResult()
+        {
+            var results = new HarvestResults();
+
+            int areaNumber = 0;
+
+            foreach (var biomassHarvestArea in _biomassHarvestAreas)
+            {
+                areaNumber++;
+
+                results.ManageAreaBiomass[areaNumber.ToString()] = 0;
+                results.ManageAreaHarvested[areaNumber.ToString()] = 0;
+                results.ManageAreaMaturityProportion[areaNumber.ToString()] = 0;
+
+                foreach (var stand in biomassHarvestArea)
+                {
+                    results.ManageAreaBiomass[areaNumber.ToString()] += stand.ActiveArea;
+
+                    if (stand.Harvested && !stand.RepeatHarvested)
+                        results.ManageAreaHarvested[areaNumber.ToString()] += stand.LastAreaHarvested;
+
+                    results.ManageAreaMaturityProportion[areaNumber.ToString()] += stand.LastAreaHarvested / stand.ActiveArea;
+                }
+
+            }
+
+            return results;
+        }
+
+        private Prescription GenerateNewPrescription(string newName, string parameter, dynamic value, string basedOn)
         {
             var originalPrescription = _biomassHarvestParameters.Prescriptions.First(p => p.Name.Equals(basedOn));
 
@@ -198,6 +228,8 @@ namespace Landis.Extension.SOSIELHarvest
 
             _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, areaToHarvest, standsToHarvest,
                 beginTime, endTime));
+
+            return newPrescription;
         }
 
         private void ApplyNewPrescription(string prescriptionName)
