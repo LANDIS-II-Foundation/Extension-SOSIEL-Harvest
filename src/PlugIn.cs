@@ -94,7 +94,8 @@ namespace Landis.Extension.SOSIELHarvest
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
 
             ////create algorithm instance
-            int iterations = 1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
+            int iterations =
+                1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
             ////create dictionary 
             projectedBiomass = new Dictionary<Area, double>();
 
@@ -102,7 +103,8 @@ namespace Landis.Extension.SOSIELHarvest
             var managementAreas = _sheParameters.AgentToManagementAreaList.GroupBy(m => m.ManagementArea)
                 .Select(g => new Area() {Name = g.Key, AssignedAgents = g.Select(m => m.Agent).ToArray()})
                 .ToArray();
-            sosielHarvest = new SosielHarvestImplementation(iterations, _configuration, managementAreas, projectedBiomass);
+            sosielHarvest =
+                new SosielHarvestImplementation(iterations, _configuration, managementAreas, projectedBiomass);
 
             sosielHarvest.Initialize(sosielHarvestModel);
 
@@ -124,13 +126,13 @@ namespace Landis.Extension.SOSIELHarvest
                     BindingFlags.Instance | BindingFlags.NonPublic);
                 if (prescriptionField == null)
                     throw new Exception();
-                _biomassHarvestAreas = (IManagementAreaDataset)prescriptionField.GetValue(_biomassHarvest);
+                _biomassHarvestAreas = (IManagementAreaDataset) prescriptionField.GetValue(_biomassHarvest);
 
                 var parametersField =
                     biomassHarvestPluginType.GetField("parameters", BindingFlags.Static | BindingFlags.NonPublic);
                 if (parametersField == null)
                     throw new Exception();
-                _biomassHarvestParameters = (BiomassHarvest.Parameters)parametersField.GetValue(_biomassHarvest);
+                _biomassHarvestParameters = (BiomassHarvest.Parameters) parametersField.GetValue(_biomassHarvest);
             }
         }
 
@@ -168,16 +170,59 @@ namespace Landis.Extension.SOSIELHarvest
                 results.ManageAreaHarvested[areaNumber.ToString()] = 0;
                 results.ManageAreaMaturityProportion[areaNumber.ToString()] = 0;
 
+                double manageAreaMaturityProportion = 0;
+
                 foreach (var stand in biomassHarvestArea)
                 {
-                    results.ManageAreaBiomass[areaNumber.ToString()] += stand.ActiveArea;
+                    double standMaturityProportion = 0;
 
-                    if (stand.Harvested && !stand.RepeatHarvested)
-                        results.ManageAreaHarvested[areaNumber.ToString()] += stand.LastAreaHarvested;
+                    foreach (var site in stand)
+                    {
+                        double siteBiomass = 0;
+                        double siteMaturity = 0;
+                        double siteMaturityProportion = 0;
 
-                    results.ManageAreaMaturityProportion[areaNumber.ToString()] += stand.LastAreaHarvested / stand.ActiveArea;
+                        foreach (var species in modelCore.Species)
+                        {
+                            var cohorts = BiomassHarvest.SiteVars.Cohorts[site][species];
+
+                            if (cohorts == null)
+                                continue;
+
+                            double siteSpeciesMaturity = 0;
+
+                            foreach (var cohort in cohorts)
+                            {
+                                siteBiomass += cohort.Biomass;
+
+                                if (cohort.Age >= modelCore.Species[species.Name].Maturity)
+                                    siteSpeciesMaturity += cohort.Biomass;
+                            }
+
+                            siteMaturity += siteSpeciesMaturity;
+                        }
+
+                        siteMaturityProportion = siteMaturity / siteBiomass;
+                        standMaturityProportion += siteMaturityProportion;
+
+                        results.ManageAreaBiomass[areaNumber.ToString()] += siteBiomass;
+                        results.ManageAreaHarvested[areaNumber.ToString()] +=
+                            BiomassHarvest.SiteVars.BiomassRemoved[site];
+                    }
+
+                    standMaturityProportion /= stand.Count();
+                    manageAreaMaturityProportion += standMaturityProportion;
                 }
 
+                manageAreaMaturityProportion /= biomassHarvestArea.StandCount;
+
+                results.ManageAreaBiomass[areaNumber.ToString()] =
+                    results.ManageAreaBiomass[areaNumber.ToString()] / 100 * modelCore.CellArea;
+
+                results.ManageAreaHarvested[areaNumber.ToString()] =
+                    results.ManageAreaHarvested[areaNumber.ToString()] / 100 * modelCore.CellArea;
+
+                results.ManageAreaMaturityProportion[areaNumber.ToString()] = manageAreaMaturityProportion;
             }
 
             return results;
@@ -254,8 +299,8 @@ namespace Landis.Extension.SOSIELHarvest
             double siteBiomass = 0;
             if (SiteVars.Cohorts[site] != null)
                 foreach (ISpeciesCohorts speciesCohorts in SiteVars.Cohorts[site])
-                    foreach (ICohort cohort in speciesCohorts)
-                        siteBiomass += cohort.Biomass;
+                foreach (ICohort cohort in speciesCohorts)
+                    siteBiomass += cohort.Biomass;
             return siteBiomass;
         }
     }
