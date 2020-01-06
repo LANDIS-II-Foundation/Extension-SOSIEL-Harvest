@@ -354,7 +354,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
             foreach (var variable in configVariables.Where(p => p.Key == key))
             {
-                var parsedValue = ParseToDynamicValue(variable.VariableType, variable.VariableValue);
+                var parsedValue = ParseToDynamicValue(variable.VariableType.Trim(), variable.VariableValue);
 
                 variables.Add(variable.VariableName, parsedValue);
             }
@@ -399,6 +399,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                         Tendency = archetypeGoal.GoalTendency,
                         IsCumulative = archetypeGoal.IsCumulative,
                         ChangeFocalValueOnPrevious = archetypeGoal.ChangeValueOnPrior,
+                        MinGoalReferenceVariable = archetypeGoal.MinGoalReferenceVariable,
+                        MaxGoalReferenceVariable = archetypeGoal.MaxGoalReferenceVariable
                         //FocalValue =  now it is agent specific value if i'm not mistaken
                     };
 
@@ -442,7 +444,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                     var layer = new DecisionOptionLayerConfiguration
                     {
                         ConsequentPrecisionDigitsAfterDecimalPoint = round,
-                        ConsequentValueInterval = ParseRange<int>(mentalModel.ConsequentValueRange),
+                        ConsequentValueInterval = ParseRange<double>(mentalModel.ConsequentValueRange),
                         Modifiable = mentalModel.Modifiable,
                         MaxNumberOfDecisionOptions = mentalModel.MaxNumberOfDesignOptions,
                         ConsequentRelationshipSign = ParseComplexValue(mentalModel.DesignOptionGoalRelationship).ToDictionary(v => v.Key, v => v.Value)

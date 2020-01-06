@@ -94,28 +94,25 @@ namespace Landis.Extension.SOSIELHarvest
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
 
             ////create algorithm instance
-            int iterations =
-                1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
-            ////create dictionary 
-            projectedBiomass = new Dictionary<Area, double>();
+            int iterations = 1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
 
             sosielHarvestModel = new AlgorithmModel();
             var managementAreas = _sheParameters.AgentToManagementAreaList.GroupBy(m => m.ManagementArea)
                 .Select(g => new Area() {Name = g.Key, AssignedAgents = g.Select(m => m.Agent).ToArray()})
                 .ToArray();
             sosielHarvest =
-                new SosielHarvestImplementation(iterations, _configuration, managementAreas, projectedBiomass);
+                new SosielHarvestImplementation(iterations, _configuration, managementAreas);
 
             sosielHarvest.Initialize(sosielHarvestModel);
 
 
-            ////remove old output files
-            //System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
+            //remove old output files
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
 
-            //foreach (System.IO.FileInfo fi in di.GetFiles("SOSIELHuman_*.csv"))
-            //{
-            //    fi.Delete();
-            //}
+            foreach (System.IO.FileInfo fi in di.GetFiles("SOSIELHuman_*.csv"))
+            {
+                fi.Delete();
+            }
 
             if (_sheParameters.Mode == 2)
             {
@@ -138,8 +135,13 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void Run()
         {
+            if (iteration == 1)
+            {
+                sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
+            }
+
             //run SOSIEL algorithm
-            //var model = sosielHarvest.Run(sosielHarvestModel);
+            var model = sosielHarvest.Run(sosielHarvestModel);
 
             if (_sheParameters.Mode == 2)
             {
@@ -150,7 +152,7 @@ namespace Landis.Extension.SOSIELHarvest
 
                 _biomassHarvest.Run();
 
-                var results = AnalyzeHarvestResult();
+                sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
             }
 
             iteration++;

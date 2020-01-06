@@ -41,12 +41,12 @@ ProbabilityAttributes
 
 GoalAttributes
 >> The number of possible goals (rows) is unlimited.
->> 	---------	----     --------              -----------------               --------------     ----------
->> 	Archetype	Goal     Goal                  Reference                       Change focal       Is
->> 	name	        	 tendency              variable			       value on prior     cumulative
->> 	---------	----     --------              -----------------               --------------     ----------
-	ForestManager	G1       Maximize              ManageAreaHarvested             no                 no
-	ForestManager	G2       MaintainAboveValue    ManageAreaMaturityProportion    no                 no 
+>> 	---------	----     --------              -----------------               --------------     ----------	----------------------------------	----------------------------------
+>> 	Archetype	Goal     Goal                  Reference                       Change focal       Is		Min goal value reference		Max goal value reference
+>> 	name	        	 tendency              variable			       value on prior     cumulative	variable (for goal prioritization)	variable (for goal prioritization)	
+>> 	---------	----     --------              -----------------               --------------     ----------	----------------------------------	----------------------------------
+	ForestManager	G1       Maximize              ManageAreaHarvested             no                 no		Min_ManageAreaHarvested             	Max_ManageAreaHarvested
+	ForestManager	G2       MaintainAboveValue    ManageAreaMaturityProportion    no                 no 		Min_ManageAreaMaturityProportion	Max_ManageAreaMaturityProportion	
 
 
 
@@ -56,13 +56,13 @@ MentalModelAttributes
 >> also associates mental models with goals. For this reason, use "--" in cases when a mental
 >> model skips a goal.
 >> ----------------------------------------------------------------------------------------------------------------------------------------------------
->> Archetype		Mental           Modifiable     Maximum number of     Decision option       Assosiated with     Consequent value     Consequent     		 
+>> Archetype		Mental           Modifiable     Maximum number of     Decision option       Assosiated with     Consequent value     Consequent     		
 >> name			(sub-)model                     decision options      goal relationship     goals          	   range		round
 >>									      (required if 
 >>									      modifiable yes)
 >> ----------------------------------------------------------------------------------------------------------------------------------------------------
-    ForestManager	MM1-1            no             10                    --	 	    G1|G2
-    ForestManager	MM2-1            yes            10                    G1<->|G2<+>	    G1|G2
+    ForestManager	MM1-1            yes            10                    G1<+>|G2<-> 	    G1|G2		0.10-2.00	     2
+    ForestManager	MM2-1            yes            10                    G1<->|G2<+>	    G1|G2		0.00-1.00	     2
      
 
 >> The number of possible decision options (rows) is unlimited, as long as each is associated with

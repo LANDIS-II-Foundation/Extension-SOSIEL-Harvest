@@ -1,2 +1,4 @@
 Agent,VariableName,VariableType,VariableValue
-FM1,BiomassHarvested,Double ,0
+FM1,ManageAreaHarvested,Double,0
+FM1,ManageAreaMaturityProportion,Double,1
+FM1,AgentType,String,Type1

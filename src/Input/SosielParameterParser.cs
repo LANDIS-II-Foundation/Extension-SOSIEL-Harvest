@@ -147,6 +147,8 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var referenceVariable = new InputVar<string>("ReferenceVariable");
             var changeValueOnPrior = new InputVar<bool>("ChangeValueOnPrior");
             var isCumulative = new InputVar<bool>("IsCumulative");
+            var minGoalReferenceVariable = new InputVar<string>("MinGoalReferenceVariable");
+            var maxGoalReferenceVariable = new InputVar<string>("MaxGoalReferenceVariable");
 
             while (CurrentName != "MentalModelAttributes")
             {
@@ -171,6 +173,12 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
                 ReadValue(isCumulative, currentLine);
                 goal.IsCumulative = isCumulative.Value;
+
+                ReadValue(minGoalReferenceVariable, currentLine);
+                goal.MinGoalReferenceVariable = minGoalReferenceVariable.Value;
+
+                ReadValue(maxGoalReferenceVariable, currentLine);
+                goal.MaxGoalReferenceVariable = maxGoalReferenceVariable.Value;
 
                 goals.Add(goal);
 

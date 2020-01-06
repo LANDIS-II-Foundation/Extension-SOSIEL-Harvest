@@ -13,5 +13,9 @@
         public bool ChangeValueOnPrior { get; set; }
 
         public bool IsCumulative { get; set; }
+
+        public string MinGoalReferenceVariable { get; set; }
+
+        public string MaxGoalReferenceVariable { get; set; }
     }
 }
