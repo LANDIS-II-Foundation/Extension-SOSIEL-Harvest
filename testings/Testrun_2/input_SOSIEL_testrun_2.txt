@@ -41,12 +41,12 @@ ProbabilityAttributes
 
 GoalAttributes
 >> The number of possible goals (rows) is unlimited.
->> 	---------	----     --------              -----------------               --------------     ----------	----------------------------------	----------------------------------
->> 	Archetype	Goal     Goal                  Reference                       Change focal       Is		Min goal value reference		Max goal value reference
->> 	name	        	 tendency              variable			       value on prior     cumulative	variable (for goal prioritization)	variable (for goal prioritization)	
->> 	---------	----     --------              -----------------               --------------     ----------	----------------------------------	----------------------------------
-	ForestManager	G1       Maximize              ManageAreaHarvested             no                 no		Min_ManageAreaHarvested             	Max_ManageAreaHarvested
-	ForestManager	G2       MaintainAboveValue    ManageAreaMaturityProportion    no                 no 		Min_ManageAreaMaturityProportion	Max_ManageAreaMaturityProportion	
+>> 	---------	----     --------              		-----------------               --------------     ----------	----------------------------------	----------------------------------
+>> 	Archetype	Goal     Goal                  		Reference                       Change focal       Is		Min goal value reference		Max goal value reference
+>> 	name	        	 tendency              		variable			       value on prior     cumulative	variable (for goal prioritization)	variable (for goal prioritization)	
+>> 	---------	----     --------              		-----------------               --------------     ----------	----------------------------------	----------------------------------
+	ForestManager	G1       Maximize              		ManageAreaHarvested             no                 no		Min_ManageAreaHarvested             	Max_ManageAreaHarvested
+	ForestManager	G2       EqualToOrAboveFocalValue	ManageAreaMaturityProportion    no                 no 		Min_ManageAreaMaturityProportion	Max_ManageAreaMaturityProportion	
 
 
 
