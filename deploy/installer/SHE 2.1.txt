@@ -1,9 +1,0 @@
-LandisData   Extension
-
-Name         "SOSIEL Human"
-Version      "2.1"
-Type         disturbance:harvest
-Assembly     Landis.Extension.SOSIELHuman-v2
-Class        Landis.Extension.SOSIELHuman.PlugIn
-Description  "SOSIEL Harvesting for biomass cohorts"
-CoreVersion  7.0
