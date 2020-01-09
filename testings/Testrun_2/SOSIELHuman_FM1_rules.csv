@@ -1,0 +1,11 @@
+Iteration,ManagementArea,ActivatedDOValues,ActivatedDO,TotalNumberOfDO
+1,1,"1,0.7","MM1-1_DO1,MM2-1_DO1",2
+2,1,"1,0.7","MM1-1_DO1,MM2-1_DO1",2
+3,1,"1.16,0.6","MM1-1_DO2,MM2-1_DO2",4
+4,1,,,4
+5,1,"1.16,0.6","MM1-1_DO2,MM2-1_DO2",4
+6,1,"1.16,0.6","MM1-1_DO2,MM2-1_DO2",4
+7,1,"1.47,0.44","MM1-1_DO3,MM2-1_DO3",6
+8,1,,,6
+9,1,"1.16,0.6","MM1-1_DO2,MM2-1_DO2",6
+10,1,,,6

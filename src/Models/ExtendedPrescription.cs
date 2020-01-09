@@ -25,5 +25,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public int StartTime { get; }
 
         public int EndTime { get; }
+
+        public string Name => Prescription.Name;
     }
 }

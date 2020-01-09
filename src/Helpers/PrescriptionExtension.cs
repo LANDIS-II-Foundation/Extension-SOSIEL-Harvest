@@ -3,17 +3,19 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using Landis.Core;
+using Landis.Library.BiomassHarvest;
 using Landis.Library.HarvestManagement;
 using Landis.Library.SiteHarvest;
 using Landis.Utilities;
+using SpecificAgesCohortSelector = Landis.Library.SiteHarvest.SpecificAgesCohortSelector;
 
 namespace Landis.Extension.SOSIELHarvest.Helpers
 {
     public static class PrescriptionExtension
     {
-        public static Prescription Copy(this Prescription prescription)
+        public static Prescription Copy(this Prescription prescription, string newName, double? cutterPercentage)
         {
-            var name = prescription.Name;
+            var name = newName;
 
             var standRankingMethod = CopyStandRankingMethod(prescription.StandRankingMethod);
 
@@ -24,7 +26,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             var preventEstablishment = prescription.PreventEstablishment;
 
             var cohortCutter = GetTypePrivateField<ICohortCutter>(prescription, "cohortCutter");
-            var cohortCutterCopy = CopyCohortCutter(cohortCutter);
+            var cohortCutterCopy = CopyCohortCutter(cohortCutter, cutterPercentage);
 
             Prescription prescriptionCopy;
 
@@ -32,7 +34,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             {
                 var additionalCohortCutter =
                     GetTypePrivateField<ICohortCutter>(singleRepeatHarvest, "additionalCohortCutter");
-                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter);
+                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, cutterPercentage);
 
                 prescriptionCopy = new SingleRepeatHarvest(name, standRankingMethod, siteSelector, cohortCutterCopy, null,
                     additionalCohortCutterCopy, null, minTimeSinceDamage, preventEstablishment, singleRepeatHarvest.Interval);
@@ -217,7 +219,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             return siteSelectorCopy;
         }
 
-        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter)
+        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter, double? percentageValue)
         {
             ICohortSelector cohortSelectorCopy;
 
@@ -256,6 +258,39 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             else
             {
                 throw new Exception();
+            }
+
+            if (cohortCutter is PartialCohortCutter partialCohortCutter)
+            {
+                if (percentageValue.HasValue)
+                {
+                    var selectors =
+                        GetTypePrivateField<PartialCohortSelectors>(partialCohortCutter,
+                            "partialCohortSelectors");
+
+                    foreach (var partialCohortSelector in selectors.Values)
+                    {
+                        var percentageList =
+                            GetTypePrivateField<IDictionary<ushort, Percentage>>(partialCohortSelector,
+                                "percentages");
+
+                        var percentageListCopy = new Dictionary<ushort, Percentage>();
+
+                        foreach (var percentage in percentageList)
+                        {
+                            percentageListCopy.Add(percentage.Key, new Percentage(percentageValue.Value));
+                        }
+
+                        percentageList.Clear();
+
+                        foreach (var percentage in percentageListCopy)
+                        {
+                            percentageList.Add(percentage.Key, percentage.Value);
+                        }
+                    }
+                }
+
+                return cohortCutter;
             }
 
             return new WholeCohortCutter(cohortSelectorCopy, HarvestExtensionMain.ExtType);

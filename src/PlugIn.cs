@@ -130,29 +130,46 @@ namespace Landis.Extension.SOSIELHarvest
                 if (parametersField == null)
                     throw new Exception();
                 _biomassHarvestParameters = (BiomassHarvest.Parameters) parametersField.GetValue(_biomassHarvest);
+
+                foreach (var biomassHarvestArea in _biomassHarvestAreas)
+                {
+                    foreach (var appliedPrescription in biomassHarvestArea.Prescriptions)
+                    {
+                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription());
+                    }
+                }
             }
         }
 
         public override void Run()
         {
-            if (iteration == 1)
-            {
-                sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
-            }
-
-            //run SOSIEL algorithm
-            var model = sosielHarvest.Run(sosielHarvestModel);
-
             if (_sheParameters.Mode == 2)
             {
-                foreach (var prescription in _biomassHarvestParameters.Prescriptions)
-                {
-                    var copy = prescription.Copy();
-                }
-
                 _biomassHarvest.Run();
 
                 sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
+
+                var model = sosielHarvest.Run(sosielHarvestModel);
+
+                foreach (var decisionOptionModel in model.NewDecisionOptions)
+                {
+                    GenerateNewPrescription(decisionOptionModel.Name, decisionOptionModel.ConsequentVariable,
+                        decisionOptionModel.ConsequentValue, decisionOptionModel.BasedOn, decisionOptionModel.ManagementArea);
+                }
+
+                foreach (var selectedDecisionPair in model.SelectedDecisions)
+                {
+                    var managementArea = _biomassHarvestAreas.ToArray()[int.Parse(selectedDecisionPair.Key) - 1];
+
+                    managementArea.Prescriptions.Clear();
+
+                    foreach (var selectedDesignName in selectedDecisionPair.Value)
+                    {
+                        var extendedPrescription =
+                            _extendedPrescriptions.First(ep => ep.Name.Equals(selectedDesignName));
+                        ApplyPrescription(managementArea, extendedPrescription);
+                    }
+                }
             }
 
             iteration++;
@@ -230,33 +247,19 @@ namespace Landis.Extension.SOSIELHarvest
             return results;
         }
 
-        private Prescription GenerateNewPrescription(string newName, string parameter, dynamic value, string basedOn)
+        private void GenerateNewPrescription(string newName, string parameter, dynamic value, string basedOn,
+            string managementAreaName)
         {
-            var originalPrescription = _biomassHarvestParameters.Prescriptions.First(p => p.Name.Equals(basedOn));
+            var originalPrescription = _extendedPrescriptions.First(p => p.Name.Equals(basedOn)).Prescription;
 
-            var newPrescription = originalPrescription.Copy();
+            Prescription newPrescription;
 
-            var type = newPrescription.GetType();
-            var nameField = type.GetField("name", BindingFlags.Instance | BindingFlags.NonPublic);
-            nameField.SetValue(newPrescription, newName);
-
-            var rankingMethodField = type.GetField("rankingMethod", BindingFlags.Instance | BindingFlags.NonPublic);
-            rankingMethodField.SetValue(newPrescription, originalPrescription.StandRankingMethod);
-
-            var cohortCutterField = type.GetField("cohortCutter", BindingFlags.Instance | BindingFlags.NonPublic);
-            var cohortCutter = cohortCutterField.GetValue(originalPrescription);
-            cohortCutterField.SetValue(newPrescription, cohortCutter);
+            var managementArea = _biomassHarvestAreas.ToArray()[int.Parse(managementAreaName) - 1];
 
             AppliedPrescription appliedPrescription = null;
 
-            foreach (var managementArea in _biomassHarvestParameters.ManagementAreas)
-            {
-                appliedPrescription =
-                    managementArea.Prescriptions.FirstOrDefault(p => p.Prescription.Name.Equals(basedOn));
-
-                if (appliedPrescription != null)
-                    break;
-            }
+            appliedPrescription =
+                managementArea.Prescriptions.First(p => p.Prescription.Name.Equals(basedOn));
 
             var areaToHarvest = appliedPrescription.PercentageToHarvest;
             var standsToHarvest = appliedPrescription.PercentStandsToHarvest;
@@ -267,31 +270,26 @@ namespace Landis.Extension.SOSIELHarvest
             {
                 case "HarvestArea":
                     areaToHarvest = new Percentage(value);
+                    newPrescription = originalPrescription.Copy(newName, null);
                     break;
                 case "CohortsRemovedProportionAdjustment":
-
+                    newPrescription = originalPrescription.Copy(newName, (double)value);
                     break;
+                default:
+                    throw new Exception();
             }
 
             _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, areaToHarvest, standsToHarvest,
                 beginTime, endTime));
-
-            return newPrescription;
         }
 
-        private void ApplyNewPrescription(string prescriptionName)
+        private void ApplyPrescription(ManagementArea managementArea, ExtendedPrescription extendedPrescription)
         {
-            foreach (var biomassHarvestArea in _biomassHarvestAreas)
-            {
-                biomassHarvestArea.Prescriptions.Clear();
-                var extendedPrescription =
-                    _extendedPrescriptions.First(p => p.Prescription.Name.Equals(prescriptionName));
-                biomassHarvestArea.ApplyPrescription(extendedPrescription.Prescription,
-                    new Percentage(extendedPrescription.HarvestAreaPercent),
-                    new Percentage(extendedPrescription.HarvestStandsAreaPercent), extendedPrescription.StartTime,
-                    extendedPrescription.EndTime);
-                biomassHarvestArea.FinishInitialization();
-            }
+            managementArea.ApplyPrescription(extendedPrescription.Prescription,
+                new Percentage(extendedPrescription.HarvestAreaPercent),
+                new Percentage(extendedPrescription.HarvestStandsAreaPercent), extendedPrescription.StartTime,
+                extendedPrescription.EndTime);
+            managementArea.FinishInitialization();
         }
 
         //---------------------------------------------------------------------
