@@ -67,7 +67,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
                 double importance = configuration.Importance;
 
-                GoalState goalState = new GoalState(configuration.Value, configuration.FocalValue, importance);
+                GoalState goalState = new GoalState(agent, configuration.Value, configuration.FocalValue, importance, configuration.MinValue, configuration.MaxValue, configuration.MinValueReference, configuration.MaxValueReference);
 
                 agent.InitialGoalStates.Add(goal, goalState);
             });

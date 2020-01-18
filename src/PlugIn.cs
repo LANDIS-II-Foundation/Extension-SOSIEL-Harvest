@@ -87,7 +87,7 @@ namespace Landis.Extension.SOSIELHarvest
         public override void Initialize()
         {
             ModelCore.UI.WriteLine("Initializing {0}...", Name);
-            SiteVars.Initialize();
+            //SiteVars.Initialize();
 
             Timestep = _sheParameters.Timestep;
 

@@ -13,9 +13,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
         [Name("Goal focal values")]
         public string GoalFocalValues { get; set; }
 
-        [Name("Goal focal value reference")]
-        public string GoalFocalValueReference { get; set; }
-
         [Name("Goal importance")]
         public string GoalImportance { get; set; }
 

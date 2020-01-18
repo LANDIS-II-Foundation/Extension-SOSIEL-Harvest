@@ -6,7 +6,7 @@
 
         public string ArchetypePrefix { get; set; }
 
-        public bool SiteOriented { get; set; }
+        public bool DataSetOriented { get; set; }
 
         public bool GoalImportanceAdjusting { get; set; }
     }

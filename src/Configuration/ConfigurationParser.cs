@@ -32,7 +32,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
     public static class ConfigurationParser
     {
-
+        private const string IgnoredValue = "--";
 
         /// <summary>
         /// Contract resolver for setting properties with private set part. 
@@ -164,7 +164,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 var agentArchetype = new AgentArchetype();
 
                 agentArchetype.NamePrefix = archetype.ArchetypePrefix;
-                agentArchetype.IsSiteOriented = archetype.SiteOriented;
+                agentArchetype.IsDataSetOriented = archetype.DataSetOriented;
                 agentArchetype.UseImportanceAdjusting = archetype.GoalImportanceAdjusting;
 
                 agentArchetype.Goals = goals[archetype.ArchetypeName];
@@ -227,7 +227,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 .ToList();
 
             var parsedStates = new List<AgentStateConfiguration>();
-            
+
             foreach (var state in initialState)
             {
                 var agentState = ParseAgentState(state.GoalAttribute, state.DecisionAttribute);
@@ -264,9 +264,9 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static Dictionary<string, GoalStateConfiguration> ParseAgentGoalAttributes(AgentGoalAttribute goalAttribute)
         {
-            var matchPattern = new Regex(@"(G\d+)<(\d+\.?\d*)>");
-            var matchReferencePattern = new Regex(@"(G\d+)<(\w+)>");
-            var matchRangePattern = new Regex(@"(G\d+)<(\d+\.?\d*)-(\d+\.?\d*)>");
+            var matchPattern = new Regex(@"(G\d+)<(?:(\d+\.?\d*)|(\w+)|(--))>");
+            var matchReferencePattern = new Regex(@"(G\d+)<(\w+|--)>");
+            var matchRangePattern = new Regex(@"(G\d+)<(?:(?:(?:(-*\d+\.?\d*)|(\w+));(?:(-*\d+\.?\d*)|(\w+)))|(--))>");
 
             var result = goalAttribute.Goals.Split('|').ToDictionary(k => k, k => new GoalStateConfiguration());
 
@@ -275,19 +275,18 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             foreach (Match focalValue in matchedFocalValues)
             {
                 var goal = focalValue.Groups[1].Value;
-                var value = ParseValue<double>(focalValue.Groups[2].Value);
+                var goalStateConfiguration = result[goal];
 
-                result[goal].FocalValue = value;
-            }
+                if (focalValue.Groups[4].Value != IgnoredValue)
+                {
+                    var focalReference = focalValue.Groups[3].Value;
+                    if (!string.IsNullOrEmpty(focalReference))
+                        goalStateConfiguration.FocalValueReference = focalReference;
 
-            var matchedReferences = matchReferencePattern.Matches(goalAttribute.GoalFocalValueReference);
-
-            foreach (Match reference in matchedReferences)
-            {
-                var goal = reference.Groups[1].Value;
-                var value = reference.Groups[2].Value;
-
-                result[goal].FocalValueReference = value;
+                    var focal = focalValue.Groups[2].Value;
+                    if (!string.IsNullOrEmpty(focal))
+                        goalStateConfiguration.FocalValue = ParseValue<double>(focal);
+                }
             }
 
             var matchedImportances = matchPattern.Matches(goalAttribute.GoalImportance);
@@ -305,12 +304,33 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             foreach (Match range in matchedValueRanges)
             {
                 var goal = range.Groups[1].Value;
-                var minValue = ParseValue<double>(range.Groups[2].Value);
-                var maxValue = ParseValue<double>(range.Groups[3].Value);
 
-                var state = result[goal];
-                state.MinValue = minValue;
-                state.MaxValue = maxValue;
+                if (range.Groups[6].Value != IgnoredValue)
+                {
+                    var state = result[goal];
+
+                    if (!string.IsNullOrEmpty(range.Groups[2].Value))
+                    {
+                        var minValue = ParseValue<double>(range.Groups[2].Value);
+                        state.MinValue = minValue;
+                    }
+
+                    if (!string.IsNullOrEmpty(range.Groups[3].Value))
+                    {
+                        state.MinValueReference = range.Groups[3].Value;
+                    }
+
+                    if (!string.IsNullOrEmpty(range.Groups[4].Value))
+                    {
+                        var maxValue = ParseValue<double>(range.Groups[4].Value);
+                        state.MaxValue = maxValue;
+                    }
+
+                    if (!string.IsNullOrEmpty(range.Groups[5].Value))
+                    {
+                        state.MaxValueReference = range.Groups[5].Value;
+                    }
+                }
             }
 
             return result;
@@ -398,9 +418,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                         ReferenceVariable = archetypeGoal.ReferenceVariable,
                         Tendency = archetypeGoal.GoalTendency,
                         IsCumulative = archetypeGoal.IsCumulative,
-                        ChangeFocalValueOnPrevious = archetypeGoal.ChangeValueOnPrior,
-                        MinGoalReferenceVariable = archetypeGoal.MinGoalReferenceVariable,
-                        MaxGoalReferenceVariable = archetypeGoal.MaxGoalReferenceVariable
+                        ChangeFocalValueOnPrevious = archetypeGoal.ChangeValueOnPrior
                         //FocalValue =  now it is agent specific value if i'm not mistaken
                     };
 
@@ -498,27 +516,6 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 throw new ArgumentException("Decision option name is not valid");
 
             return parts[0];
-        }
-
-        private static List<Goal> ParseAgentGoals(AgentGoalAttribute agentGoalAttribute)
-        {
-            var goals = new List<Goal>();
-
-            var goalNames = agentGoalAttribute.Goals.Split('|');
-
-            foreach (var goalName in goalNames)
-            {
-                var goal = new Goal
-                {
-                    Name = goalName,
-                    FocalValue = GetValueByName<double>(goalName, agentGoalAttribute.GoalFocalValues),
-                    FocalValueReference = GetValueByName<string>(goalName, agentGoalAttribute.GoalFocalValueReference),
-                };
-
-                goals.Add(goal);
-            }
-
-            return goals;
         }
 
         private static T GetValueByName<T>(string key, string @string)

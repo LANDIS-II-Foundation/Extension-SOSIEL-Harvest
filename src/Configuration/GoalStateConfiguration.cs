@@ -21,6 +21,10 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         public double MaxValue { get; set; }
 
+        public string MinValueReference { get; set; }
+
+        public string MaxValueReference { get; set; }
+
         //public bool Randomness { get; set; }
 
         //public double RandomFrom { get; set; }
