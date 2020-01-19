@@ -145,9 +145,7 @@ namespace Landis.Extension.SOSIELHarvest
         {
             if (_sheParameters.Mode == 2)
             {
-                _biomassHarvest.Run();
-
-                sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
+                sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();                                
 
                 var model = sosielHarvest.Run(sosielHarvestModel);
 
@@ -170,6 +168,8 @@ namespace Landis.Extension.SOSIELHarvest
                         ApplyPrescription(managementArea, extendedPrescription);
                     }
                 }
+
+                _biomassHarvest.Run();
             }
 
             iteration++;
