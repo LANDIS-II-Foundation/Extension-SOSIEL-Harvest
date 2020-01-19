@@ -23,6 +23,7 @@ namespace Landis.Extension.SOSIELHarvest.Services
         {
             PlugIn.ModelCore.UI.WriteLine(logEntry);
             _streamWriter.WriteLine(logEntry);
+            _streamWriter.Flush();
         }
 
         public void Dispose()
