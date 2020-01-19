@@ -3,7 +3,7 @@ using SOSIEL.Entities;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
-    public class Area: ISite
+    public class Area: IDataSet
     {
         public string Name { get; set; }
 

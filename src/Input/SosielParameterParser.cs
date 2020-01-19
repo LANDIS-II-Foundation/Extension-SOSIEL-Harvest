@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using CsvHelper;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
@@ -147,8 +146,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var referenceVariable = new InputVar<string>("ReferenceVariable");
             var changeValueOnPrior = new InputVar<bool>("ChangeValueOnPrior");
             var isCumulative = new InputVar<bool>("IsCumulative");
-            var minGoalReferenceVariable = new InputVar<string>("MinGoalReferenceVariable");
-            var maxGoalReferenceVariable = new InputVar<string>("MaxGoalReferenceVariable");
 
             while (CurrentName != "MentalModelAttributes")
             {
@@ -173,12 +170,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
                 ReadValue(isCumulative, currentLine);
                 goal.IsCumulative = isCumulative.Value;
-
-                ReadValue(minGoalReferenceVariable, currentLine);
-                goal.MinGoalReferenceVariable = minGoalReferenceVariable.Value;
-
-                ReadValue(maxGoalReferenceVariable, currentLine);
-                goal.MaxGoalReferenceVariable = maxGoalReferenceVariable.Value;
 
                 goals.Add(goal);
 
@@ -295,7 +286,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             var archetypeName = new InputVar<string>("ArchetypeName");
             var archetypePrefix = new InputVar<string>("ArchetypePrefix");
-            var siteOriented = new InputVar<bool>("SiteOriented");
+            var dataSetOriented = new InputVar<bool>("DataSetOriented");
             var goalImportanceAdjusting = new InputVar<bool>("GoalImportanceAdjusting");
 
             while (!CurrentName.Equals("AgentArchetypeVariables"))
@@ -310,8 +301,8 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 ReadValue(archetypePrefix, currentLine);
                 agentArchetype.ArchetypePrefix = archetypePrefix.Value;
 
-                ReadValue(siteOriented, currentLine);
-                agentArchetype.SiteOriented = siteOriented.Value;
+                ReadValue(dataSetOriented, currentLine);
+                agentArchetype.DataSetOriented = dataSetOriented.Value;
 
                 ReadValue(goalImportanceAdjusting, currentLine);
                 agentArchetype.GoalImportanceAdjusting = goalImportanceAdjusting.Value;
