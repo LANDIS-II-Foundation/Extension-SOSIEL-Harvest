@@ -208,6 +208,12 @@ namespace Landis.Extension.SOSIELHarvest
 
                 foreach (var selectedDecisionPair in model.SelectedDecisions)
                 {
+                    if (selectedDecisionPair.Value.Count == 0)
+                    {
+                        _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
+                        continue;
+                    }
+
                     var managementArea = _biomassHarvestAreas.ToArray()[int.Parse(selectedDecisionPair.Key) - 1];
 
                     managementArea.Prescriptions.Clear();
