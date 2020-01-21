@@ -10,6 +10,10 @@
 
         public string[] ActivatedDO { get; set; }
 
+        public string[] MatchedDO { get; set; }
+
+        public string MostImportantGoal { get; set; }
+
         public int TotalNumberOfDO { get; set; }
     }
 }

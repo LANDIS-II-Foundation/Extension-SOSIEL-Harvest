@@ -338,16 +338,21 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     foreach (var area in agentState.DecisionOptionsHistories.Keys)
                     {
                         //save activation rule stat
-                        DecisionOption[] activatedRules = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
+                        DecisionOption[] activatedDOs = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
+                        DecisionOption[] matchedDOs = agentState.DecisionOptionsHistories[area].Matched.Distinct().OrderBy(r => r.Id).ToArray();
+                        
+                        string[] activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
+                        string[] matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
 
-                        string[] activatedRuleIds = activatedRules.Select(r => r.Id).ToArray();
 
                         FMDOUsageOutput ruleUsage = new FMDOUsageOutput()
                         {
                             Iteration = iteration,
                             ManagementArea = area.Name,
-                            ActivatedDOValues = activatedRules.Select(r => string.IsNullOrEmpty(r.Consequent.VariableValue) ? (string)r.Consequent.Value.ToString() : (string)agent[r.Consequent.VariableValue].ToString()).ToArray(),
-                            ActivatedDO = activatedRuleIds,
+                            ActivatedDOValues = activatedDOs.Select(r => string.IsNullOrEmpty(r.Consequent.VariableValue) ? (string)r.Consequent.Value.ToString() : (string)agent[r.Consequent.VariableValue].ToString()).ToArray(),
+                            ActivatedDO = activatedDOIds,
+                            MatchedDO = matchedDOIds,
+                            MostImportantGoal = agentState.RankedGoals.First().Name,
                             TotalNumberOfDO = agent.AssignedDecisionOptions.Count
                         };
 
