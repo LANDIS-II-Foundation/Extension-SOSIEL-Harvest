@@ -13,7 +13,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 {
     public static class PrescriptionExtension
     {
-        public static Prescription Copy(this Prescription prescription, string newName, double? cutterPercentage)
+        public static Prescription Copy(this Prescription prescription, string newName, double? cutterAdjustment)
         {
             var name = newName;
 
@@ -26,7 +26,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             var preventEstablishment = prescription.PreventEstablishment;
 
             var cohortCutter = GetTypePrivateField<ICohortCutter>(prescription, "cohortCutter");
-            var cohortCutterCopy = CopyCohortCutter(cohortCutter, cutterPercentage);
+            var cohortCutterCopy = CopyCohortCutter(cohortCutter, cutterAdjustment);
 
             Prescription prescriptionCopy;
 
@@ -34,7 +34,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             {
                 var additionalCohortCutter =
                     GetTypePrivateField<ICohortCutter>(singleRepeatHarvest, "additionalCohortCutter");
-                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, cutterPercentage);
+                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, cutterAdjustment);
 
                 prescriptionCopy = new SingleRepeatHarvest(name, standRankingMethod, siteSelector, cohortCutterCopy, null,
                     additionalCohortCutterCopy, null, minTimeSinceDamage, preventEstablishment, singleRepeatHarvest.Interval);
@@ -219,7 +219,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             return siteSelectorCopy;
         }
 
-        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter, double? percentageValue)
+        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter, double? cutterAdjustment)
         {
             ICohortSelector cohortSelectorCopy;
 
@@ -262,7 +262,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 
             if (cohortCutter is PartialCohortCutter partialCohortCutter)
             {
-                if (percentageValue.HasValue)
+                if (cutterAdjustment.HasValue)
                 {
                     var selectors =
                         GetTypePrivateField<PartialCohortSelectors>(partialCohortCutter,
@@ -278,7 +278,9 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 
                         foreach (var percentage in percentageList)
                         {
-                            percentageListCopy.Add(percentage.Key, new Percentage(percentageValue.Value));
+                            var newValue = percentage.Value * cutterAdjustment.Value;
+                            if (newValue > 1) newValue = 1;
+                            percentageListCopy.Add(percentage.Key, new Percentage(newValue));
                         }
 
                         percentageList.Clear();
