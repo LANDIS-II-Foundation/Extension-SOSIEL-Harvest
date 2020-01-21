@@ -276,7 +276,7 @@ namespace Landis.Extension.SOSIELHarvest
                             siteMaturity += siteSpeciesMaturity;
                         }
 
-                        siteMaturityProportion = siteMaturity / siteBiomass;
+                        siteMaturityProportion = Math.Abs(siteBiomass) < 0.0001 ? 0 : siteMaturity / siteBiomass;
                         standMaturityProportion += siteMaturityProportion;
 
                         results.ManageAreaBiomass[areaNumber.ToString()] += siteBiomass;
