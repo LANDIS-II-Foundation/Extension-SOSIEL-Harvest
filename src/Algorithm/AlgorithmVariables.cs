@@ -1,4 +1,5 @@
-﻿using SOSIEL.Helpers;
+﻿// Can use classes from the listed namespaces.
+using SOSIEL.Helpers;
 
 // The container for classes and other namespaces.
 namespace Landis.Extension.SOSIELHuman.Algorithm

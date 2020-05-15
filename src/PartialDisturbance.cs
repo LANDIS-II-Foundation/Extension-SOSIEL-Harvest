@@ -1,5 +1,6 @@
 //  Authors:  Various
 
+// Can use classes from the listed namespaces.
 using Landis.Core;
 using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
