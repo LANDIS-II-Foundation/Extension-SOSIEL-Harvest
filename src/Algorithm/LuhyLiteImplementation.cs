@@ -1,4 +1,5 @@
-﻿using System;
+// Can use classes from the System namespace.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Landis.Extension.SOSIELHuman.Helpers;
@@ -11,16 +12,16 @@ using SOSIEL.Exceptions;
 using SOSIEL.Helpers;
 using SOSIEL.Processes;
 
-
+// The container for classes and other namespaces.
 namespace Landis.Extension.SOSIELHuman.Algorithm
 {
     using Configuration;
     using Output;
-
+    // The container for data and methods.
     public class LuhyLiteImplementation : SosielAlgorithm<ActiveSite>, IAlgorithm<AlgorithmModel>
     {
         public string Name { get { return "LuhyLiteImplementation"; } }
-        
+
         private ConfigurationModel configuration;
 
         private ActiveSite[] activeSites;
@@ -30,7 +31,7 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
 
         /// <summary>
         /// Initializes Luhy lite implementation
-        /// </summary> 
+        /// </summary>
         /// <param name="numberOfIterations">Number of internal iterations</param>
         /// <param name="configuration">Parsed agent configuration</param>
         /// <param name="activeSites">Enumerable of active sites from Landis</param>
@@ -51,7 +52,7 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
         }
 
         /// <summary>
-        /// Executes agent initializing. It's the first initializing step. 
+        /// Executes agent initializing. It's the first initializing step.
         /// </summary>
         protected override void InitializeAgents()
         {
@@ -291,7 +292,7 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
 
             if (agent[AlgorithmVariables.AgentType] == "Type1")
             {
-                //set value of current site biomass to agent variable. 
+                //set value of current site biomass to agent variable.
                 agent[AlgorithmVariables.Biomass] = biomass[site];
             }
         }
@@ -310,11 +311,11 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
             //if agent is FE, set to local variables current site biomass
             if (agent[AlgorithmVariables.AgentType] == "Type1")
             {
-                //set value of current site biomass to agent variable. 
+                //set value of current site biomass to agent variable.
                 agent[AlgorithmVariables.Biomass] = biomass[site];
 
 
-                //drop total profit value 
+                //drop total profit value
                 agent[AlgorithmVariables.Profit] = 0;
             }
         }
@@ -412,11 +413,11 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
                         MaxReductionPercentage = maxReductionPercentage,
                         BiomassReduction = profit
                     };
-                    
+
                     CSVHelper.AppendTo(string.Format("SOSIELHuman_{0}_values.csv", agent.Id), values);
                 }
 
-                //all agent types 
+                //all agent types
 
                 //save activation rule stat
                 DecisionOption[] activatedRules = agentState.DecisionOptionsHistories.Values.SelectMany(rh => rh.Activated).Distinct().OrderBy(r=>r.Id).ToArray();
@@ -517,7 +518,7 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
 
 
         /// <summary>
-        /// Reduces biomass 
+        /// Reduces biomass
         /// </summary>
         /// <param name="site"></param>
         /// <param name="reductionPercent"></param>

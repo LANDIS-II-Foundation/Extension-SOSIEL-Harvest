@@ -1,4 +1,5 @@
-﻿using System;
+// Can use classes from the System namespace.
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Landis.Extension.SOSIELHuman.Configuration;
@@ -6,6 +7,7 @@ using SOSIEL.Entities;
 using SOSIEL.Helpers;
 using SOSIEL.Randoms;
 
+// The container for classes and other namespaces.
 namespace Landis.Extension.SOSIELHuman.Algorithm
 {
     /// <summary>
@@ -45,7 +47,7 @@ namespace Landis.Extension.SOSIELHuman.Algorithm
         }
 
         /// <summary>
-        /// Creates agent instance based on agent prototype and agent configuration 
+        /// Creates agent instance based on agent prototype and agent configuration
         /// </summary>
         /// <param name="agentConfiguration"></param>
         /// <param name="prototype"></param>
