@@ -33,7 +33,6 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.2.2" />
-    <PackageReference Include="Landis.Core" Version="2.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 
@@ -65,6 +64,15 @@
     </Reference>
     <Reference Include="Landis.Library.Succession-v8">
       <HintPath>lib\Landis.Library.Succession-v8.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Core">
+      <HintPath>lib\Landis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Utilities">
+      <HintPath>lib\Landis.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.SpatialModeling">
+      <HintPath>lib\Landis.SpatialModeling.dll</HintPath>
     </Reference>
   </ItemGroup>
 
