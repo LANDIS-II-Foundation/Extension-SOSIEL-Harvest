@@ -218,8 +218,9 @@ namespace Landis.Extension.SOSIELHarvest
                     foreach (var selectedDesignName in selectedDecisionPair.Value)
                     {
                         var extendedPrescription =
-                            _extendedPrescriptions.First(ep => ep.Name.Equals(selectedDesignName));
-                        ApplyPrescription(managementArea, extendedPrescription);
+                            _extendedPrescriptions.FirstOrDefault(ep => ep.Name.Equals(selectedDesignName));
+                        if(extendedPrescription != null)
+                            ApplyPrescription(managementArea, extendedPrescription);
                     }
 
                     var prescriptions = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
