@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CsvHelper;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
@@ -33,61 +34,21 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
         private Demographic ParseDemographic()
         {
+            
+            
             var demographic = new Demographic();
 
-            while (CurrentName != "DemographicAttributes")
-                GetNextLine();
+            InputVar<string> demographicAttributes =
+                new InputVar<string>("DemographicAttributes");
+            ReadVar(demographicAttributes);
+            var fileName = demographicAttributes.Value;
 
-            GetNextLine();
-
-            var demographicChange = new InputVar<bool>("DemographicChange");
-            ReadVar(demographicChange);
-            demographic.DemographicChange = demographicChange.Value;
-
-            var deathProbability = new InputVar<string>("DeathProbability");
-            ReadVar(deathProbability);
-            demographic.DeathProbability = deathProbability.Value;
-
-            var birthProbability = new InputVar<string>("BirthProbability");
-            ReadVar(birthProbability);
-            demographic.BirthProbability = birthProbability.Value;
-
-            var adoptionProbability = new InputVar<string>("AdoptionProbability");
-            ReadVar(adoptionProbability);
-            demographic.AdoptionProbability = adoptionProbability.Value;
-
-            var sexualOrientationRate = new InputVar<double>("SexualOrientationRate");
-            ReadVar(sexualOrientationRate);
-            demographic.SexualOrientationRate = sexualOrientationRate.Value;
-
-            var homosexualTypeRate = new InputVar<double>("HomosexualTypeRate");
-            ReadVar(homosexualTypeRate);
-            demographic.HomosexualTypeRate = homosexualTypeRate.Value;
-
-            var pairingProbability = new InputVar<double>("PairingProbability");
-            ReadVar(pairingProbability);
-            demographic.PairingProbability = pairingProbability.Value;
-
-            var pairingAgeMin = new InputVar<int>("PairingAgeMin");
-            ReadVar(pairingAgeMin);
-            demographic.PairingAgeMin = pairingAgeMin.Value;
-
-            var pairingAgeMax = new InputVar<int>("PairingAgeMax");
-            ReadVar(pairingAgeMax);
-            demographic.PairingAgeMax = pairingAgeMax.Value;
-
-            var yearsBetweenBirths = new InputVar<int>("YearsBetweenBirths");
-            ReadVar(yearsBetweenBirths);
-            demographic.YearsBetweenBirths = yearsBetweenBirths.Value;
-
-            var minimumAgeForHouseholdHead = new InputVar<int>("MinimumAgeForHouseholdHead");
-            ReadVar(minimumAgeForHouseholdHead);
-            demographic.MinimumAgeForHouseholdHead = minimumAgeForHouseholdHead.Value;
-
-            var maximumAge = new InputVar<int>("MaximumAge");
-            ReadVar(maximumAge);
-            demographic.MaximumAge = maximumAge.Value;
-
+            using (var reader = new StreamReader(fileName))
+            using (var csv = new CsvReader(reader))
+            {
+                var records = csv.GetRecords<Demographic>().ToList();
+                demographic = records.FirstOrDefault();
+            }
             return demographic;
         }
 

@@ -91,27 +91,22 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void Initialize()
         {
+#if DEBUG
+            Debugger.Launch();
+#endif
             ModelCore.UI.WriteLine("Initializing {0}...", Name);
             //SiteVars.Initialize();
-
             Timestep = _sheParameters.Timestep;
-
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
-
             ////create algorithm instance
-            int iterations =
-                1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
-
+            int iterations = 1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
             sosielHarvestModel = new AlgorithmModel();
             var managementAreas = _sheParameters.AgentToManagementAreaList.GroupBy(m => m.ManagementArea)
                 .Select(g => new Area() {Name = g.Key, AssignedAgents = g.Select(m => m.Agent).ToArray()})
                 .ToArray();
             sosielHarvest =
                 new SosielHarvestImplementation(iterations, _configuration, managementAreas);
-
             sosielHarvest.Initialize(sosielHarvestModel);
-
-
             //remove old output files
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
 
@@ -144,7 +139,7 @@ namespace Landis.Extension.SOSIELHarvest
                         _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription());
                     }
                 }
-            }
+            } 
         }
 
         public override void Run()
@@ -181,7 +176,9 @@ namespace Landis.Extension.SOSIELHarvest
                     _logService.WriteLine(
                         $"\t\t{"MaturityProportion:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityProportion[pair.Key],10:F2}");
                 }
-
+#if DEBUG
+                Debugger.Launch();
+#endif
                 var model = sosielHarvest.Run(sosielHarvestModel);
 
                 foreach (var decisionOptionModel in model.NewDecisionOptions)
@@ -221,8 +218,9 @@ namespace Landis.Extension.SOSIELHarvest
                     foreach (var selectedDesignName in selectedDecisionPair.Value)
                     {
                         var extendedPrescription =
-                            _extendedPrescriptions.First(ep => ep.Name.Equals(selectedDesignName));
-                        ApplyPrescription(managementArea, extendedPrescription);
+                            _extendedPrescriptions.FirstOrDefault(ep => ep.Name.Equals(selectedDesignName));
+                        if(extendedPrescription != null)
+                            ApplyPrescription(managementArea, extendedPrescription);
                     }
 
                     var prescriptions = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");

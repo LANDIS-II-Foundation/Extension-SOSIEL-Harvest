@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
@@ -167,6 +168,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// </summary>
         public AlgorithmModel Run(AlgorithmModel data)
         {
+#if DEBUG
+            Debugger.Launch();
+#endif
             RunSosiel(activeAreas);
 
             return data;
