@@ -1,3 +1,0 @@
-Iteration,ActivatedRuleValues,ActivatedRules,TotalNumberOfRules,NotActivatedRules
-1,"320000,600","RS1_L1_R6,RS2_L1_R1",6,"RS1_L1_R1,RS1_L1_R2,RS1_L1_R3,RS2_L1_R2"
-2,"320000,600","RS1_L1_R6,RS2_L1_R1",8,"RS1_L1_R1,RS1_L1_R2,RS1_L1_R3,RS2_L1_R2,RS1_L1_R5,RS1_L1_R7"

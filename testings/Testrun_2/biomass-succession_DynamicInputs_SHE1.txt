@@ -1,0 +1,14 @@
+LandisData  "Dynamic Input Data"
+
+>> Year Ecoregion Species ProbEst MaxANPP MaxB
+>> --- ---------  ------- ------  ------  -----
+
+  0 	1  confsens       0.9	886	26000	
+  0 	1  confrslt       0.82 	1106	26000	
+  0 	1  brdlsens       0.56 	1017	26000	
+  0 	1  brdlrslt	  0.5	1000	26000	
+
+
+
+
+

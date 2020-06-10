@@ -1,0 +1,192 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\Users\Petr.Sobolev\.Rider2019.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\Petr.Sobolev\.Rider2019.2\system\resharper-host\local\Transient\ReSharperHost\v192\SolutionCaches\_sosiel-harvest.-2143252157.00" t="ExcludeRecursive" />
+    <e p="C:\work\sosiel\Extension-SOSIEL-Harvest\src" t="IncludeRecursive">
+      <e p="Algorithm" t="Include">
+        <e p="AlgorithmModel.cs" t="Include" />
+        <e p="AlgorithmProbabilityTables.cs" t="Include" />
+        <e p="AlgorithmVariables.cs" t="Include" />
+        <e p="Area.cs" t="Include" />
+        <e p="NewDecisionOptionModel.cs" t="Include" />
+        <e p="SosielHarvestAgent.cs" t="Include" />
+        <e p="SosielHarvestImplementation.cs" t="Include" />
+      </e>
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="birth_probability.csv" t="Include" />
+      <e p="Configuration" t="Include">
+        <e p="AgentStateConfiguration.cs" t="Include" />
+        <e p="AlgorithmConfiguration.cs" t="Include" />
+        <e p="ConfigurationModel.cs" t="Include" />
+        <e p="ConfigurationParser.cs" t="Include" />
+        <e p="GoalStateConfiguration.cs" t="Include" />
+        <e p="InitialStateConfiguration.cs" t="Include" />
+        <e p="ProbabilitiesConfiguration.cs" t="Include" />
+      </e>
+      <e p="configuration.json" t="Include" />
+      <e p="death_probability.csv" t="Include" />
+      <e p="general_probability.csv" t="Include" />
+      <e p="Helpers" t="Include">
+        <e p="AppliedPrescriptionExtension.cs" t="Include" />
+        <e p="DictionaryHelper.cs" t="Include" />
+        <e p="PrescriptionExtension.cs" t="Include" />
+        <e p="ProbabilityTableParser.cs" t="Include" />
+        <e p="VariableTypeHelper.cs" t="Include" />
+      </e>
+      <e p="Input" t="Include">
+        <e p="SheParameterParser.cs" t="Include" />
+        <e p="SheParameters.cs" t="Include" />
+        <e p="SosielParameterParser.cs" t="Include" />
+        <e p="SosielParameters.cs" t="Include" />
+      </e>
+      <e p="lib" t="Include">
+        <e p="CsvHelper.dll" t="Include" />
+        <e p="CsvHelper.pdb" t="Include" />
+        <e p="Landis.Core.dll" t="Include" />
+        <e p="Landis.Extension.BiomassHarvest-v4.dll" t="Include" />
+        <e p="Landis.Library.AgeOnlyCohorts-v3.dll" t="Include" />
+        <e p="Landis.Library.Biomass-v2.dll" t="Include" />
+        <e p="Landis.Library.BiomassCohorts-v3.dll" t="Include" />
+        <e p="Landis.Library.BiomassHarvest-v3.dll" t="Include" />
+        <e p="Landis.Library.Cohorts-v2.dll" t="Include" />
+        <e p="Landis.Library.HarvestManagement-v4.dll" t="Include" />
+        <e p="Landis.Library.Metadata-v2.dll" t="Include" />
+        <e p="Landis.Library.SiteHarvest-v2.dll" t="Include" />
+        <e p="Landis.Library.Succession-v8.dll" t="Include" />
+        <e p="Landis.SpatialModeling.dll" t="Include" />
+        <e p="Landis.Utilities.dll" t="Include" />
+        <e p="support_libs_download.ps1" t="Include" />
+      </e>
+      <e p="MapPixel.cs" t="Include" />
+      <e p="Models" t="Include">
+        <e p="AgentArchetype.cs" t="Include" />
+        <e p="AgentArchetypeVariable.cs" t="Include" />
+        <e p="AgentDecisionOption.cs" t="Include" />
+        <e p="AgentGoalAttribute.cs" t="Include" />
+        <e p="AgentToManagementArea.cs" t="Include" />
+        <e p="AgentVariable.cs" t="Include" />
+        <e p="DecisionOptionAntecedentAttribute.cs" t="Include" />
+        <e p="DecisionOptionAttribute.cs" t="Include" />
+        <e p="Demographic.cs" t="Include" />
+        <e p="ExtendedPrescription.cs" t="Include" />
+        <e p="GoalAttribute.cs" t="Include" />
+        <e p="HarvestResults.cs" t="Include" />
+        <e p="IVariable.cs" t="Include" />
+        <e p="MentalModel.cs" t="Include" />
+        <e p="Probability.cs" t="Include" />
+        <e p="ProbabilityRecord.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netstandard2.0" t="Include">
+            <e p="sosiel-harvest.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Output" t="Include">
+        <e p="FMDOUsageOutput.cs" t="Include" />
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+      <e p="Parameters.cs" t="Include" />
+      <e p="PlugIn.cs" t="Include" />
+      <e p="Services" t="Include">
+        <e p="LogService.cs" t="Include" />
+      </e>
+      <e p="sosiel-harvest.csproj" t="IncludeRecursive" />
+      <e p="sosiel-harvest.sln" t="IncludeFlat" />
+      <e p="sosiel-harvest.sln.DotSettings" t="Include" />
+      <e p="WhatsNew.txt" t="Include" />
+    </e>
+    <e p="C:\work\sosiel\The-SOSIEL-Platform-v2.0\SOSIEL EX1\sosiel" t="IncludeRecursive">
+      <e p="Algorithm" t="Include">
+        <e p="IAlgorithm.cs" t="Include" />
+        <e p="SosielAlgorithm.cs" t="Include" />
+      </e>
+      <e p="bin" t="ExcludeRecursive" />
+      <e p="Configuration" t="Include">
+        <e p="DemographicProcessesConfiguration.cs" t="Include" />
+        <e p="ProcessesConfiguration.cs" t="Include" />
+      </e>
+      <e p="Entities" t="Include">
+        <e p="Agent.cs" t="Include" />
+        <e p="AgentArchetype.cs" t="Include" />
+        <e p="AgentList.cs" t="Include" />
+        <e p="AgentState.cs" t="Include" />
+        <e p="DecisionOption.cs" t="Include" />
+        <e p="DecisionOptionAntecedentPart.cs" t="Include" />
+        <e p="DecisionOptionConsequent.cs" t="Include" />
+        <e p="DecisionOptionLayer.cs" t="Include" />
+        <e p="DecisionOptionLayerConfiguration.cs" t="Include" />
+        <e p="DecisionOptionsHistory.cs" t="Include" />
+        <e p="ExtendedProbabilityTable.cs" t="Include" />
+        <e p="Goal.cs" t="Include" />
+        <e p="GoalState.cs" t="Include" />
+        <e p="IAgent.cs" t="Include" />
+        <e p="IDataSet.cs" t="Include" />
+        <e p="MentalModel.cs" t="Include" />
+        <e p="MentalModelConfiguration.cs" t="Include" />
+        <e p="Probabilities.cs" t="Include" />
+        <e p="ProbabilityTable.cs" t="Include" />
+        <e p="Site.cs" t="Include" />
+        <e p="SiteList.cs" t="Include" />
+        <e p="TakenAction.cs" t="Include" />
+      </e>
+      <e p="Enums" t="Include">
+        <e p="ActionTaking.cs" t="Include" />
+        <e p="AnticipatedDirection.cs" t="Include" />
+        <e p="CognitiveLevel.cs" t="Include" />
+        <e p="ConsequentRelationship.cs" t="Include" />
+        <e p="GoalTendency.cs" t="Include" />
+        <e p="Model.cs" t="Include" />
+        <e p="SiteType.cs" t="Include" />
+        <e p="SocialNetworkType.cs" t="Include" />
+      </e>
+      <e p="Environments" t="Include">
+        <e p="ICloneable.cs" t="Include" />
+      </e>
+      <e p="Exceptions" t="Include">
+        <e p="InputParameterException.cs" t="Include" />
+        <e p="SosielAlgorithmException.cs" t="Include" />
+        <e p="UnknownVariableException.cs" t="Include" />
+      </e>
+      <e p="Helpers" t="Include">
+        <e p="AntecedentBuilder.cs" t="Include" />
+        <e p="CSVHelper.cs" t="Include" />
+        <e p="EventHelper.cs" t="Include" />
+        <e p="ExtendedProbabilityTableRandomHelper.cs" t="Include" />
+        <e p="IEnumerableHelper.cs" t="Include" />
+        <e p="ProbabilityTableRandomHelper.cs" t="Include" />
+        <e p="RandomizeHelper.cs" t="Include" />
+        <e p="ReflectionHelper.cs" t="Include" />
+        <e p="SosielProbabilityTables.cs" t="Include" />
+        <e p="SosielVariables.cs" t="Include" />
+      </e>
+      <e p="obj" t="ExcludeRecursive">
+        <e p="Debug" t="Include">
+          <e p="netstandard2.0" t="Include">
+            <e p="SOSIEL.AssemblyInfo.cs" t="Include" />
+          </e>
+        </e>
+      </e>
+      <e p="Processes" t="Include">
+        <e p="ActionTaking.cs" t="Include" />
+        <e p="AnticipatoryLearning.cs" t="Include" />
+        <e p="CounterfactualThinking.cs" t="Include" />
+        <e p="Demographic.cs" t="Include" />
+        <e p="GoalPrioritizing.cs" t="Include" />
+        <e p="GoalSelecting.cs" t="Include" />
+        <e p="Innovation.cs" t="Include" />
+        <e p="Satisficing.cs" t="Include" />
+        <e p="SocialLearning.cs" t="Include" />
+        <e p="VolatileProcess.cs" t="Include" />
+      </e>
+      <e p="Randoms" t="Include">
+        <e p="LinearUniformRandom.cs" t="Include" />
+        <e p="NormalDistributionRandom.cs" t="Include" />
+        <e p="PowerLawRandom.cs" t="Include" />
+      </e>
+      <e p="SOSIEL.csproj" t="IncludeRecursive" />
+    </e>
+  </component>
+</project>

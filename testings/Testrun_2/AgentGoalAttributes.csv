@@ -1,0 +1,2 @@
+Agent,Archetype,Goals,Goal focal values,Goal importance,Goal value range
+FM1,ForestManager,G1|G2,G1<5000>|G2<0.7>,G1<0.5>|G2<0.5>,G1<0;ManageAreaBiomass>|G2<0;ManageAreaMaturityProportion>

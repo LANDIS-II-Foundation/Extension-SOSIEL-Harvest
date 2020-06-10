@@ -1,0 +1,100 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Landis.Extension.SOSIELHarvest</RootNamespace>
+    <AssemblyName>Landis.Extension.SOSIELHarvest-v1</AssemblyName>
+    <AssemblyTitle>Landis.Extension.SOSIELHuman-v2</AssemblyTitle>
+    <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
+    <AssemblyProduct>Landis.Extension.SOSIELHuman-v2</AssemblyProduct>
+    <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
+    <AssemblyVersion>2.0</AssemblyVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Human</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Human/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
+    <NeutralLanguage>English</NeutralLanguage>
+    <Authors>Garry Sotnik</Authors>
+    <Product>Landis.Extension.SOSIELHuman-v2</Product>
+    <Copyright>Landis-II-Foundation</Copyright>
+    <Version>2.0</Version>
+    <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
+    <Description>SOSIEL Human Extension</Description>
+    <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
+    <FileVersion>2.0.0.0</FileVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="PartialDisturbance.cs" />
+    <Compile Remove="SiteVars.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="12.2.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\The-SOSIEL-Platform-v2.0\SOSIEL EX1\SOSIEL\SOSIEL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Landis.Extension.BiomassHarvest-v4">
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Extension.BiomassHarvest-v4.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.BiomassCohorts-v3">
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.BiomassCohorts-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.BiomassHarvest-v3">
+      <HintPath>lib\Landis.Library.BiomassHarvest-v3.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Cohorts-v2">
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.Cohorts-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.HarvestManagement-v4">
+      <HintPath>lib\Landis.Library.HarvestManagement-v4.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.SiteHarvest-v2">
+      <HintPath>lib\Landis.Library.SiteHarvest-v2.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Library.Succession-v8">
+      <HintPath>lib\Landis.Library.Succession-v8.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Core">
+      <HintPath>lib\Landis.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Utilities">
+      <HintPath>lib\Landis.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.SpatialModeling">
+      <HintPath>lib\Landis.SpatialModeling.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="configuration.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
+/*
+Copyright 2020 Garry Sotnik
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
