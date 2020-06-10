@@ -5,7 +5,7 @@ using Landis.Core;
 using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
 
-namespace Landis.Extension.SOSIELHuman
+namespace Landis.Extension.SOSIELHarvest
 {
     /// <summary>
     /// A biomass disturbance that handles partial thinning of cohorts.

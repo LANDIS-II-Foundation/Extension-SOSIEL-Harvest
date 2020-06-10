@@ -208,3 +208,15 @@ FakesAssemblies/
 
 # LANDIS-II	
 *.dll
+testings/Testrun_2/biomass/
+testings/Testrun_2/biomass-reclass/
+testings/Testrun_2/biomass-succession/
+testings/Testrun_2/harvest/
+testings/Testrun_2/biomass-harvest-event-log.csv
+testings/Testrun_2/biomass-harvest-summary-log.csv
+testings/Testrun_2/Biomass-succession-log.csv
+testings/Testrun_2/Climate-annual-log.csv
+testings/Testrun_2/Landis-log.txt
+testings/Testrun_2/spp-biomass-log.csv
+testings/Testrun_2/sosiel-harvest-log.txt
+testings/Testrun_2/SOSIELHuman_FM1_rules.csv

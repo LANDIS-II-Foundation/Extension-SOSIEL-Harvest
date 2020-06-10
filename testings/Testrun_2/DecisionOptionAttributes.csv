@@ -1,0 +1,3 @@
+DecisionOption,RequiredParticipants,ConsequentVariable,ConsequentValue,ConsequentValueReference,ConsequentValueType
+MM1-1_DO1,1,CohortsRemovedProportionAdjustment,1,,Double
+MM2-1_DO1,1,HarvestArea,0.7,,Double

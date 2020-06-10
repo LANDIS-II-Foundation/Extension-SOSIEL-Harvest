@@ -1,28 +1,18 @@
-// Can use classes from the listed namespaces.
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using Landis.Extension.SOSIELHarvest.Models;
 
-// The container for classes and other namespaces.
-namespace Landis.Extension.SOSIELHuman.Algorithm
+namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
-    // The container for data and methods, used to pass external data.
+    /// <summary>
+    /// The model used to pass external data.
+    /// </summary>
     public class AlgorithmModel
     {
+        public List<NewDecisionOptionModel> NewDecisionOptions { get; set; }
+
+        //Management area to selected decision options list
+        public Dictionary<string, List<string>> SelectedDecisions { get; set; }
+
+        public HarvestResults HarvestResults { get; set; }
     }
 }
-/*
-Copyright 2020 Garry Sotnik
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-*/
