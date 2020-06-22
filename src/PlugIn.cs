@@ -331,7 +331,7 @@ namespace Landis.Extension.SOSIELHarvest
                     areaToHarvest = new Percentage(value);
                     newPrescription = originalPrescription.Copy(newName, null);
                     break;
-                case "CohortsRemovedProportionAdjustment":
+                case "PortionOfBiomassRemovedAdjustment":
                     newPrescription = originalPrescription.Copy(newName, (double) value);
                     break;
                 default:
