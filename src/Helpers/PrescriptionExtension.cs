@@ -279,7 +279,8 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
                         foreach (var percentage in percentageList)
                         {
                             var newValue = percentage.Value * cutterAdjustment.Value;
-                            if (newValue > 1) newValue = 1;
+                            if (newValue < 0) newValue = 0;
+                            else if (newValue > 1) newValue = 1;
                             percentageListCopy.Add(percentage.Key, new Percentage(newValue));
                         }
 

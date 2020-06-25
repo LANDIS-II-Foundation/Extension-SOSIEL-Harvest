@@ -34,7 +34,7 @@ namespace Landis.Extension.SOSIELHarvest
         private AlgorithmModel sosielHarvestModel;
         private SosielHarvestImplementation sosielHarvest;
         private BiomassHarvest.PlugIn _biomassHarvest;
-        private IManagementAreaDataset _biomassHarvestAreas;
+        private Dictionary<uint, ManagementArea> _areas;
         private List<ExtendedPrescription> _extendedPrescriptions;
 
 
@@ -124,7 +124,9 @@ namespace Landis.Extension.SOSIELHarvest
                     BindingFlags.Instance | BindingFlags.NonPublic);
                 if (prescriptionField == null)
                     throw new Exception();
-                _biomassHarvestAreas = (IManagementAreaDataset) prescriptionField.GetValue(_biomassHarvest);
+                
+                _areas = ((IManagementAreaDataset) prescriptionField.GetValue(_biomassHarvest)).ToDictionary(
+                    area => area.MapCode, area => area);
 
                 var parametersField =
                     biomassHarvestPluginType.GetField("parameters", BindingFlags.Static | BindingFlags.NonPublic);
@@ -132,7 +134,7 @@ namespace Landis.Extension.SOSIELHarvest
                     throw new Exception();
                 _biomassHarvestParameters = (BiomassHarvest.Parameters) parametersField.GetValue(_biomassHarvest);
 
-                foreach (var biomassHarvestArea in _biomassHarvestAreas)
+                foreach (var biomassHarvestArea in _areas.Values)
                 {
                     foreach (var appliedPrescription in biomassHarvestArea.Prescriptions)
                     {
@@ -211,7 +213,7 @@ namespace Landis.Extension.SOSIELHarvest
                         continue;
                     }
 
-                    var managementArea = _biomassHarvestAreas.ToArray()[int.Parse(selectedDecisionPair.Key) - 1];
+                    var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
 
                     managementArea.Prescriptions.Clear();
 
@@ -240,7 +242,7 @@ namespace Landis.Extension.SOSIELHarvest
 
             int areaNumber = 0;
 
-            foreach (var biomassHarvestArea in _biomassHarvestAreas)
+            foreach (var biomassHarvestArea in _areas.Values)
             {
                 areaNumber++;
 
@@ -309,11 +311,9 @@ namespace Landis.Extension.SOSIELHarvest
         private void GenerateNewPrescription(string newName, string parameter, dynamic value, string basedOn,
             string managementAreaName)
         {
-            var originalPrescription = _extendedPrescriptions.First(p => p.Name.Equals(basedOn)).Prescription;
-
             Prescription newPrescription;
 
-            var managementArea = _biomassHarvestAreas.ToArray()[int.Parse(managementAreaName) - 1];
+            var managementArea = _areas[uint.Parse(managementAreaName)];
 
             AppliedPrescription appliedPrescription = null;
 
@@ -327,12 +327,12 @@ namespace Landis.Extension.SOSIELHarvest
 
             switch (parameter)
             {
-                case "HarvestArea":
+                case "PortionOfAreaHarvestedAdjustment":
                     areaToHarvest = new Percentage(value);
-                    newPrescription = originalPrescription.Copy(newName, null);
+                    newPrescription = appliedPrescription.Prescription.Copy(newName, null);
                     break;
-                case "CohortsRemovedProportionAdjustment":
-                    newPrescription = originalPrescription.Copy(newName, (double) value);
+                case "PortionOfBiomassRemovedAdjustment":
+                    newPrescription = appliedPrescription.Prescription.Copy(newName, (double) value);
                     break;
                 default:
                     throw new Exception();
