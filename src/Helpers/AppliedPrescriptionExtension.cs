@@ -5,7 +5,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 {
     public static class AppliedPrescriptionExtension
     {
-        public static ExtendedPrescription ToExtendedPrescription(this AppliedPrescription appliedPrescription)
+        public static ExtendedPrescription ToExtendedPrescription(this AppliedPrescription appliedPrescription, ManagementArea managementArea)
         {
             var prescription = appliedPrescription.Prescription;
             var areaToHarvest = appliedPrescription.PercentageToHarvest;
@@ -13,7 +13,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             var beginTime = appliedPrescription.BeginTime;
             var endTime = appliedPrescription.EndTime;
 
-            return new ExtendedPrescription(prescription, areaToHarvest, standsToHarvest,
+            return new ExtendedPrescription(prescription, managementArea, areaToHarvest, standsToHarvest,
                 beginTime, endTime);
         }
     }

@@ -138,7 +138,7 @@ namespace Landis.Extension.SOSIELHarvest
                 {
                     foreach (var appliedPrescription in biomassHarvestArea.Prescriptions)
                     {
-                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription());
+                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription(biomassHarvestArea));
                     }
                 }
             } 
@@ -220,14 +220,14 @@ namespace Landis.Extension.SOSIELHarvest
                     foreach (var selectedDesignName in selectedDecisionPair.Value)
                     {
                         var extendedPrescription =
-                            _extendedPrescriptions.FirstOrDefault(ep => ep.Name.Equals(selectedDesignName));
+                            _extendedPrescriptions.FirstOrDefault(ep => ep.ManagementArea.MapCode.Equals(managementArea.MapCode) && ep.Name.Equals(selectedDesignName));
                         if(extendedPrescription != null)
                             ApplyPrescription(managementArea, extendedPrescription);
                     }
 
-                    var prescriptions = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
+                    var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
 
-                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptions}");
+                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
                 }
 
                 _biomassHarvest.Run();
@@ -343,7 +343,7 @@ namespace Landis.Extension.SOSIELHarvest
                     throw new Exception();
             }
 
-            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, areaToHarvest, standsToHarvest,
+            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, managementArea, areaToHarvest, standsToHarvest,
                 beginTime, endTime));
         }
 
