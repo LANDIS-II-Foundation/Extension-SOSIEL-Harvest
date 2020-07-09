@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Configuration;
@@ -215,7 +216,11 @@ namespace Landis.Extension.SOSIELHarvest
 
                     var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
 
-                    managementArea.Prescriptions.Clear();
+                    managementArea.Prescriptions.RemoveAll(prescription => 
+                    {
+                        var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
+                        return decisionPattern.IsMatch(prescription.Prescription.Name);
+                    });
 
                     foreach (var selectedDesignName in selectedDecisionPair.Value)
                     {
