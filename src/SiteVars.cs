@@ -1,4 +1,8 @@
-// This file is part of the Social Human extension for LANDIS-II.
+/// Name: SiteVars.cs
+/// Description: 
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
@@ -18,7 +22,7 @@ namespace Landis.Extension.SOSIELHarvest
 
             if (biomassCohorts == null)
             {
-                string mesg = string.Format("Cohorts are empty.  Please double-check that this extension is compatible with your chosen succession extension.");
+                string mesg = string.Format("Cohorts are empty. Please double-check that this extension is compatible with your chosen succession extension.");
                 throw new System.ApplicationException(mesg);
             }
 

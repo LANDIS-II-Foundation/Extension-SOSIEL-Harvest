@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+/// Name: AgentStateConfiguration.cs
+/// Description: The source code file used to parse section "InitialState.AgentsState".
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace Landis.Extension.SOSIELHarvest.Configuration
