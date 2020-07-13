@@ -1,7 +1,7 @@
 ; LANDIS-II Extension infomation
 #define CoreRelease "LANDIS-II-V7"
 #define ExtensionName "SOSIEL Harvest"
-#define AppVersion "1.1.1"
+#define AppVersion "1.1.2"
 #define AppPublisher "LANDIS-II Foundation"
 #define AppURL "http://www.landis-ii.org/"
 
@@ -31,7 +31,7 @@ DefaultDirName={pf}\{#ExtensionName}
 DisableDirPage=yes
 DefaultGroupName={#ExtensionName}
 DisableProgramGroupPage=yes
-LicenseFile=THE SOSIEL HUMAN EXTENSION (SHE) LICENSE AGREEMENT.rtf
+LicenseFile=SHE's Apache license.txt
 OutputDir={#SourcePath}
 OutputBaseFilename={#CoreRelease} {#ExtensionName} {#AppVersion}-setup
 Compression=lzma
