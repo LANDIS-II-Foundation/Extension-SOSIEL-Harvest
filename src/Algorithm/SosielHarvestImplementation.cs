@@ -67,10 +67,14 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
                 agentStateGroup.ForEach((agentState) =>
                 {
-                    for (int i = 0; i < agentState.NumberOfAgents; i++)
+                    for (var i = 0; i < agentState.NumberOfAgents; i++)
                     {
-                        Agent agent = SosielHarvestAgent.CreateAgent(agentState, archetype);
-                        agent.SetId(index);
+                        var name = agentState.Name;
+
+                        if (string.IsNullOrEmpty(name) || agentState.NumberOfAgents > 1)
+                            name = $"{agentState.PrototypeOfAgent}{index}";
+
+                        Agent agent = SosielHarvestAgent.CreateAgent(agentState, archetype, name);
 
                         agents.Add(agent);
 
@@ -124,12 +128,12 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             agentList.Agents.ForEach(agent =>
             {
-                //creates empty agent state
-                AgentState<Area> agentState = AgentState<Area>.Create(agent.Archetype.IsDataSetOriented);
+            //creates empty agent state
+            AgentState<Area> agentState = AgentState<Area>.Create(agent.Archetype.IsDataSetOriented);
 
-                //copy generated goal importance
-                agent.InitialGoalStates.ForEach(kvp =>
-                {
+            //copy generated goal importance
+            agent.InitialGoalStates.ForEach(kvp =>
+        {
                     var goalState = kvp.Value;
                     goalState.Value = agent[kvp.Key.ReferenceVariable];
 
@@ -201,7 +205,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             base.PreIterationCalculations(iteration);
 
             _algorithmModel.NewDecisionOptions = new List<NewDecisionOptionModel>();
-            
+
             var fmAgents = agentList.GetAgentsWithPrefix("FM");
 
             fmAgents.ForEach(fm =>
@@ -341,10 +345,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 {
                     foreach (var area in agentState.DecisionOptionsHistories.Keys)
                     {
-                        //save activation rule stat
-                        DecisionOption[] activatedDOs = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
+                    //save activation rule stat
+                    DecisionOption[] activatedDOs = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
                         DecisionOption[] matchedDOs = agentState.DecisionOptionsHistories[area].Matched.Distinct().OrderBy(r => r.Id).ToArray();
-                        
+
                         string[] activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
                         string[] matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
 

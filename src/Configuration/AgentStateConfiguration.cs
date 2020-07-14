@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 
 namespace Landis.Extension.SOSIELHarvest.Configuration
@@ -8,6 +9,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
     /// </summary>
     public class AgentStateConfiguration
     {
+        public string Name { get; set; }
+
         [JsonRequired]
         public string PrototypeOfAgent { get; set; }
 
