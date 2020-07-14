@@ -1,10 +1,11 @@
-/// Name: AgentStateConfiguration.cs
+﻿/// Name: AgentStateConfiguration.cs
 /// Description: The source code file used to parse section "InitialState.AgentsState".
 /// Authors: Multiple.
 /// Last updated: July 10th, 2020.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 
 namespace Landis.Extension.SOSIELHarvest.Configuration
@@ -14,6 +15,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
     /// </summary>
     public class AgentStateConfiguration
     {
+        public string Name { get; set; }
+
         [JsonRequired]
         public string PrototypeOfAgent { get; set; }
 

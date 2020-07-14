@@ -27,9 +27,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             return agent;
         }
 
-        public override Agent CreateChild(string gender)
+        public override Agent CreateChild(string gender, string name)
         {
-            SosielHarvestAgent child = (SosielHarvestAgent)base.CreateChild(gender);
+            SosielHarvestAgent child = (SosielHarvestAgent)base.CreateChild(gender, name);
 
             return child;
         }
@@ -50,10 +50,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <param name="agentConfiguration"></param>
         /// <param name="archetype"></param>
         /// <returns></returns>
-        public static SosielHarvestAgent CreateAgent(AgentStateConfiguration agentConfiguration, AgentArchetype archetype)
+        public static SosielHarvestAgent CreateAgent(AgentStateConfiguration agentConfiguration, AgentArchetype archetype, string name)
         {
             SosielHarvestAgent agent = new SosielHarvestAgent();
 
+            agent.Id = name;
             agent.Archetype = archetype;
             agent.privateVariables = new Dictionary<string, dynamic>(agentConfiguration.PrivateVariables);
 

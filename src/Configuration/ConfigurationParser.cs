@@ -248,6 +248,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         {
             var agentState = new AgentStateConfiguration();
 
+            agentState.Name = goalAttribute.Agent;
             agentState.NumberOfAgents = 1;
             agentState.PrototypeOfAgent = goalAttribute.Archetype;
             agentState.AssignedGoals = goalAttribute.Goals.Split('|').ToArray();

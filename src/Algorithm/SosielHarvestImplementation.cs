@@ -1,4 +1,4 @@
-/// Name: SosielHarvestImplementation.cs
+﻿/// Name: SosielHarvestImplementation.cs
 /// Description: 
 /// Authors: Multiple.
 /// Last updated: July 10th, 2020.
@@ -73,10 +73,14 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
                 agentStateGroup.ForEach((agentState) =>
                 {
-                    for (int i = 0; i < agentState.NumberOfAgents; i++)
+                    for (var i = 0; i < agentState.NumberOfAgents; i++)
                     {
-                        Agent agent = SosielHarvestAgent.CreateAgent(agentState, archetype);
-                        agent.SetId(index);
+                        var name = agentState.Name;
+
+                        if (string.IsNullOrEmpty(name) || agentState.NumberOfAgents > 1)
+                            name = $"{agentState.PrototypeOfAgent}{index}";
+
+                        Agent agent = SosielHarvestAgent.CreateAgent(agentState, archetype, name);
 
                         agents.Add(agent);
 
