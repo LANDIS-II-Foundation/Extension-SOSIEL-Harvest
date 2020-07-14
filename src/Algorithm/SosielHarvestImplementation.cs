@@ -1,4 +1,10 @@
-﻿using System;
+/// Name: SosielHarvestImplementation.cs
+/// Description: 
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -27,7 +33,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
         /// <summary>
         /// Initializes Luhy lite implementation
-        /// </summary> 
+        /// </summary>
         /// <param name="numberOfIterations">Number of internal iterations</param>
         /// <param name="configuration">Parsed agent configuration</param>
         /// <param name="areas">Enumerable of active areas from Landis</param>
@@ -43,7 +49,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         }
 
         /// <summary>
-        /// Executes agent initializing. It's the first initializing step. 
+        /// Executes agent initializing. It's the first initializing step.
         /// </summary>
         protected override void InitializeAgents()
         {
@@ -58,7 +64,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             InitialStateConfiguration initialState = configuration.InitialState;
 
-            //create agents, groupby is used for saving agents numeration, e.g. FE1, HM1. HM2 etc
+            // Create agents, groupby is used for saving agents numeration, e.g. FE1, HM1, HM2, etc.
             initialState.AgentsState.GroupBy(state => state.PrototypeOfAgent).ForEach((agentStateGroup) =>
             {
                 AgentArchetype archetype = agentPrototypes[agentStateGroup.Key];
@@ -124,10 +130,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             agentList.Agents.ForEach(agent =>
             {
-                //creates empty agent state
+                // Creates empty agent state
                 AgentState<Area> agentState = AgentState<Area>.Create(agent.Archetype.IsDataSetOriented);
 
-                //copy generated goal importance
+                // Copy generated goal importance
                 agent.InitialGoalStates.ForEach(kvp =>
                 {
                     var goalState = kvp.Value;
@@ -143,7 +149,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         }
 
         /// <summary>
-        /// Executes algorithm initialization
+        /// Executes algorithm initialization.
         /// </summary>
         public void Initialize(AlgorithmModel data)
         {
@@ -164,7 +170,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
 
         /// <summary>
-        /// Runs as many internal iterations as passed to the constructor
+        /// Runs as many internal iterations as passed to the constructor.
         /// </summary>
         public AlgorithmModel Run(AlgorithmModel data)
         {
@@ -177,15 +183,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         }
 
         /// <summary>
-        /// Executes last preparations before runs the algorithm. Executes after InitializeAgents and InitializeFirstIterationState.
+        /// Executes last preparations before running the algorithm. Executes after InitializeAgents and InitializeFirstIterationState.
         /// </summary>
         protected override void AfterInitialization()
         {
-            //call default implementation
+            // Call default implementation.
             base.AfterInitialization();
 
             //----
-            //set default values which were not defined in configuration file
+            // Set default values, which were not defined in configuration file.
 
             //var fmAgents = agentList.GetAgentsWithPrefix("FM");
         }
@@ -197,11 +203,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <param name="iteration"></param>
         protected override void PreIterationCalculations(int iteration)
         {
-            //call default implementation
+            // Call default implementation.
             base.PreIterationCalculations(iteration);
 
             _algorithmModel.NewDecisionOptions = new List<NewDecisionOptionModel>();
-            
+
             var fmAgents = agentList.GetAgentsWithPrefix("FM");
 
             fmAgents.ForEach(fm =>
@@ -231,42 +237,42 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
 
         /// <summary>
-        /// Executes before action selection process
+        /// Executes before action selection process.
         /// </summary>
         /// <param name="agent"></param>
         /// <param name="dataSet"></param>
         protected override void BeforeActionSelection(IAgent agent, Area dataSet)
         {
-            //call default implementation
+            // Call default implementation.
             base.BeforeActionSelection(agent, dataSet);
 
-            //if agent is FE, set to local variables current site biomass
+            // If agent is FE, set to local variables current site biomass.
             if (agent.Archetype.NamePrefix == "FM")
             {
-                //set value of current area manage biomass to agent variable. 
+                // Set value of current area manage biomass to agent variable.
                 agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults.ManageAreaBiomass[dataSet.Name];
             }
         }
 
         /// <summary>
-        /// Executes after action taking process
+        /// Executes after action taking process.
         /// </summary>
         /// <param name="agent"></param>
         /// <param name="dataSet"></param>
         protected override void AfterActionTaking(IAgent agent, Area dataSet)
         {
-            //call default implementation
+            // Call default implementation.
             base.AfterActionTaking(agent, dataSet);
 
 
             if (agent.Archetype.NamePrefix == "FM")
             {
-                //compute profit
-                //add computed profit to total profit
-                //agent[AlgorithmVariables.Profit] += profit;
+                // Compute profit
+                // Add computed profit to total profit
+                // Agent[AlgorithmVariables.Profit] += profit;
 
-                //reduce biomass
-                //biomass[site] -= profit;
+                // Reduce biomass
+                // Biomass[site] -= profit;
             }
         }
 
@@ -291,7 +297,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                         iterationSelection.Add(area.Name, areaList);
                     }
 
-                    //not sure what to do with 2 or more similar DO from different agents
+                    // Not sure what to do with 2 or more similar DO from different agents
                     areaList.AddRange(decisionOptionHistries[area].Activated.Select(d => d.Id));
                 }
             }
@@ -324,7 +330,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
 
         /// <summary>
-        /// Executes after PostIterationCalculations. Here we can collect all output data.
+        /// Executes after PostIterationCalculations. Collects output data.
         /// </summary>
         /// <param name="iteration"></param>
         protected override void PostIterationStatistic(int iteration)
@@ -332,7 +338,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             base.PostIterationStatistic(iteration);
 
 
-            //save statistics for each agent
+            // Save statistics for each agent
             agentList.ActiveAgents.ForEach(agent =>
             {
                 AgentState<Area> agentState = iterations.Last.Value[agent];
@@ -341,10 +347,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 {
                     foreach (var area in agentState.DecisionOptionsHistories.Keys)
                     {
-                        //save activation rule stat
+                        // Save activation rule stat
                         DecisionOption[] activatedDOs = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
                         DecisionOption[] matchedDOs = agentState.DecisionOptionsHistories[area].Matched.Distinct().OrderBy(r => r.Id).ToArray();
-                        
+
                         string[] activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
                         string[] matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
 
@@ -370,7 +376,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         {
             base.Maintenance();
 
-            //clean up unassigned rules
+            // Clean up unassigned rules.
             agentList.Archetypes.ForEach(prototype =>
             {
                 IEnumerable<IAgent> agents = agentList.GetAgentsWithPrefix(prototype.NamePrefix);

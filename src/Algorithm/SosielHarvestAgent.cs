@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+/// Name: NewDecisionOptionModel.cs
+/// Description: 
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Collections.Generic;
 using System.Linq;
 using Landis.Extension.SOSIELHarvest.Configuration;
 using SOSIEL.Entities;
@@ -7,7 +13,7 @@ using SOSIEL.Helpers;
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
     /// <summary>
-    /// Sosiel harvest agent model
+    /// SOSIEL Harvest agent model.
     /// </summary>
     /// <seealso cref="SOSIEL.Entities.Agent" />
     public sealed class SosielHarvestAgent : Agent
@@ -39,7 +45,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         }
 
         /// <summary>
-        /// Creates agent instance based on agent archetype and agent configuration 
+        /// Creates agent instance based on agent archetype and agent configuration.
         /// </summary>
         /// <param name="agentConfiguration"></param>
         /// <param name="archetype"></param>
@@ -56,7 +62,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             agent.AssignedDecisionOptions.ForEach(kh => agent.DecisionOptionActivationFreshness.Add(kh, 1));
 
-            //generate goal importance
+            // Generates goal importance.
             agentConfiguration.GoalsState.ForEach(kvp =>
             {
                 var goalName = kvp.Key;
@@ -72,7 +78,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 agent.InitialGoalStates.Add(goal, goalState);
             });
 
-            //initializes initial anticipated influence for each kh and goal assigned to the agent
+            // Initializes initial anticipated influence for each kh and goal assigned to the agent
             agent.AssignedDecisionOptions.ForEach(kh =>
             {
                 Dictionary<string, double> source;

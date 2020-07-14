@@ -1,0 +1,9 @@
+LandisData   Extension
+
+Name         "SOSIEL Harvest"
+Version      "2.0"
+Type         disturbance:harvest
+Assembly     Landis.Extension.SOSIELHuman-v2
+Class        Landis.Extension.SOSIELHuman.PlugIn
+Description  "Knowledge-based, cognitive, and multi-agent"
+CoreVersion  7.0

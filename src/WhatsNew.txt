@@ -8,7 +8,7 @@ Integration 1.0.6.6374 2017-06-13
 
 New features:
  - Changed output format for 'activated rule values' column (removed parameter name).
- - Changed algorithm: FE agents work with site biomass instead of average site biomass.  
+ - Changed algorithm: FE agents work with site biomass instead of average site biomass.
  - Changed configuration: antecedent parameter of FE is Biomass
 
 
@@ -39,5 +39,3 @@ Integration 1.0.2.6359 2017-05-29
 New features:
  - Implemented the rule equality checking for avoiding creating a lot of similar rules.
  - Implemented additional cases to calculate normalized difference in goal prioritization method.
-
-  

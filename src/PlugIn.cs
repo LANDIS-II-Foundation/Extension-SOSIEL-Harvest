@@ -1,4 +1,8 @@
-﻿// This file is part of SHE for LANDIS-II.
+/// Name: PlugIn.cs
+/// Description: 
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System;
 using System.Collections.Generic;
@@ -99,7 +103,7 @@ namespace Landis.Extension.SOSIELHarvest
             Timestep = _sheParameters.Timestep;
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
             ////create algorithm instance
-            int iterations = 1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration. 
+            int iterations = 1; // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration.
             sosielHarvestModel = new AlgorithmModel();
             var managementAreas = _sheParameters.AgentToManagementAreaList.GroupBy(m => m.ManagementArea)
                 .Select(g => new Area() {Name = g.Key, AssignedAgents = g.Select(m => m.Agent).ToArray()})
@@ -124,7 +128,7 @@ namespace Landis.Extension.SOSIELHarvest
                     BindingFlags.Instance | BindingFlags.NonPublic);
                 if (prescriptionField == null)
                     throw new Exception();
-                
+
                 _areas = ((IManagementAreaDataset) prescriptionField.GetValue(_biomassHarvest)).ToDictionary(
                     area => area.MapCode, area => area);
 
@@ -141,7 +145,7 @@ namespace Landis.Extension.SOSIELHarvest
                         _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription());
                     }
                 }
-            } 
+            }
         }
 
         public override void Run()
