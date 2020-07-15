@@ -249,15 +249,13 @@ namespace Landis.Extension.SOSIELHarvest
         {
             var results = new HarvestResults();
 
-            int areaNumber = 0;
-
             foreach (var biomassHarvestArea in _areas.Values)
             {
-                areaNumber++;
+                var managementAreaName = biomassHarvestArea.MapCode.ToString();
 
-                results.ManageAreaBiomass[areaNumber.ToString()] = 0;
-                results.ManageAreaHarvested[areaNumber.ToString()] = 0;
-                results.ManageAreaMaturityProportion[areaNumber.ToString()] = 0;
+                results.ManageAreaBiomass[managementAreaName] = 0;
+                results.ManageAreaHarvested[managementAreaName] = 0;
+                results.ManageAreaMaturityProportion[managementAreaName] = 0;
 
                 double manageAreaMaturityProportion = 0;
 
@@ -294,8 +292,8 @@ namespace Landis.Extension.SOSIELHarvest
                         siteMaturityProportion = Math.Abs(siteBiomass) < 0.0001 ? 0 : siteMaturity / siteBiomass;
                         standMaturityProportion += siteMaturityProportion;
 
-                        results.ManageAreaBiomass[areaNumber.ToString()] += siteBiomass;
-                        results.ManageAreaHarvested[areaNumber.ToString()] +=
+                        results.ManageAreaBiomass[managementAreaName] += siteBiomass;
+                        results.ManageAreaHarvested[managementAreaName] +=
                             BiomassHarvest.SiteVars.BiomassRemoved[site];
                     }
 
@@ -305,13 +303,13 @@ namespace Landis.Extension.SOSIELHarvest
 
                 manageAreaMaturityProportion /= biomassHarvestArea.StandCount;
 
-                results.ManageAreaBiomass[areaNumber.ToString()] =
-                    results.ManageAreaBiomass[areaNumber.ToString()] / 100 * modelCore.CellArea;
+                results.ManageAreaBiomass[managementAreaName] =
+                    results.ManageAreaBiomass[managementAreaName] / 100 * modelCore.CellArea;
 
-                results.ManageAreaHarvested[areaNumber.ToString()] =
-                    results.ManageAreaHarvested[areaNumber.ToString()] / 100 * modelCore.CellArea;
+                results.ManageAreaHarvested[managementAreaName] =
+                    results.ManageAreaHarvested[managementAreaName] / 100 * modelCore.CellArea;
 
-                results.ManageAreaMaturityProportion[areaNumber.ToString()] = manageAreaMaturityProportion;
+                results.ManageAreaMaturityProportion[managementAreaName] = manageAreaMaturityProportion;
             }
 
             return results;
