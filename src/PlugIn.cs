@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Configuration;
@@ -142,7 +143,7 @@ namespace Landis.Extension.SOSIELHarvest
                 {
                     foreach (var appliedPrescription in biomassHarvestArea.Prescriptions)
                     {
-                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription());
+                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription(biomassHarvestArea));
                     }
                 }
             }
@@ -219,19 +220,23 @@ namespace Landis.Extension.SOSIELHarvest
 
                     var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
 
-                    managementArea.Prescriptions.Clear();
+                    managementArea.Prescriptions.RemoveAll(prescription => 
+                    {
+                        var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
+                        return decisionPattern.IsMatch(prescription.Prescription.Name);
+                    });
 
                     foreach (var selectedDesignName in selectedDecisionPair.Value)
                     {
                         var extendedPrescription =
-                            _extendedPrescriptions.FirstOrDefault(ep => ep.Name.Equals(selectedDesignName));
+                            _extendedPrescriptions.FirstOrDefault(ep => ep.ManagementArea.MapCode.Equals(managementArea.MapCode) && ep.Name.Equals(selectedDesignName));
                         if(extendedPrescription != null)
                             ApplyPrescription(managementArea, extendedPrescription);
                     }
 
-                    var prescriptions = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
+                    var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
 
-                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptions}");
+                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
                 }
 
                 _biomassHarvest.Run();
@@ -244,15 +249,13 @@ namespace Landis.Extension.SOSIELHarvest
         {
             var results = new HarvestResults();
 
-            int areaNumber = 0;
-
             foreach (var biomassHarvestArea in _areas.Values)
             {
-                areaNumber++;
+                var managementAreaName = biomassHarvestArea.MapCode.ToString();
 
-                results.ManageAreaBiomass[areaNumber.ToString()] = 0;
-                results.ManageAreaHarvested[areaNumber.ToString()] = 0;
-                results.ManageAreaMaturityProportion[areaNumber.ToString()] = 0;
+                results.ManageAreaBiomass[managementAreaName] = 0;
+                results.ManageAreaHarvested[managementAreaName] = 0;
+                results.ManageAreaMaturityProportion[managementAreaName] = 0;
 
                 double manageAreaMaturityProportion = 0;
 
@@ -289,8 +292,8 @@ namespace Landis.Extension.SOSIELHarvest
                         siteMaturityProportion = Math.Abs(siteBiomass) < 0.0001 ? 0 : siteMaturity / siteBiomass;
                         standMaturityProportion += siteMaturityProportion;
 
-                        results.ManageAreaBiomass[areaNumber.ToString()] += siteBiomass;
-                        results.ManageAreaHarvested[areaNumber.ToString()] +=
+                        results.ManageAreaBiomass[managementAreaName] += siteBiomass;
+                        results.ManageAreaHarvested[managementAreaName] +=
                             BiomassHarvest.SiteVars.BiomassRemoved[site];
                     }
 
@@ -300,13 +303,13 @@ namespace Landis.Extension.SOSIELHarvest
 
                 manageAreaMaturityProportion /= biomassHarvestArea.StandCount;
 
-                results.ManageAreaBiomass[areaNumber.ToString()] =
-                    results.ManageAreaBiomass[areaNumber.ToString()] / 100 * modelCore.CellArea;
+                results.ManageAreaBiomass[managementAreaName] =
+                    results.ManageAreaBiomass[managementAreaName] / 100 * modelCore.CellArea;
 
-                results.ManageAreaHarvested[areaNumber.ToString()] =
-                    results.ManageAreaHarvested[areaNumber.ToString()] / 100 * modelCore.CellArea;
+                results.ManageAreaHarvested[managementAreaName] =
+                    results.ManageAreaHarvested[managementAreaName] / 100 * modelCore.CellArea;
 
-                results.ManageAreaMaturityProportion[areaNumber.ToString()] = manageAreaMaturityProportion;
+                results.ManageAreaMaturityProportion[managementAreaName] = manageAreaMaturityProportion;
             }
 
             return results;
@@ -347,7 +350,7 @@ namespace Landis.Extension.SOSIELHarvest
                     throw new Exception();
             }
 
-            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, areaToHarvest, standsToHarvest,
+            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, managementArea, areaToHarvest, standsToHarvest,
                 beginTime, endTime));
         }
 
