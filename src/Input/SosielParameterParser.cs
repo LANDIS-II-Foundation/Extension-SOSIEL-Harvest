@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+/// Name: SosielParameterParser.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
@@ -34,8 +40,8 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
         private Demographic ParseDemographic()
         {
-            
-            
+
+
             var demographic = new Demographic();
 
             InputVar<string> demographicAttributes =

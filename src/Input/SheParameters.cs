@@ -1,4 +1,8 @@
-﻿// This file is part of the Social Human extension for LANDIS-II.
+/// Name: SheParameters.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System.Collections.Generic;
 using Landis.Extension.SOSIELHarvest.Models;
