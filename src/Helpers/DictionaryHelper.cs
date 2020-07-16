@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+/// Name: DictionaryHelper.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Collections.Generic;
 
 namespace Landis.Extension.SOSIELHarvest.Helpers
 {

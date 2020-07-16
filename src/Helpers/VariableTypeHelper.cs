@@ -1,4 +1,10 @@
-﻿using System;
+/// Name: VariableTypeHelper.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System;
 
 namespace Landis.Extension.SOSIELHarvest.Helpers
 {

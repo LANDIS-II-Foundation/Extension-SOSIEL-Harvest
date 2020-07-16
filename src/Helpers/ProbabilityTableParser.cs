@@ -1,4 +1,10 @@
-﻿using System.Linq;
+/// Name: ProbabilityTableParser.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Linq;
 using Landis.Extension.SOSIELHarvest.Models;
 using SOSIEL.Entities;
 using SOSIEL.Helpers;

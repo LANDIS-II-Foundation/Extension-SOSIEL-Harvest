@@ -1,4 +1,10 @@
-﻿using Newtonsoft.Json;
+/// Name: AlgorithmConfiguration.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using Newtonsoft.Json;
 using SOSIEL.Configuration;
 using SOSIEL.Enums;
 using SOSIEL.Exceptions;

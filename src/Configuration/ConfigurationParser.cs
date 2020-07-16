@@ -1,4 +1,10 @@
-﻿using System;
+/// Name: ConfigurationParser.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -35,7 +41,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         private const string IgnoredValue = "--";
 
         /// <summary>
-        /// Contract resolver for setting properties with private set part. 
+        /// Contract resolver for setting properties with private set part.
         /// </summary>
         private class PrivateSetterContractResolver : DefaultContractResolver
         {

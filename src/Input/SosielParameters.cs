@@ -1,4 +1,10 @@
-﻿using System.Collections.Generic;
+/// Name: sosielParameters.cs
+/// Description:
+/// Authors: Multiple.
+/// Last updated: July 10th, 2020.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Collections.Generic;
 using Landis.Extension.SOSIELHarvest.Models;
 
 namespace Landis.Extension.SOSIELHarvest.Input
