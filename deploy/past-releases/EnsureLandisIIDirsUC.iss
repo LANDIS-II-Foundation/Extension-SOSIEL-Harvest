@@ -1,4 +1,4 @@
-// To these subroutines display debugging information in message boxes,
+// So these subroutines display debugging information in message boxes,
 // either uncomment the pre-processor directive below, or define the
 // Debug variable before including this file.  Otherwise, these
 // subroutines do not report anything to the user.
