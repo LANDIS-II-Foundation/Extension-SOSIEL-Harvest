@@ -486,7 +486,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static (int MentalModel, int MentalSubModel) ParseMentalModelName(string mentalModelString)
         {
-            var regex = new Regex(@"^MM(\d{1,2})-(\d{1,2})$");
+            var regex = new Regex(@"^MM(\d{1,})-(\d{1,})$");
 
             var match = regex.Match(mentalModelString);
 
@@ -501,7 +501,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static (int MentalModel, int MentalSubModel, int DecisionOptionNumber) ParseDecisionOptionName(string decisionOptionName)
         {
-            var regex = new Regex(@"^MM(\d{1,2})-(\d{1,2})_DO(\d{1,2})$");
+            var regex = new Regex(@"^MM(\d{1,})-(\d{1,})_DO(\d{1,})$");
 
             var match = regex.Match(decisionOptionName);
 
