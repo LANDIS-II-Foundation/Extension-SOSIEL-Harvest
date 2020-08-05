@@ -5,12 +5,11 @@
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 // Can use classes from the listed namespaces.
-using System;
-using System.Collections.Generic;
-using System.Linq;
+
+
 
 // The container for classes and other namespaces.
-namespace Landis.Extension.SOSIELHuman.Output
+namespace Landis.Extension.SOSIELHarvest.Output
 {
     public class FEValuesOutput
     {

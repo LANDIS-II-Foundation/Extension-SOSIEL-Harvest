@@ -5,9 +5,10 @@
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 // Can use classes from the listed namespaces.
+
 using Landis.Utilities;
 
-namespace Landis.Extension.SOSIELHuman
+namespace Landis.Extension.SOSIELHarvest
 {
     public class Parameters
     {
