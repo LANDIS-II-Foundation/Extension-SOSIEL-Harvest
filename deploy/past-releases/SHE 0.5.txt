@@ -1,6 +1,6 @@
 LandisData   Extension
 
-Name         "Sosiel Humans"
+Name         "Sosiel Human"
 Version      0.5
 Type         Disturbance
 Assembly     Landis.Extension.SosielHuman
