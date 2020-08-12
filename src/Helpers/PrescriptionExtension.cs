@@ -307,8 +307,15 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 
         private static T GetTypePrivateField<T>(object @object, string fieldName)
         {
+            FieldInfo field = null;
             var type = @object.GetType();
-            var field = type.GetField(fieldName, BindingFlags.GetField | BindingFlags.NonPublic | BindingFlags.Instance);
+            
+            while (field == null && type != null)
+            {
+                field = type.GetField(fieldName, BindingFlags.GetField | BindingFlags.NonPublic | BindingFlags.Instance);
+                type = type.BaseType;
+            }
+
             return (T) field.GetValue(@object);
         }
     }
