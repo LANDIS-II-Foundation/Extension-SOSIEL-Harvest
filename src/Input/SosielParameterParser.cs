@@ -25,8 +25,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var sosielParameters = new SosielParameters
             {
                 CognitiveLevel = ParseCognitiveLevel(),
-                Demographic = ParseDemographic(),
-                Probabilities = ParseProbabilities(),
                 GoalAttributes = ParseGoalAttributes(),
                 MentalModels = ParseMentalModels(),
                 DecisionOptionAttributes = ParseDecisionOptionAttributes(),
@@ -35,7 +33,9 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 AgentArchetypeVariables = ParseAgentArchetypeVariables(),
                 AgentGoalAttributes = ParseAgentGoalAttributes(),
                 AgentVariables = ParseAgentVariables(),
-                AgentDecisionOptions = ParseAgentDecisionOptions()
+                AgentDecisionOptions = ParseAgentDecisionOptions(),
+                Demographic = ParseDemographic(),
+                Probabilities = ParseProbabilities(),
             };
 
             return sosielParameters;
@@ -83,7 +83,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var fileName = new InputVar<string>("FileName");
             var ignoreFirstLine = new InputVar<bool>("IgnoreFirstLine");
 
-            while (!CurrentName.Equals("GoalAttributes"))
+            while (!string.IsNullOrEmpty(CurrentLine))
             {
                 var probability = new Probability();
 
