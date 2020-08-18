@@ -118,7 +118,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             var configuration = new ConfigurationModel
             {
                 AlgorithmConfiguration =
-                    MakeAlgorithmConfiguration(parameters.Demographic, parameters.Probabilities),
+                    MakeAlgorithmConfiguration(parameters.CognitiveLevel, parameters.Demographic, parameters.Probabilities),
                 AgentConfiguration = MakeAgentConfiguration(parameters),
                 InitialState = MakeInitialStateConfiguration(parameters)
             };
@@ -126,11 +126,11 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             return configuration;
         }
 
-        private static AlgorithmConfiguration MakeAlgorithmConfiguration(Demographic demographic, IEnumerable<Probability> probabilities)
+        private static AlgorithmConfiguration MakeAlgorithmConfiguration(CognitiveLevel cognitiveLevel, Demographic demographic, IEnumerable<Probability> probabilities)
         {
             return new AlgorithmConfiguration
             {
-                CognitiveLevel = CognitiveLevel.CL4,
+                CognitiveLevel = cognitiveLevel,
                 DemographicConfiguration = new DemographicProcessesConfiguration
                 {
                     AdoptionProbability = demographic.AdoptionProbability,

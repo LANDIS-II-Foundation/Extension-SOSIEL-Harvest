@@ -4,12 +4,14 @@
 /// Last updated: July 10th, 2020.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
+using SOSIEL.Enums;
 using StringReader = Landis.Utilities.StringReader;
 
 namespace Landis.Extension.SOSIELHarvest.Input
@@ -22,6 +24,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
         {
             var sosielParameters = new SosielParameters
             {
+                CognitiveLevel = ParseCognitiveLevel(),
                 Demographic = ParseDemographic(),
                 Probabilities = ParseProbabilities(),
                 GoalAttributes = ParseGoalAttributes(),
@@ -36,6 +39,14 @@ namespace Landis.Extension.SOSIELHarvest.Input
             };
 
             return sosielParameters;
+        }
+
+        private CognitiveLevel ParseCognitiveLevel()
+        {
+            InputVar<string> cognitiveLevel =
+                new InputVar<string>("CognitiveLevel");
+            ReadVar(cognitiveLevel);
+            return (CognitiveLevel)Enum.Parse(typeof(CognitiveLevel), cognitiveLevel.Value);
         }
 
         private Demographic ParseDemographic()
