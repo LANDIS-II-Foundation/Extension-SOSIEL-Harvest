@@ -341,7 +341,8 @@ namespace Landis.Extension.SOSIELHarvest
                     else if (newValue < 0)
                         newValue = 0;
                     areaToHarvest = new Percentage(newValue);
-                    newPrescription = appliedPrescription.Prescription.Copy(newName, sosielHarvest.Probabilities);
+                    bool increaseCuttingPercent = newValue < value;
+                    newPrescription = appliedPrescription.Prescription.Copy(newName, sosielHarvest.Probabilities, increaseCuttingPercent);
                     break;
                 default:
                     throw new Exception();

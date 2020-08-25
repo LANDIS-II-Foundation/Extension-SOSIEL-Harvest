@@ -21,7 +21,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 {
     public static class PrescriptionExtension
     {
-        public static Prescription Copy(this Prescription prescription, string newName, Probabilities probabilities)
+        public static Prescription Copy(this Prescription prescription, string newName, Probabilities probabilities, bool increaseCuttingPercent)
         {
             var name = newName;
 
@@ -34,7 +34,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             var preventEstablishment = prescription.PreventEstablishment;
 
             var cohortCutter = GetTypePrivateField<ICohortCutter>(prescription, "cohortCutter");
-            var cohortCutterCopy = CopyCohortCutter(cohortCutter, probabilities);
+            var cohortCutterCopy = CopyCohortCutter(cohortCutter, probabilities, increaseCuttingPercent);
 
             Prescription prescriptionCopy;
 
@@ -42,7 +42,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             {
                 var additionalCohortCutter =
                     GetTypePrivateField<ICohortCutter>(singleRepeatHarvest, "additionalCohortCutter");
-                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, probabilities);
+                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, probabilities, increaseCuttingPercent);
 
                 prescriptionCopy = new SingleRepeatHarvest(name, standRankingMethod, siteSelector, cohortCutterCopy, null,
                     additionalCohortCutterCopy, null, minTimeSinceDamage, preventEstablishment, singleRepeatHarvest.Interval);
@@ -227,7 +227,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             return siteSelectorCopy;
         }
 
-        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter, Probabilities probabilities)
+        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter, Probabilities probabilities, bool increaseCuttingPercent)
         {
             ICohortSelector cohortSelectorCopy;
 
@@ -287,7 +287,9 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 
                     foreach (var percentage in percentageList)
                     {
-                        var newValue = probabilityTable.GetRandomValue(percentage.Value * 100, 100, false) / 100;
+                        var newValue = increaseCuttingPercent
+                            ? probabilityTable.GetRandomValue(percentage.Value * 100, 100, false) / 100
+                            : probabilityTable.GetRandomValue(0, percentage.Value * 100, false) / 100;
                         percentageListCopy.Add(percentage.Key, new Percentage(newValue));
                     }
 
