@@ -334,17 +334,14 @@ namespace Landis.Extension.SOSIELHarvest
 
             switch (parameter)
             {
-                case "PortionOfAreaHarvestedAdjustment":
+                case "PortionOfAreaHarvested":
                     var newValue = value * appliedPrescription.PercentageToHarvest;
                     if (newValue > 1)
                         newValue = 1;
                     else if (newValue < 0)
                         newValue = 0;
                     areaToHarvest = new Percentage(newValue);
-                    newPrescription = appliedPrescription.Prescription.Copy(newName, null);
-                    break;
-                case "PortionOfBiomassRemovedAdjustment":
-                    newPrescription = appliedPrescription.Prescription.Copy(newName, (double) value);
+                    newPrescription = appliedPrescription.Prescription.Copy(newName, sosielHarvest.Probabilities);
                     break;
                 default:
                     throw new Exception();
