@@ -322,10 +322,7 @@ namespace Landis.Extension.SOSIELHarvest
 
             var managementArea = _areas[uint.Parse(managementAreaName)];
 
-            AppliedPrescription appliedPrescription = null;
-
-            appliedPrescription =
-                managementArea.Prescriptions.First(p => p.Prescription.Name.Equals(basedOn));
+            var appliedPrescription = managementArea.Prescriptions.First(p => p.Prescription.Name.Equals(basedOn));
 
             var areaToHarvest = appliedPrescription.PercentageToHarvest;
             var standsToHarvest = appliedPrescription.PercentStandsToHarvest;
@@ -334,14 +331,10 @@ namespace Landis.Extension.SOSIELHarvest
 
             switch (parameter)
             {
-                case "PortionOfAreaHarvested":
-                    var newValue = value * appliedPrescription.PercentageToHarvest;
-                    if (newValue > 1)
-                        newValue = 1;
-                    else if (newValue < 0)
-                        newValue = 0;
-                    areaToHarvest = new Percentage(newValue);
-                    bool increaseCuttingPercent = newValue < value;
+                case "PercentOfHarvestArea":
+                    var newAreaToHarvest = new Percentage(value / 100);
+                    bool increaseCuttingPercent = newAreaToHarvest.Value < areaToHarvest.Value;
+                    areaToHarvest = newAreaToHarvest;
                     newPrescription = appliedPrescription.Prescription.Copy(newName, sosielHarvest.Probabilities, increaseCuttingPercent);
                     break;
                 default:
