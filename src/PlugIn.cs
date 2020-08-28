@@ -333,7 +333,7 @@ namespace Landis.Extension.SOSIELHarvest
             {
                 case "PercentOfHarvestArea":
                     var newAreaToHarvest = new Percentage(value / 100);
-                    double cuttingMultiplier = newAreaToHarvest.Value / areaToHarvest.Value;
+                    double cuttingMultiplier = areaToHarvest.Value > 0 ? newAreaToHarvest.Value / areaToHarvest.Value : 1;
                     areaToHarvest = newAreaToHarvest;
                     newPrescription = appliedPrescription.Prescription.Copy(newName, cuttingMultiplier);
                     break;
