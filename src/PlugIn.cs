@@ -333,9 +333,9 @@ namespace Landis.Extension.SOSIELHarvest
             {
                 case "PercentOfHarvestArea":
                     var newAreaToHarvest = new Percentage(value / 100);
-                    bool increaseCuttingPercent = newAreaToHarvest.Value < areaToHarvest.Value;
+                    double cuttingMultiplier = newAreaToHarvest.Value / areaToHarvest.Value;
                     areaToHarvest = newAreaToHarvest;
-                    newPrescription = appliedPrescription.Prescription.Copy(newName, sosielHarvest.Probabilities, increaseCuttingPercent);
+                    newPrescription = appliedPrescription.Prescription.Copy(newName, cuttingMultiplier);
                     break;
                 default:
                     throw new Exception();

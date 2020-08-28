@@ -13,7 +13,6 @@ using Landis.Library.BiomassHarvest;
 using Landis.Library.HarvestManagement;
 using Landis.Library.SiteHarvest;
 using Landis.Utilities;
-using SOSIEL.Entities;
 using SOSIEL.Helpers;
 using SpecificAgesCohortSelector = Landis.Library.SiteHarvest.SpecificAgesCohortSelector;
 
@@ -21,7 +20,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
 {
     public static class PrescriptionExtension
     {
-        public static Prescription Copy(this Prescription prescription, string newName, Probabilities probabilities, bool increaseCuttingPercent)
+        public static Prescription Copy(this Prescription prescription, string newName, double cuttingMultiplier)
         {
             var name = newName;
 
@@ -34,7 +33,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             var preventEstablishment = prescription.PreventEstablishment;
 
             var cohortCutter = GetTypePrivateField<ICohortCutter>(prescription, "cohortCutter");
-            var cohortCutterCopy = CopyCohortCutter(cohortCutter, probabilities, increaseCuttingPercent);
+            var cohortCutterCopy = CopyCohortCutter(cohortCutter, cuttingMultiplier);
 
             Prescription prescriptionCopy;
 
@@ -42,7 +41,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             {
                 var additionalCohortCutter =
                     GetTypePrivateField<ICohortCutter>(singleRepeatHarvest, "additionalCohortCutter");
-                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, probabilities, increaseCuttingPercent);
+                var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, cuttingMultiplier);
 
                 prescriptionCopy = new SingleRepeatHarvest(name, standRankingMethod, siteSelector, cohortCutterCopy, null,
                     additionalCohortCutterCopy, null, minTimeSinceDamage, preventEstablishment, singleRepeatHarvest.Interval);
@@ -227,7 +226,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             return siteSelectorCopy;
         }
 
-        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter, Probabilities probabilities, bool increaseCuttingPercent)
+        private static ICohortCutter CopyCohortCutter(ICohortCutter cohortCutter, double cuttingMultiplier)
         {
             ICohortSelector cohortSelectorCopy;
 
@@ -281,15 +280,11 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
                             "percentages");
 
                     var percentageListCopy = new Dictionary<ushort, Percentage>();
-                    
-                    ExtendedProbabilityTable<int> probabilityTable =
-                        probabilities.GetExtendedProbabilityTable<int>(SosielProbabilityTables.GeneralProbabilityTable);
 
                     foreach (var percentage in percentageList)
                     {
-                        var newValue = increaseCuttingPercent
-                            ? probabilityTable.GetRandomValue(percentage.Value * 100, 100, false) / 100
-                            : probabilityTable.GetRandomValue(0, percentage.Value * 100, false) / 100;
+                        var newValue = percentage.Value * cuttingMultiplier;
+                        if (newValue > 1) newValue = 1;
                         percentageListCopy.Add(percentage.Key, new Percentage(newValue));
                     }
 
