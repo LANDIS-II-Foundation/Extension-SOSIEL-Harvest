@@ -345,7 +345,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static Dictionary<string, Dictionary<string, double>> ParseAgentDecisionOptions(string decisionOptions)
         {
-            var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)<((?:G\d+<\d+>&?)+)>");
+            var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)<((?:G\d+<\d+\.?\d*>&?)+)>");
             var goalPattern = new Regex(@"(G\d+)<(\d+\.?\d*)>");
 
             var results = new Dictionary<string, Dictionary<string, double>>();
