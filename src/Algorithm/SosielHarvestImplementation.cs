@@ -24,6 +24,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
     {
         public string Name { get { return "SosielHarvestImplementation"; } }
 
+        public Probabilities Probabilities => probabilities;
+
         private ConfigurationModel configuration;
         private AlgorithmModel _algorithmModel;
 

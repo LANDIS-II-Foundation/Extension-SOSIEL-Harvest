@@ -4,12 +4,14 @@
 /// Last updated: July 10th, 2020.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CsvHelper;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
+using SOSIEL.Enums;
 using StringReader = Landis.Utilities.StringReader;
 
 namespace Landis.Extension.SOSIELHarvest.Input
@@ -22,8 +24,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
         {
             var sosielParameters = new SosielParameters
             {
-                Demographic = ParseDemographic(),
-                Probabilities = ParseProbabilities(),
+                CognitiveLevel = ParseCognitiveLevel(),
                 GoalAttributes = ParseGoalAttributes(),
                 MentalModels = ParseMentalModels(),
                 DecisionOptionAttributes = ParseDecisionOptionAttributes(),
@@ -32,10 +33,20 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 AgentArchetypeVariables = ParseAgentArchetypeVariables(),
                 AgentGoalAttributes = ParseAgentGoalAttributes(),
                 AgentVariables = ParseAgentVariables(),
-                AgentDecisionOptions = ParseAgentDecisionOptions()
+                AgentDecisionOptions = ParseAgentDecisionOptions(),
+                Demographic = ParseDemographic(),
+                Probabilities = ParseProbabilities(),
             };
 
             return sosielParameters;
+        }
+
+        private CognitiveLevel ParseCognitiveLevel()
+        {
+            InputVar<string> cognitiveLevel =
+                new InputVar<string>("CognitiveLevel");
+            ReadVar(cognitiveLevel);
+            return (CognitiveLevel)Enum.Parse(typeof(CognitiveLevel), cognitiveLevel.Value);
         }
 
         private Demographic ParseDemographic()
@@ -72,7 +83,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var fileName = new InputVar<string>("FileName");
             var ignoreFirstLine = new InputVar<bool>("IgnoreFirstLine");
 
-            while (!CurrentName.Equals("GoalAttributes"))
+            while (!string.IsNullOrEmpty(CurrentLine))
             {
                 var probability = new Probability();
 

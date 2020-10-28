@@ -6,11 +6,14 @@
 
 using System.Collections.Generic;
 using Landis.Extension.SOSIELHarvest.Models;
+using SOSIEL.Enums;
 
 namespace Landis.Extension.SOSIELHarvest.Input
 {
     public class SosielParameters
     {
+        public CognitiveLevel CognitiveLevel { get; set; }
+        
         public Demographic Demographic { get; set; }
 
         public List<Probability> Probabilities { get; set; }
