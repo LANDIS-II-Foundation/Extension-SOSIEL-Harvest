@@ -70,8 +70,8 @@
     <Reference Include="Landis.SpatialModeling">
       <HintPath>lib\Landis.SpatialModeling.dll</HintPath>
     </Reference>
-    <Reference Include="SOSIEL-v2, Version=2.4.3.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>lib\SOSIEL-v2.dll</HintPath>
+    <Reference Include="SOSIEL-v2.4.3, Version=2.4.3.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>lib\SOSIEL-v2.4.3.dll</HintPath>
     </Reference>
   </ItemGroup>
 
