@@ -89,6 +89,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                         index++;
                     }
                 });
+
+                agents.ForEach(agent =>
+                {
+                    if (!agent.ContainsVariable(AlgorithmVariables.Group))
+                        return;
+
+                    agent.ConnectedAgents.AddRange(agents.Where(a => a != agent && a.ContainsVariable(AlgorithmVariables.Group) 
+                                                                                && a[AlgorithmVariables.Group] == agent[AlgorithmVariables.Group]));
+                });
             });
 
             agentList = new AgentList(agents, agentPrototypes.Select(kvp => kvp.Value).ToList());

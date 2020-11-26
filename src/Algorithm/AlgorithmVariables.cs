@@ -20,5 +20,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         public const string Mean = "Mean";
         public const string StdDev = "StdDev";
 
+        public const string Group = "Group";
     }
 }
