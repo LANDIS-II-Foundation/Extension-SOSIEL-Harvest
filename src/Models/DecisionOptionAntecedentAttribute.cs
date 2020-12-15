@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿/// Name: DecisionOptionAntecedentAttribute.cs
+/// Description:
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {

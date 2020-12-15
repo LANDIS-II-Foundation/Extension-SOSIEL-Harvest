@@ -1,7 +1,6 @@
 /// Name: NewDecisionOptionModel.cs
 /// Description: The source code file used to create new decision options.
 /// Authors: Multiple.
-/// Last updated: July 10th, 2020.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm

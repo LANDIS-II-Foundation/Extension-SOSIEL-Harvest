@@ -1,4 +1,9 @@
-﻿using CsvHelper.Configuration;
+﻿/// Name: ProbabilityRecord.cs
+/// Description:
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using CsvHelper.Configuration;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
