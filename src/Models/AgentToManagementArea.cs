@@ -1,9 +1,17 @@
-﻿namespace Landis.Extension.SOSIELHarvest.Models
+﻿using System.Collections.Generic;
+
+namespace Landis.Extension.SOSIELHarvest.Models
 {
     public class AgentToManagementArea
     {
-        public string Agent { get; set; }
+        public AgentToManagementArea()
+        {
+            ManagementAreas = new List<string>();
+        }
 
-        public string ManagementArea { get; set; }
+        public string Agent { get; set; }
+        public List<string> ManagementAreas { get; }
+
+        public SiteSelectionMethod SiteSelectionMethod { get; set; }
     }
 }

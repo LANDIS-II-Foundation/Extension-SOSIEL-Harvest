@@ -9,10 +9,15 @@ using SOSIEL.Entities;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
-    public class Area: IDataSet
+    public class Area : IDataSet
     {
+        public Area()
+        {
+            AssignedAgents = new List<string>();
+        }
+
         public string Name { get; set; }
 
-        public string[] AssignedAgents { get; set; }
+        public List<string> AssignedAgents { get; set; }
     }
 }
