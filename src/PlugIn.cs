@@ -207,7 +207,7 @@ namespace Landis.Extension.SOSIELHarvest
                     }
                 }
 
-                _logService.WriteLine($"\tSosiel selected next prescriptions:");
+                _logService.WriteLine($"\tSosiel selected the following prescriptions:");
                 _logService.WriteLine($"\t\t{"Area",-10}Prescriptions");
 
                 foreach (var selectedDecisionPair in model.SelectedDecisions)
