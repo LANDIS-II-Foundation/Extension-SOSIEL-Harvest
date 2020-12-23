@@ -21,5 +21,9 @@ namespace Landis.Extension.SOSIELHarvest.Output
         public string MostImportantGoal { get; set; }
 
         public int TotalNumberOfDO { get; set; }
+        
+        public double BiomassHarvested { get; set; }
+        
+        public double ManageAreaMaturityProportion { get; set; }
     }
 }

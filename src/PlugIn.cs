@@ -70,9 +70,6 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void LoadParameters(string dataFile, ICore mCore)
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
             modelCore = mCore;
 
             ModelCore.UI.WriteLine("  Loading parameters from {0}", dataFile);
@@ -96,9 +93,6 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void Initialize()
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
             ModelCore.UI.WriteLine("Initializing {0}...", Name);
             //SiteVars.Initialize();
             Timestep = _sheParameters.Timestep;
@@ -170,6 +164,9 @@ namespace Landis.Extension.SOSIELHarvest
         {
             _logService.WriteLine("Timestamp:\t" + ModelCore.CurrentTime);
 
+#if DEBUG
+            Debugger.Launch();
+#endif
             if (_sheParameters.Mode == 2)
             {
                 sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
@@ -183,9 +180,7 @@ namespace Landis.Extension.SOSIELHarvest
                     _logService.WriteLine(
                         $"\t\t{"MaturityProportion:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityProportion[pair.Key],10:F2}");
                 }
-#if DEBUG
-                Debugger.Launch();
-#endif
+
                 var model = sosielHarvest.Run(sosielHarvestModel);
 
                 foreach (var decisionOptionModel in model.NewDecisionOptions)
