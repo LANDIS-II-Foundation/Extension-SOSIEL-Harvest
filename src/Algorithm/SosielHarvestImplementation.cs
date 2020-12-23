@@ -387,7 +387,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                             ManageAreaMaturityProportion = _algorithmModel.HarvestResults.ManageAreaMaturityProportion[area.Name]
                         };
 
-                        CSVHelper.AppendTo(string.Format("output_SOSIELHuman_{0}_rules.csv", agent.Id), ruleUsage);
+                        CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), ruleUsage);
                     }
                 }
             });
