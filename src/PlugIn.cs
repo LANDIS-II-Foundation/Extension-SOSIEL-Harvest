@@ -109,7 +109,7 @@ namespace Landis.Extension.SOSIELHarvest
             //remove old output files
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
 
-            foreach (System.IO.FileInfo fi in di.GetFiles("SOSIELHuman_*.csv"))
+            foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
             {
                 fi.Delete();
             }
