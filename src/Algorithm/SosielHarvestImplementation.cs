@@ -411,8 +411,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 {
                     var layer = rule.Layer;
 
-                    layer.Remove(rule);
                     prototype.DecisionOptions.Remove(rule);
+                    layer.Remove(rule);
                 });
             });
         }
