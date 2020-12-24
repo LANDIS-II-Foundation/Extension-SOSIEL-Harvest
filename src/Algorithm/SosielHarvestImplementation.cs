@@ -384,7 +384,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                             MostImportantGoal = agentState.RankedGoals.First().Name,
                             TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
                             BiomassHarvested = _algorithmModel.HarvestResults.ManageAreaHarvested[area.Name],
-                            ManageAreaMaturityProportion = _algorithmModel.HarvestResults.ManageAreaMaturityProportion[area.Name]
+                            ManageAreaMaturityProportion = _algorithmModel.HarvestResults.ManageAreaMaturityProportion[area.Name],
+                            Biomass = _algorithmModel.HarvestResults.ManageAreaBiomass[area.Name]
                         };
 
                         CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), ruleUsage);
