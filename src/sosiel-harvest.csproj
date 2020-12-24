@@ -7,7 +7,7 @@
     <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
     <AssemblyProduct>Landis.Extension.SOSIELHuman-v2</AssemblyProduct>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
-    <AssemblyVersion>1.1.8</AssemblyVersion>
+    <AssemblyVersion>1.1.9</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Human</RepositoryUrl>
@@ -22,7 +22,7 @@
     <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
     <Description>SOSIEL Harvest Extension</Description>
     <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
-    <FileVersion>1.1.8</FileVersion>
+    <FileVersion>1.1.9</FileVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
