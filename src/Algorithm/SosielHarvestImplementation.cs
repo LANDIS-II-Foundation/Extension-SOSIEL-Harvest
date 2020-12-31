@@ -232,7 +232,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 var manageAreas = activeAreas.Where(a => a.AssignedAgents.Contains(fm.Id)).Select(a => a.Name).ToArray();
 
                 fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaHarvested[a]).Average();
-                fm[AlgorithmVariables.ManageAreaMaturityProportion] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaMaturityProportion[a]).Average();
+                fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaMaturityPercent[a]).Average();
                 fm[AlgorithmVariables.ManageAreaBiomass] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaBiomass[a]).Sum();
 
                 if (iteration == 1)
@@ -384,7 +384,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                             MostImportantGoal = agentState.RankedGoals.First().Name,
                             TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
                             BiomassHarvested = _algorithmModel.HarvestResults.ManageAreaHarvested[area.Name],
-                            ManageAreaMaturityProportion = _algorithmModel.HarvestResults.ManageAreaMaturityProportion[area.Name],
+                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManageAreaMaturityPercent[area.Name],
                             Biomass = _algorithmModel.HarvestResults.ManageAreaBiomass[area.Name]
                         };
 

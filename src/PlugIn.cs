@@ -178,7 +178,7 @@ namespace Landis.Extension.SOSIELHarvest
                     _logService.WriteLine(
                         $"\t\t{"Harvested:",-20}{sosielHarvestModel.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
                     _logService.WriteLine(
-                        $"\t\t{"MaturityProportion:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityProportion[pair.Key],10:F2}");
+                        $"\t\t{"MaturityPercent:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
                 }
 
                 var model = sosielHarvest.Run(sosielHarvestModel);
@@ -250,7 +250,7 @@ namespace Landis.Extension.SOSIELHarvest
 
                 results.ManageAreaBiomass[managementAreaName] = 0;
                 results.ManageAreaHarvested[managementAreaName] = 0;
-                results.ManageAreaMaturityProportion[managementAreaName] = 0;
+                results.ManageAreaMaturityPercent[managementAreaName] = 0;
 
                 double manageAreaMaturityProportion = 0;
 
@@ -304,7 +304,7 @@ namespace Landis.Extension.SOSIELHarvest
                 results.ManageAreaHarvested[managementAreaName] =
                     results.ManageAreaHarvested[managementAreaName] / 100 * modelCore.CellArea;
 
-                results.ManageAreaMaturityProportion[managementAreaName] = manageAreaMaturityProportion;
+                results.ManageAreaMaturityPercent[managementAreaName] = 100 * manageAreaMaturityProportion;
             }
 
             return results;

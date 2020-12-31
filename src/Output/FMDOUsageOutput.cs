@@ -24,7 +24,7 @@ namespace Landis.Extension.SOSIELHarvest.Output
         
         public double BiomassHarvested { get; set; }
         
-        public double ManageAreaMaturityProportion { get; set; }
+        public double ManageAreaMaturityPercent { get; set; }
         public double Biomass { get; set; }
     }
 }
