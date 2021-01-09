@@ -89,6 +89,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                         index++;
                     }
                 });
+
+                agents.ForEach(agent =>
+                {
+                    if (!agent.ContainsVariable(AlgorithmVariables.Group))
+                        return;
+
+                    agent.ConnectedAgents.AddRange(agents.Where(a => a != agent && a.ContainsVariable(AlgorithmVariables.Group) 
+                                                                                && a[AlgorithmVariables.Group] == agent[AlgorithmVariables.Group]));
+                });
             });
 
             agentList = new AgentList(agents, agentPrototypes.Select(kvp => kvp.Value).ToList());
@@ -213,7 +222,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             base.PreIterationCalculations(iteration);
 
             _algorithmModel.NewDecisionOptions = new List<NewDecisionOptionModel>();
-
+#if DEBUG
+            Debugger.Launch();
+#endif
             var fmAgents = agentList.GetAgentsWithPrefix("FM");
 
             fmAgents.ForEach(fm =>
@@ -221,7 +232,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 var manageAreas = activeAreas.Where(a => a.AssignedAgents.Contains(fm.Id)).Select(a => a.Name).ToArray();
 
                 fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaHarvested[a]).Average();
-                fm[AlgorithmVariables.ManageAreaMaturityProportion] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaMaturityProportion[a]).Average();
+                fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaMaturityPercent[a]).Average();
                 fm[AlgorithmVariables.ManageAreaBiomass] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaBiomass[a]).Sum();
 
                 if (iteration == 1)
@@ -342,21 +353,23 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         protected override void PostIterationStatistic(int iteration)
         {
             base.PostIterationStatistic(iteration);
-
+#if DEBUG
+            Debugger.Launch();
+#endif
 
             // Save statistics for each agent
             agentList.ActiveAgents.ForEach(agent =>
             {
-                AgentState<Area> agentState = iterations.Last.Value[agent];
 
+                AgentState<Area> agentState = iterations.Last.Value[agent];
                 if (agent.Archetype.NamePrefix == "FM")
-                {
+                { 
                     foreach (var area in agentState.DecisionOptionsHistories.Keys)
                     {
                         // Save activation rule stat
                         DecisionOption[] activatedDOs = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
                         DecisionOption[] matchedDOs = agentState.DecisionOptionsHistories[area].Matched.Distinct().OrderBy(r => r.Id).ToArray();
-
+                        
                         string[] activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
                         string[] matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
 
@@ -369,10 +382,13 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                             ActivatedDO = activatedDOIds,
                             MatchedDO = matchedDOIds,
                             MostImportantGoal = agentState.RankedGoals.First().Name,
-                            TotalNumberOfDO = agent.AssignedDecisionOptions.Count
+                            TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
+                            BiomassHarvested = _algorithmModel.HarvestResults.ManageAreaHarvested[area.Name],
+                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManageAreaMaturityPercent[area.Name],
+                            Biomass = _algorithmModel.HarvestResults.ManageAreaBiomass[area.Name]
                         };
 
-                        CSVHelper.AppendTo(string.Format("SOSIELHuman_{0}_rules.csv", agent.Id), ruleUsage);
+                        CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), ruleUsage);
                     }
                 }
             });
@@ -396,6 +412,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 {
                     var layer = rule.Layer;
 
+                    prototype.DecisionOptions.Remove(rule);
                     layer.Remove(rule);
                 });
             });
