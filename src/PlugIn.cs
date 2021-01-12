@@ -207,19 +207,19 @@ namespace Landis.Extension.SOSIELHarvest
 
                 foreach (var selectedDecisionPair in model.SelectedDecisions)
                 {
+                    var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
+
+                    managementArea.Prescriptions.RemoveAll(prescription =>
+                    {
+                        var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
+                        return decisionPattern.IsMatch(prescription.Prescription.Name);
+                    });
+
                     if (selectedDecisionPair.Value.Count == 0)
                     {
                         _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
                         continue;
                     }
-
-                    var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
-
-                    managementArea.Prescriptions.RemoveAll(prescription => 
-                    {
-                        var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
-                        return decisionPattern.IsMatch(prescription.Prescription.Name);
-                    });
 
                     foreach (var selectedDesignName in selectedDecisionPair.Value)
                     {
