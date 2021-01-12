@@ -7,10 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
 using Landis.Extension.SOSIELHarvest.Output;
+using Newtonsoft.Json;
 using SOSIEL.Algorithm;
 using SOSIEL.Configuration;
 using SOSIEL.Entities;
@@ -357,13 +359,28 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             Debugger.Launch();
 #endif
 
+            try
+            {
+                var settings = new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                var data = JsonConvert.SerializeObject(iterations.Last.Value, settings);
+
+                File.WriteAllText($"output_SOSIEL_Harvest_DUMP_{iteration}.json", data);
+            }
+            catch(Exception e)
+            {
+
+            }
+
+
             // Save statistics for each agent
             agentList.ActiveAgents.ForEach(agent =>
             {
-
                 AgentState<Area> agentState = iterations.Last.Value[agent];
                 if (agent.Archetype.NamePrefix == "FM")
-                { 
+                {
                     foreach (var area in agentState.DecisionOptionsHistories.Keys)
                     {
                         // Save activation rule stat
