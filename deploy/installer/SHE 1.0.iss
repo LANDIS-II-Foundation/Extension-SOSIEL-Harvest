@@ -1,7 +1,7 @@
 ; LANDIS-II Extension infomation
 #define CoreRelease "LANDIS-II-V7"
 #define ExtensionName "SOSIEL Harvest"
-#define AppVersion "1.1.11"
+#define AppVersion "1.1.12"
 #define AppPublisher "LANDIS-II Foundation"
 #define AppURL "http://www.landis-ii.org/"
 
