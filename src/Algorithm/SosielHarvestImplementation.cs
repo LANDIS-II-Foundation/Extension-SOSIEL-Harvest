@@ -411,30 +411,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             });
         }
 
-        protected override void Maintenance()
-        {
-            base.Maintenance();
-
-            // Clean up unassigned rules.
-            agentList.Archetypes.ForEach(prototype =>
-            {
-                IEnumerable<IAgent> agents = agentList.GetAgentsWithPrefix(prototype.NamePrefix);
-
-                IEnumerable<DecisionOption> prototypeRules = prototype.MentalProto.SelectMany(mental => mental.AsDecisionOptionEnumerable()).ToArray();
-                IEnumerable<DecisionOption> assignedRules = agents.SelectMany(agent => agent.AssignedDecisionOptions).Distinct();
-
-                IEnumerable<DecisionOption> unassignedRules = prototypeRules.Except(assignedRules).ToArray();
-
-                unassignedRules.ForEach(rule =>
-                {
-                    var layer = rule.Layer;
-
-                    prototype.DecisionOptions.Remove(rule);
-                    layer.Remove(rule);
-                });
-            });
-        }
-
         protected override Area[] FilterManagementDataSets(IAgent agent, Area[] orderedDataSets)
         {
             var agentName = agent.Id;
