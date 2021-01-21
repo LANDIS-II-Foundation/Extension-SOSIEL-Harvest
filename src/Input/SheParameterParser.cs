@@ -138,7 +138,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
                 GetNextLine();
 
-                while (CurrentName != "AgentToManagementArea")
+                while (CurrentName != "AgentToManagementArea" && CurrentName != "DO")
                 {
                     var currentLine = new StringReader(CurrentLine);
                     var speciesName = new InputVar<string>("SpeciesName");
@@ -174,7 +174,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var managementArea = new InputVar<string>("ManagementArea");
             var siteSelectionMethod = new InputVar<string>("SiteSelectionMethod");
 
-            while (CurrentName != "OUTPUTS")
+            while (!AtEndOfInput && CurrentName != "OUTPUTS")
             {
                 var agentToManagementArea = new AgentToManagementArea();
 

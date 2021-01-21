@@ -1,4 +1,7 @@
+using System;
 using System.Collections.ObjectModel;
+using Landis.Library.BiomassCohorts;
+using Landis.SpatialModeling;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
@@ -32,6 +35,18 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public void AddSiteHarvestingRule(SiteHarvestingRule siteHarvestingRule)
         {
             _siteHarvestingRules.Add(siteHarvestingRule);
+        }
+
+        public bool CheckSiteToHarvest(ISiteCohorts siteCohorts)
+        {
+            foreach (var siteSelectionRule in SiteSelectionRules)
+            {
+                var result = siteSelectionRule.CheckSite(siteCohorts);
+                if (result == false)
+                    return false;
+            }
+
+            return true;
         }
     }
 }

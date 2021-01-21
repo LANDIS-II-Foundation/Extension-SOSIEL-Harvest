@@ -11,16 +11,18 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using Landis.Core;
-using Landis.Extension.BiomassHarvest;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
 using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Extension.SOSIELHarvest.Services;
+using Landis.Library.BiomassCohorts;
 using Landis.Library.HarvestManagement;
+using Landis.SpatialModeling;
 using Landis.Utilities;
 using HarvestManagement = Landis.Library.HarvestManagement;
+using Prescription = Landis.Extension.SOSIELHarvest.Models.Prescription;
 
 
 namespace Landis.Extension.SOSIELHarvest
@@ -41,6 +43,9 @@ namespace Landis.Extension.SOSIELHarvest
         private BiomassHarvest.PlugIn _biomassHarvest;
         private Dictionary<uint, ManagementArea> _areas;
         private readonly List<ExtendedPrescription> _extendedPrescriptions;
+        private List<Prescription> _prescriptions;
+        private ISiteVar<ISiteCohorts> _siteCohorts;
+        private ISiteVar<string> _harvestPrescriptionName;
 
 
         private static ICore modelCore;
@@ -97,6 +102,8 @@ namespace Landis.Extension.SOSIELHarvest
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
             // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration.
             int iterations = 1;
+            
+            _harvestPrescriptionName = _modelCore.GetSiteVar<string>("Harvest.PrescriptionName");
 
             var managementAreas = new List<Area>();
 
@@ -112,6 +119,8 @@ namespace Landis.Extension.SOSIELHarvest
                     var area = managementAreas.First(a => a.Name.Equals(managementAreaName));
                     area.AssignedAgents.Add(agentToManagementArea.Agent);
                 }
+
+                _prescriptions = _sheParameters.Prescriptions;
             }
 
             //create algorithm instance
@@ -153,12 +162,26 @@ namespace Landis.Extension.SOSIELHarvest
 
                 foreach (var biomassHarvestArea in _areas.Values)
                 {
-                    foreach (var appliedPrescription in biomassHarvestArea.Prescriptions)
+                    foreach (var appliedPrescription in biomassHarvestArea.ManagementArea.Prescriptions)
                     {
-                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription(biomassHarvestArea));
+                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription(biomassHarvestArea.ManagementArea));
                     }
                 }
             }
+            
+            //create algorithm instance
+            _sosielHarvestModel = new AlgorithmModel();
+            _sosielHarvest = new SosielHarvestImplementation(iterations, _configuration, managementAreas);
+            _sosielHarvest.Initialize(_sosielHarvestModel);
+            //remove old output files
+            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
+
+            foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
+            {
+                fi.Delete();
+            }
+
+            _siteCohorts = _modelCore.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
         }
 
         public override void Run()
@@ -187,6 +210,18 @@ namespace Landis.Extension.SOSIELHarvest
 
         private void RunMode1()
         {
+            foreach (var agent in _sosielHarvest.ActiveAgents)
+            {
+                var agentName = agent.Id;
+                var agentToManagementArea = _sheParameters.AgentToManagementAreaList.First(a => a.Agent.Equals(agentName));
+                foreach (var areaName in agentToManagementArea.ManagementAreas)
+                {
+                    var area = _areas.First(a => a.Key.Equals(areaName)).Value;
+                    var harvestManager =
+                        new HarvestManager(area, _prescriptions, _harvestPrescriptionName, _siteCohorts);
+                    var harvested = harvestManager.Harvest();
+                }
+            }
         }
 
         private void RunBiomassHarvest()
@@ -269,13 +304,13 @@ namespace Landis.Extension.SOSIELHarvest
             }
         }
 
-        private HarvestResults AnalyzeHarvestResult()
+        private void AnalyzeHarvestResult()
         {
             var results = new HarvestResults();
 
             foreach (var biomassHarvestArea in _areas.Values)
             {
-                var managementAreaName = biomassHarvestArea.MapCode.ToString();
+                var managementAreaName = biomassHarvestArea.ManagementArea.MapCode.ToString();
 
                 results.ManageAreaBiomass[managementAreaName] = 0;
                 results.ManageAreaHarvested[managementAreaName] = 0;
@@ -283,7 +318,7 @@ namespace Landis.Extension.SOSIELHarvest
 
                 double manageAreaMaturityProportion = 0;
 
-                foreach (var stand in biomassHarvestArea)
+                foreach (var stand in biomassHarvestArea.ManagementArea)
                 {
                     double standMaturityProportion = 0;
 
@@ -291,11 +326,11 @@ namespace Landis.Extension.SOSIELHarvest
                     {
                         double siteBiomass = 0;
                         double siteMaturity = 0;
-                        double siteMaturityProportion = 0;
+                        double siteMaturityProportion;
 
-                        foreach (var species in modelCore.Species)
+                        foreach (var species in _modelCore.Species)
                         {
-                            var cohorts = BiomassHarvest.SiteVars.Cohorts[site][species];
+                            var cohorts = _siteCohorts[site][species];
 
                             if (cohorts == null)
                                 continue;
@@ -317,15 +352,23 @@ namespace Landis.Extension.SOSIELHarvest
                         standMaturityProportion += siteMaturityProportion;
 
                         results.ManageAreaBiomass[managementAreaName] += siteBiomass;
-                        results.ManageAreaHarvested[managementAreaName] +=
-                            BiomassHarvest.SiteVars.BiomassRemoved[site];
+
+                        if (_sheParameters.Mode == 1)
+                        {
+                            results.ManageAreaHarvested[managementAreaName] += 0;
+                        }
+                        else if (_sheParameters.Mode == 2)
+                        {
+                            results.ManageAreaHarvested[managementAreaName] +=
+                                BiomassHarvest.SiteVars.BiomassRemoved[site];
+                        }
                     }
 
                     standMaturityProportion /= stand.Count();
                     manageAreaMaturityProportion += standMaturityProportion;
                 }
 
-                manageAreaMaturityProportion /= biomassHarvestArea.StandCount;
+                manageAreaMaturityProportion /= biomassHarvestArea.ManagementArea.StandCount;
 
                 results.ManageAreaBiomass[managementAreaName] =
                     results.ManageAreaBiomass[managementAreaName] / 100 * modelCore.CellArea;
@@ -346,7 +389,7 @@ namespace Landis.Extension.SOSIELHarvest
 
             var managementArea = _areas[uint.Parse(managementAreaName)];
 
-            var appliedPrescription = managementArea.Prescriptions.First(p => p.Prescription.Name.Equals(basedOn));
+            var appliedPrescription = area.ManagementArea.Prescriptions.First(p => p.Prescription.Name.Equals(basedOn));
 
             var areaToHarvest = appliedPrescription.PercentageToHarvest;
             var standsToHarvest = appliedPrescription.PercentStandsToHarvest;
@@ -366,7 +409,7 @@ namespace Landis.Extension.SOSIELHarvest
                     throw new Exception();
             }
 
-            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, managementArea, areaToHarvest,
+            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, area.ManagementArea, areaToHarvest,
                 standsToHarvest,
                 beginTime, endTime));
         }

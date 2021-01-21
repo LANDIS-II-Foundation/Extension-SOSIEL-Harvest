@@ -1,3 +1,6 @@
+using Landis.Core;
+using Landis.Library.BiomassCohorts;
+using Landis.SpatialModeling;
 using Landis.Utilities;
 
 namespace Landis.Extension.SOSIELHarvest.Models
@@ -16,5 +19,28 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public int MinAge { get; }
         public int MaxAge { get; }
         public Percentage Percentage { get; }
+    }
+
+    public readonly struct Disturbance : IDisturbance
+    {
+        private readonly SiteHarvestingRule _siteHarvestingRule;
+
+        public ExtensionType Type { get; }
+        public ActiveSite CurrentSite { get; }
+
+        public Disturbance(ActiveSite currentSite, SiteHarvestingRule siteHarvestingRule)
+        {
+            Type = new ExtensionType("disturbance:harvest");
+            _siteHarvestingRule = siteHarvestingRule;
+            CurrentSite = currentSite;
+        }
+
+        public int ReduceOrKillMarkedCohort(ICohort cohort)
+        {
+            if (_siteHarvestingRule.SpeciesName.Equals(cohort.Species.Name) == false)
+                return 0;
+
+            return (int) (cohort.Biomass * (double) _siteHarvestingRule.Percentage);
+        }
     }
 }
