@@ -102,7 +102,7 @@ namespace Landis.Extension.SOSIELHarvest
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
             // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration.
             int iterations = 1;
-            
+
             _harvestPrescriptionName = _modelCore.GetSiteVar<string>("Harvest.PrescriptionName");
 
             var managementAreas = new List<Area>();
@@ -113,7 +113,7 @@ namespace Landis.Extension.SOSIELHarvest
                 {
                     if (managementAreas.FirstOrDefault(a => a.Name.Equals(managementAreaName)) == null)
                     {
-                        managementAreas.Add(new Area {Name = managementAreaName});
+                        managementAreas.Add(new Area { Name = managementAreaName });
                     }
 
                     var area = managementAreas.First(a => a.Name.Equals(managementAreaName));
@@ -140,7 +140,7 @@ namespace Landis.Extension.SOSIELHarvest
                 var maDataSet = new ManagementAreaDataset();
                 foreach (var area in managementAreas)
                     maDataSet.Add(new ManagementArea(ushort.Parse(area.Name)));
-                
+
                 ManagementAreas.ReadMap(_sheParameters.ManagementAreaFileName, maDataSet);
                 Stands.ReadMap(_sheParameters.StandsFileName);
                 HarvestManagement.SiteVars.GetExternalVars();
@@ -157,7 +157,7 @@ namespace Landis.Extension.SOSIELHarvest
                 if (prescriptionField == null)
                     throw new Exception();
 
-                _areas = ((IManagementAreaDataset) prescriptionField.GetValue(_biomassHarvest)).ToDictionary(
+                _areas = ((IManagementAreaDataset)prescriptionField.GetValue(_biomassHarvest)).ToDictionary(
                     area => area.MapCode, area => area);
 
                 foreach (var biomassHarvestArea in _areas.Values)
@@ -168,11 +168,11 @@ namespace Landis.Extension.SOSIELHarvest
                     }
                 }
             }
-            
+
             //create algorithm instance
-            _sosielHarvestModel = new AlgorithmModel();
-            _sosielHarvest = new SosielHarvestImplementation(iterations, _configuration, managementAreas);
-            _sosielHarvest.Initialize(_sosielHarvestModel);
+            sosielHarvestModel = new AlgorithmModel() { Mode = _sheParameters.Mode };
+            sosielHarvest = new SosielHarvestImplementation(iterations, _configuration, managementAreas);
+            sosielHarvest.Initialize(sosielHarvestModel);
             //remove old output files
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
 
@@ -210,7 +210,7 @@ namespace Landis.Extension.SOSIELHarvest
 
         private void RunMode1()
         {
-            foreach (var agent in _sosielHarvest.ActiveAgents)
+            foreach (var agent in sosielHarvest.ActiveAgents)
             {
                 var agentName = agent.Id;
                 var agentToManagementArea = _sheParameters.AgentToManagementAreaList.First(a => a.Agent.Equals(agentName));

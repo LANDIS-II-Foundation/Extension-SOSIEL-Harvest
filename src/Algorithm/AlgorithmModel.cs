@@ -14,6 +14,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
     /// </summary>
     public class AlgorithmModel
     {
+        public int Mode { get; set; }
+
         public List<NewDecisionOptionModel> NewDecisionOptions { get; set; }
 
         // Management area to selected decision options list.

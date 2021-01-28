@@ -95,7 +95,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     if (!agent.ContainsVariable(AlgorithmVariables.Group))
                         return;
 
-                    agent.ConnectedAgents.AddRange(agents.Where(a => a != agent && a.ContainsVariable(AlgorithmVariables.Group) 
+                    agent.ConnectedAgents.AddRange(agents.Where(a => a != agent && a.ContainsVariable(AlgorithmVariables.Group)
                                                                                 && a[AlgorithmVariables.Group] == agent[AlgorithmVariables.Group]));
                 });
             });
@@ -182,8 +182,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             AfterInitialization();
         }
 
-
-
         /// <summary>
         /// Runs as many internal iterations as passed to the constructor.
         /// </summary>
@@ -229,15 +227,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             fmAgents.ForEach(fm =>
             {
-                var manageAreas = activeAreas.Where(a => a.AssignedAgents.Contains(fm.Id)).Select(a => a.Name).ToArray();
+                var manageAreas = activeAreas.Where(a => a.AssignedAgents.Contains(fm.Id)).ToArray();
 
-                fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaHarvested[a]).Average();
-                fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaMaturityPercent[a]).Average();
-                fm[AlgorithmVariables.ManageAreaBiomass] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaBiomass[a]).Sum();
+                fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(area => _algorithmModel.HarvestResults.ManageAreaHarvested[GetKey(fm, area)]).Average();
+                fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(area => _algorithmModel.HarvestResults.ManageAreaMaturityPercent[GetKey(fm, area)]).Average();
+                fm[AlgorithmVariables.ManageAreaBiomass] = manageAreas.Select(area => _algorithmModel.HarvestResults.ManageAreaBiomass[GetKey(fm, area)]).Sum();
 
                 if (iteration == 1)
                 {
-                    fm[AlgorithmVariables.ManageAreaHarvested] = 0d;
+                    fm[AlgorithmVariables.ManageAreaHarvested] = 0d;    // ?????? should be commented
                 }
             });
         }
@@ -248,7 +246,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             if (agent.Archetype.NamePrefix == "FM")
             {
-                agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults.ManageAreaBiomass[dataSet.Name];
+                agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults.ManageAreaBiomass[GetKey(agent, dataSet)];
             };
         }
 
@@ -267,7 +265,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             if (agent.Archetype.NamePrefix == "FM")
             {
                 // Set value of current area manage biomass to agent variable.
-                agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults.ManageAreaBiomass[dataSet.Name];
+                agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults.ManageAreaBiomass[GetKey(agent, dataSet)];
             }
         }
 
@@ -303,19 +301,18 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             foreach (var fmAgent in fmAgents)
             {
-                var decisionOptionHistries = iterationState[fmAgent].DecisionOptionsHistories;
+                var decisionOptionHistories = iterationState[fmAgent].DecisionOptionsHistories;
 
-                foreach (var area in decisionOptionHistries.Keys)
+                foreach (var area in decisionOptionHistories.Keys)
                 {
-                    List<string> areaList;
-                    if (!iterationSelection.TryGetValue(area.Name, out areaList))
+                    if (!iterationSelection.TryGetValue(GetKey(fmAgent, area), out List<string> areaList))
                     {
                         areaList = new List<string>();
-                        iterationSelection.Add(area.Name, areaList);
+                        iterationSelection.Add(GetKey(fmAgent, area), areaList);
                     }
 
                     // Not sure what to do with 2 or more similar DO from different agents
-                    areaList.AddRange(decisionOptionHistries[area].Activated.Select(d => d.Id));
+                    areaList.AddRange(decisionOptionHistories[area].Activated.Select(d => d.Id));
                 }
             }
 
@@ -323,7 +320,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             base.PostIterationCalculations(iteration);
         }
-
 
         protected override void AfterInnovation(IAgent agent, Area dataSet, DecisionOption newDecisionOption)
         {
@@ -360,19 +356,17 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             // Save statistics for each agent
             agentList.ActiveAgents.ForEach(agent =>
             {
-
                 AgentState<Area> agentState = iterations.Last.Value[agent];
                 if (agent.Archetype.NamePrefix == "FM")
-                { 
+                {
                     foreach (var area in agentState.DecisionOptionsHistories.Keys)
                     {
                         // Save activation rule stat
                         DecisionOption[] activatedDOs = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
                         DecisionOption[] matchedDOs = agentState.DecisionOptionsHistories[area].Matched.Distinct().OrderBy(r => r.Id).ToArray();
-                        
+
                         string[] activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
                         string[] matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
-
 
                         FMDOUsageOutput ruleUsage = new FMDOUsageOutput()
                         {
@@ -383,9 +377,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                             MatchedDO = matchedDOIds,
                             MostImportantGoal = agentState.RankedGoals.First().Name,
                             TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
-                            BiomassHarvested = _algorithmModel.HarvestResults.ManageAreaHarvested[area.Name],
-                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManageAreaMaturityPercent[area.Name],
-                            Biomass = _algorithmModel.HarvestResults.ManageAreaBiomass[area.Name]
+                            BiomassHarvested = _algorithmModel.HarvestResults.ManageAreaHarvested[GetKey(agent, area)],
+                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManageAreaMaturityPercent[GetKey(agent, area)],
+                            Biomass = _algorithmModel.HarvestResults.ManageAreaBiomass[GetKey(agent, area)]
                         };
 
                         CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), ruleUsage);
@@ -394,34 +388,18 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             });
         }
 
-        protected override void Maintenance()
-        {
-            base.Maintenance();
-
-            // Clean up unassigned rules.
-            agentList.Archetypes.ForEach(prototype =>
-            {
-                IEnumerable<IAgent> agents = agentList.GetAgentsWithPrefix(prototype.NamePrefix);
-
-                IEnumerable<DecisionOption> prototypeRules = prototype.MentalProto.SelectMany(mental => mental.AsDecisionOptionEnumerable()).ToArray();
-                IEnumerable<DecisionOption> assignedRules = agents.SelectMany(agent => agent.AssignedDecisionOptions).Distinct();
-
-                IEnumerable<DecisionOption> unassignedRules = prototypeRules.Except(assignedRules).ToArray();
-
-                unassignedRules.ForEach(rule =>
-                {
-                    var layer = rule.Layer;
-
-                    prototype.DecisionOptions.Remove(rule);
-                    layer.Remove(rule);
-                });
-            });
-        }
-
         protected override Area[] FilterManagementDataSets(IAgent agent, Area[] orderedDataSets)
         {
             var agentName = agent.Id;
             return orderedDataSets.Where(s => s.AssignedAgents.Contains(agentName)).ToArray();
+        }
+
+        public string GetKey(IAgent agent, Area area)
+        {
+            if (_algorithmModel.Mode == 1)
+                return $"{agent.Id}_{area.Name}";
+            else
+                return area.Name;
         }
     }
 }
