@@ -6,10 +6,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
 using Landis.Extension.SOSIELHarvest.Output;
+using Newtonsoft.Json;
 using SOSIEL.Algorithm;
 using SOSIEL.Configuration;
 using SOSIEL.Entities;
@@ -87,6 +89,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
                         index++;
                     }
+                });
+
+                agents.ForEach(agent =>
+                {
+                    if (!agent.ContainsVariable(AlgorithmVariables.Group))
+                        return;
+
+                    agent.ConnectedAgents.AddRange(agents.Where(a => a != agent && a.ContainsVariable(AlgorithmVariables.Group) 
+                                                                                && a[AlgorithmVariables.Group] == agent[AlgorithmVariables.Group]));
                 });
             });
 
@@ -212,7 +223,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             base.PreIterationCalculations(iteration);
 
             _algorithmModel.NewDecisionOptions = new List<NewDecisionOptionModel>();
-
+#if DEBUG
+            Debugger.Launch();
+#endif
             var fmAgents = agentList.GetAgentsWithPrefix("FM");
 
             fmAgents.ForEach(fm =>
@@ -220,7 +233,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 var manageAreas = activeAreas.Where(a => a.AssignedAgents.Contains(fm.Id)).Select(a => a.Name).ToArray();
 
                 fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaHarvested[a]).Average();
-                fm[AlgorithmVariables.ManageAreaMaturityProportion] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaMaturityProportion[a]).Average();
+                fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaMaturityPercent[a]).Average();
                 fm[AlgorithmVariables.ManageAreaBiomass] = manageAreas.Select(a => _algorithmModel.HarvestResults.ManageAreaBiomass[a]).Sum();
 
                 if (iteration == 1)
@@ -341,13 +354,30 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         protected override void PostIterationStatistic(int iteration)
         {
             base.PostIterationStatistic(iteration);
+#if DEBUG
+            Debugger.Launch();
+#endif
+
+            try
+            {
+                var settings = new JsonSerializerSettings()
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                };
+                var data = JsonConvert.SerializeObject(iterations.Last.Value, settings);
+
+                File.WriteAllText($"output_SOSIEL_Harvest_DUMP_{iteration}.json", data);
+            }
+            catch(Exception e)
+            {
+
+            }
 
 
             // Save statistics for each agent
             agentList.ActiveAgents.ForEach(agent =>
             {
                 AgentState<Area> agentState = iterations.Last.Value[agent];
-
                 if (agent.Archetype.NamePrefix == "FM")
                 {
                     foreach (var area in agentState.DecisionOptionsHistories.Keys)
@@ -355,7 +385,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                         // Save activation rule stat
                         DecisionOption[] activatedDOs = agentState.DecisionOptionsHistories[area].Activated.Distinct().OrderBy(r => r.Id).ToArray();
                         DecisionOption[] matchedDOs = agentState.DecisionOptionsHistories[area].Matched.Distinct().OrderBy(r => r.Id).ToArray();
-
+                        
                         string[] activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
                         string[] matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
 
@@ -368,35 +398,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                             ActivatedDO = activatedDOIds,
                             MatchedDO = matchedDOIds,
                             MostImportantGoal = agentState.RankedGoals.First().Name,
-                            TotalNumberOfDO = agent.AssignedDecisionOptions.Count
+                            TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
+                            BiomassHarvested = _algorithmModel.HarvestResults.ManageAreaHarvested[area.Name],
+                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManageAreaMaturityPercent[area.Name],
+                            Biomass = _algorithmModel.HarvestResults.ManageAreaBiomass[area.Name]
                         };
 
-                        CSVHelper.AppendTo(string.Format("SOSIELHuman_{0}_rules.csv", agent.Id), ruleUsage);
+                        CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), ruleUsage);
                     }
                 }
-            });
-        }
-
-        protected override void Maintenance()
-        {
-            base.Maintenance();
-
-            // Clean up unassigned rules.
-            agentList.Archetypes.ForEach(prototype =>
-            {
-                IEnumerable<IAgent> agents = agentList.GetAgentsWithPrefix(prototype.NamePrefix);
-
-                IEnumerable<DecisionOption> prototypeRules = prototype.MentalProto.SelectMany(mental => mental.AsDecisionOptionEnumerable()).ToArray();
-                IEnumerable<DecisionOption> assignedRules = agents.SelectMany(agent => agent.AssignedDecisionOptions).Distinct();
-
-                IEnumerable<DecisionOption> unassignedRules = prototypeRules.Except(assignedRules).ToArray();
-
-                unassignedRules.ForEach(rule =>
-                {
-                    var layer = rule.Layer;
-
-                    layer.Remove(rule);
-                });
             });
         }
 

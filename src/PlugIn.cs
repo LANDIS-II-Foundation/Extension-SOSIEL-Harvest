@@ -69,9 +69,6 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void LoadParameters(string dataFile, ICore mCore)
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
             modelCore = mCore;
 
             ModelCore.UI.WriteLine("  Loading parameters from {0}", dataFile);
@@ -95,9 +92,6 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void Initialize()
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
             ModelCore.UI.WriteLine("Initializing {0}...", Name);
             //SiteVars.Initialize();
             Timestep = _sheParameters.Timestep;
@@ -114,7 +108,7 @@ namespace Landis.Extension.SOSIELHarvest
             //remove old output files
             System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
 
-            foreach (System.IO.FileInfo fi in di.GetFiles("SOSIELHuman_*.csv"))
+            foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
             {
                 fi.Delete();
             }
@@ -169,6 +163,9 @@ namespace Landis.Extension.SOSIELHarvest
         {
             _logService.WriteLine("Timestamp:\t" + ModelCore.CurrentTime);
 
+#if DEBUG
+            Debugger.Launch();
+#endif
             if (_sheParameters.Mode == 2)
             {
                 sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
@@ -180,11 +177,9 @@ namespace Landis.Extension.SOSIELHarvest
                     _logService.WriteLine(
                         $"\t\t{"Harvested:",-20}{sosielHarvestModel.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
                     _logService.WriteLine(
-                        $"\t\t{"MaturityProportion:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityProportion[pair.Key],10:F2}");
+                        $"\t\t{"MaturityPercent:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
                 }
-#if DEBUG
-                Debugger.Launch();
-#endif
+
                 var model = sosielHarvest.Run(sosielHarvestModel);
 
                 foreach (var decisionOptionModel in model.NewDecisionOptions)
@@ -206,24 +201,24 @@ namespace Landis.Extension.SOSIELHarvest
                     }
                 }
 
-                _logService.WriteLine($"\tSosiel selected next prescriptions:");
+                _logService.WriteLine($"\tSosiel selected the following prescriptions:");
                 _logService.WriteLine($"\t\t{"Area",-10}Prescriptions");
 
                 foreach (var selectedDecisionPair in model.SelectedDecisions)
                 {
+                    var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
+
+                    managementArea.Prescriptions.RemoveAll(prescription =>
+                    {
+                        var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
+                        return decisionPattern.IsMatch(prescription.Prescription.Name);
+                    });
+
                     if (selectedDecisionPair.Value.Count == 0)
                     {
                         _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
                         continue;
                     }
-
-                    var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
-
-                    managementArea.Prescriptions.RemoveAll(prescription => 
-                    {
-                        var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
-                        return decisionPattern.IsMatch(prescription.Prescription.Name);
-                    });
 
                     foreach (var selectedDesignName in selectedDecisionPair.Value)
                     {
@@ -254,7 +249,7 @@ namespace Landis.Extension.SOSIELHarvest
 
                 results.ManageAreaBiomass[managementAreaName] = 0;
                 results.ManageAreaHarvested[managementAreaName] = 0;
-                results.ManageAreaMaturityProportion[managementAreaName] = 0;
+                results.ManageAreaMaturityPercent[managementAreaName] = 0;
 
                 double manageAreaMaturityProportion = 0;
 
@@ -308,7 +303,7 @@ namespace Landis.Extension.SOSIELHarvest
                 results.ManageAreaHarvested[managementAreaName] =
                     results.ManageAreaHarvested[managementAreaName] / 100 * modelCore.CellArea;
 
-                results.ManageAreaMaturityProportion[managementAreaName] = manageAreaMaturityProportion;
+                results.ManageAreaMaturityPercent[managementAreaName] = 100 * manageAreaMaturityProportion;
             }
 
             return results;

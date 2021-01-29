@@ -7,22 +7,22 @@
     <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
     <AssemblyProduct>Landis.Extension.SOSIELHuman-v2</AssemblyProduct>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
-    <AssemblyVersion>1.1.6</AssemblyVersion>
+    <AssemblyVersion>1.1.12</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
-    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Human</RepositoryUrl>
+    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
-    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Human/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
     <NeutralLanguage>English</NeutralLanguage>
     <Authors>Garry Sotnik</Authors>
     <Product>Landis.Extension.SOSIELHarvest-v1</Product>
     <Copyright>Landis-II-Foundation</Copyright>
-    <Version>1.1</Version>
+    <Version>1.1.12</Version>
     <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
     <Description>SOSIEL Harvest Extension</Description>
     <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
-    <FileVersion>1.1.6</FileVersion>
+    <FileVersion>1.1.11</FileVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
 
@@ -70,8 +70,8 @@
     <Reference Include="Landis.SpatialModeling">
       <HintPath>lib\Landis.SpatialModeling.dll</HintPath>
     </Reference>
-    <Reference Include="SOSIEL-v2.4.3, Version=2.4.3.0, Culture=neutral, PublicKeyToken=null">
-      <HintPath>lib\SOSIEL-v2.4.3.dll</HintPath>
+    <Reference Include="SOSIEL-v2.4.5">
+      <HintPath>lib\SOSIEL-v2.4.5.dll</HintPath>
     </Reference>
   </ItemGroup>
 

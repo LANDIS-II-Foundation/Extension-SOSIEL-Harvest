@@ -3,7 +3,7 @@
 /// Authors: Multiple.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
-﻿using SOSIEL.Helpers;
+ using SOSIEL.Helpers;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
@@ -13,11 +13,12 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
     public class AlgorithmVariables : SosielVariables
     {
         public const string ManageAreaHarvested = "ManageAreaHarvested";
-        public const string ManageAreaMaturityProportion = "ManageAreaMaturityProportion";
+        public const string ManageAreaMaturityPercent = "ManageAreaMaturityPercent";
         public const string ManageAreaBiomass = "ManageAreaBiomass";
 
         public const string Mean = "Mean";
         public const string StdDev = "StdDev";
 
+        public const string Group = "Group";
     }
 }
