@@ -24,6 +24,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
     {
         public string Name { get { return "SosielHarvestImplementation"; } }
 
+        public List<IAgent> ActiveAgents => agentList.ActiveAgents.ToList();
+
         public Probabilities Probabilities => probabilities;
 
         private ConfigurationModel configuration;

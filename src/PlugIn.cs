@@ -1,15 +1,14 @@
-/// Name: PlugIn.cs
-/// Description: 
-/// Authors: Multiple.
-/// Last updated: July 10th, 2020.
-/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+// Name: PlugIn.cs
+// Description: 
+// Authors: Multiple.
+// Last updated: July 10th, 2020.
+// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Configuration;
@@ -38,17 +37,17 @@ namespace Landis.Extension.SOSIELHarvest
 
         private ConfigurationModel _configuration;
 
-        private AlgorithmModel sosielHarvestModel;
+        private AlgorithmModel _algorithmModel;
         private SosielHarvestImplementation sosielHarvest;
         private BiomassHarvest.PlugIn _biomassHarvest;
-        private Dictionary<uint, ManagementArea> _areas;
+        private Dictionary<string, Area> _areas;
         private readonly List<ExtendedPrescription> _extendedPrescriptions;
         private List<Prescription> _prescriptions;
         private ISiteVar<ISiteCohorts> _siteCohorts;
         private ISiteVar<string> _harvestPrescriptionName;
 
 
-        private static ICore modelCore;
+        private static ICore _modelCore;
 
 
         private Dictionary<Area, double> projectedBiomass;
@@ -64,17 +63,22 @@ namespace Landis.Extension.SOSIELHarvest
             _logService = new LogService();
             _logService.StartService();
             _extendedPrescriptions = new List<ExtendedPrescription>();
+            _areas = new Dictionary<string, Area>();
         }
 
         //---------------------------------------------------------------------
 
-        public static ICore ModelCore => modelCore;
+        public static ICore ModelCore => _modelCore;
         //---------------------------------------------------------------------
 
         public override void LoadParameters(string dataFile, ICore mCore)
         {
-            modelCore = mCore;
-            Main.InitializeLib(modelCore);
+#if DEBUG
+            Debugger.Launch();
+#endif
+
+            _modelCore = mCore;
+            Main.InitializeLib(_modelCore);
 
             ModelCore.UI.WriteLine("  Loading parameters from {0}", dataFile);
             var sheParameterParser = new SheParameterParser();
@@ -105,45 +109,33 @@ namespace Landis.Extension.SOSIELHarvest
 
             _harvestPrescriptionName = _modelCore.GetSiteVar<string>("Harvest.PrescriptionName");
 
-            var managementAreas = new List<Area>();
-
-            foreach (var agentToManagementArea in _sheParameters.AgentToManagementAreaList)
-            {
-                foreach (var managementAreaName in agentToManagementArea.ManagementAreas)
-                {
-                    if (managementAreas.FirstOrDefault(a => a.Name.Equals(managementAreaName)) == null)
-                    {
-                        managementAreas.Add(new Area { Name = managementAreaName });
-                    }
-
-                    var area = managementAreas.First(a => a.Name.Equals(managementAreaName));
-                    area.AssignedAgents.Add(agentToManagementArea.Agent);
-                }
-
-                _prescriptions = _sheParameters.Prescriptions;
-            }
-
-            //create algorithm instance
-            sosielHarvest =
-                new SosielHarvestImplementation(iterations, _configuration, managementAreas);
-            sosielHarvest.Initialize(sosielHarvestModel);
-            //remove old output files
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
-
-            foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
-            {
-                fi.Delete();
-            }
-
             if (_sheParameters.Mode == 1)
             {
+                _prescriptions = _sheParameters.Prescriptions;
+
                 var maDataSet = new ManagementAreaDataset();
-                foreach (var area in managementAreas)
-                    maDataSet.Add(new ManagementArea(ushort.Parse(area.Name)));
+
+                foreach (var agentToManagementArea in _sheParameters.AgentToManagementAreaList)
+                {
+                    foreach (var managementAreaName in agentToManagementArea.ManagementAreas)
+                    {
+                        if (_areas.ContainsKey(managementAreaName) == false)
+                        {
+                            var managementArea = new ManagementArea(ushort.Parse(managementAreaName));
+                            maDataSet.Add(managementArea);
+                            var newArea = new Area {Name = managementAreaName};
+                            newArea.Initialize(managementArea);
+                            _areas.Add(managementAreaName, newArea);
+                        }
+
+                        var area = _areas[managementAreaName];
+                        area.AssignedAgents.Add(agentToManagementArea.Agent);
+                    }
+                }
 
                 ManagementAreas.ReadMap(_sheParameters.ManagementAreaFileName, maDataSet);
                 Stands.ReadMap(_sheParameters.StandsFileName);
-                HarvestManagement.SiteVars.GetExternalVars();
+                SiteVars.GetExternalVars();
                 foreach (ManagementArea mgmtArea in maDataSet)
                     mgmtArea.FinishInitialization();
             }
@@ -152,34 +144,36 @@ namespace Landis.Extension.SOSIELHarvest
                 _biomassHarvest.Initialize();
 
                 var biomassHarvestPluginType = _biomassHarvest.GetType();
-                var prescriptionField = biomassHarvestPluginType.GetField("managementAreas",
+                var managementAreasField = biomassHarvestPluginType.GetField("managementAreas",
                     BindingFlags.Instance | BindingFlags.NonPublic);
-                if (prescriptionField == null)
+                if (managementAreasField == null)
                     throw new Exception();
 
-                _areas = ((IManagementAreaDataset)prescriptionField.GetValue(_biomassHarvest)).ToDictionary(
-                    area => area.MapCode, area => area);
+                _areas = ((IManagementAreaDataset) managementAreasField.GetValue(_biomassHarvest)).ToDictionary(
+                    area => area.MapCode.ToString(), managementArea =>
+                    {
+                        var area = new Area();
+                        area.Initialize(managementArea);
+                        return area;
+                    });
 
                 foreach (var biomassHarvestArea in _areas.Values)
                 {
                     foreach (var appliedPrescription in biomassHarvestArea.ManagementArea.Prescriptions)
-                    {
-                        _extendedPrescriptions.Add(appliedPrescription.ToExtendedPrescription(biomassHarvestArea.ManagementArea));
-                    }
+                        _extendedPrescriptions.Add(
+                            appliedPrescription.ToExtendedPrescription(biomassHarvestArea.ManagementArea));
                 }
             }
 
             //create algorithm instance
-            sosielHarvestModel = new AlgorithmModel() { Mode = _sheParameters.Mode };
-            sosielHarvest = new SosielHarvestImplementation(iterations, _configuration, managementAreas);
-            sosielHarvest.Initialize(sosielHarvestModel);
-            //remove old output files
-            System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
+            _algorithmModel = new AlgorithmModel {Mode = _sheParameters.Mode};
+            sosielHarvest = new SosielHarvestImplementation(iterations, _configuration, _areas.Values);
+            sosielHarvest.Initialize(_algorithmModel);
 
+            //remove old output files
+            var di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
             foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
-            {
                 fi.Delete();
-            }
 
             _siteCohorts = _modelCore.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
         }
@@ -188,13 +182,16 @@ namespace Landis.Extension.SOSIELHarvest
         {
             try
             {
+                AnalyzeHarvestResult();
+                RunSosiel();
+
                 if (_sheParameters.Mode == 1)
                 {
                     RunMode1();
                 }
                 else if (_sheParameters.Mode == 2)
                 {
-                    RunBiomassHarvest();
+                    //RunBiomassHarvest();
                 }
             }
             catch (Exception e)
@@ -213,7 +210,8 @@ namespace Landis.Extension.SOSIELHarvest
             foreach (var agent in sosielHarvest.ActiveAgents)
             {
                 var agentName = agent.Id;
-                var agentToManagementArea = _sheParameters.AgentToManagementAreaList.First(a => a.Agent.Equals(agentName));
+                var agentToManagementArea =
+                    _sheParameters.AgentToManagementAreaList.First(a => a.Agent.Equals(agentName));
                 foreach (var areaName in agentToManagementArea.ManagementAreas)
                 {
                     var area = _areas.First(a => a.Key.Equals(areaName)).Value;
@@ -224,85 +222,82 @@ namespace Landis.Extension.SOSIELHarvest
             }
         }
 
-        private void RunBiomassHarvest()
-        {
-            _logService.WriteLine("Timestamp:\t" + ModelCore.CurrentTime);
-
-#if DEBUG
-            Debugger.Launch();
-#endif
-            if (_sheParameters.Mode == 2)
-            {
-                sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
-                _logService.WriteLine("\tRun Sosiel with parameters:");
-                foreach (var pair in sosielHarvestModel.HarvestResults.ManageAreaBiomass)
-                {
-                    _logService.WriteLine(
-                        $"\t\t{"Biomass:",-20}{sosielHarvestModel.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
-                    _logService.WriteLine(
-                        $"\t\t{"Harvested:",-20}{sosielHarvestModel.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
-                    _logService.WriteLine(
-                        $"\t\t{"MaturityPercent:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
-                }
-
-                var model = sosielHarvest.Run(sosielHarvestModel);
-
-                foreach (var decisionOptionModel in model.NewDecisionOptions)
-                {
-                    GenerateNewPrescription(decisionOptionModel.Name, decisionOptionModel.ConsequentVariable,
-                        decisionOptionModel.ConsequentValue, decisionOptionModel.BasedOn,
-                        decisionOptionModel.ManagementArea);
-                }
-
-                if (model.NewDecisionOptions.Any())
-                {
-                    _logService.WriteLine("\tSosiel generated new prescriptions:");
-                    _logService.WriteLine($"\t\t{"Area",-10}{"Name",-20}{"Based on",-20}{"Variable",-40}{"Value",10}");
-
-                    foreach (var decisionOption in model.NewDecisionOptions)
-                    {
-                        _logService.WriteLine(
-                            $"\t\t{decisionOption.ManagementArea,-10}{decisionOption.Name,-20}{decisionOption.BasedOn,-20}{decisionOption.ConsequentVariable,-40}{decisionOption.ConsequentValue,10}");
-                    }
-                }
-
-                _logService.WriteLine($"\tSosiel selected the following prescriptions:");
-                _logService.WriteLine($"\t\t{"Area",-10}Prescriptions");
-
-                foreach (var selectedDecisionPair in model.SelectedDecisions)
-                {
-                    if (selectedDecisionPair.Value.Count == 0)
-                    {
-                        _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
-                        continue;
-                    }
-
-                    var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
-
-                    managementArea.Prescriptions.RemoveAll(prescription =>
-                    {
-                        var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
-                        return decisionPattern.IsMatch(prescription.Prescription.Name);
-                    });
-
-                    foreach (var selectedDesignName in selectedDecisionPair.Value)
-                    {
-                        var extendedPrescription =
-                            _extendedPrescriptions.FirstOrDefault(ep =>
-                                ep.ManagementArea.MapCode.Equals(managementArea.MapCode) &&
-                                ep.Name.Equals(selectedDesignName));
-                        if (extendedPrescription != null)
-                            ApplyPrescription(managementArea, extendedPrescription);
-                    }
-
-                    var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
-
-                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
-                }
-
-                _biomassHarvest.Run();
-            }
-        }
+        // private void RunBiomassHarvest()
+        // {
+        //     _logService.WriteLine("Timestamp:\t" + ModelCore.CurrentTime);
+        //
+        //     if (_sheParameters.Mode == 2)
+        //     {
+        //         sosielHarvestModel.HarvestResults = AnalyzeHarvestResult();
+        //         _logService.WriteLine("\tRun Sosiel with parameters:");
+        //         foreach (var pair in sosielHarvestModel.HarvestResults.ManageAreaBiomass)
+        //         {
+        //             _logService.WriteLine(
+        //                 $"\t\t{"Biomass:",-20}{sosielHarvestModel.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
+        //             _logService.WriteLine(
+        //                 $"\t\t{"Harvested:",-20}{sosielHarvestModel.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
+        //             _logService.WriteLine(
+        //                 $"\t\t{"MaturityPercent:",-20}{sosielHarvestModel.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
+        //         }
+        //
+        //         var model = sosielHarvest.Run(sosielHarvestModel);
+        //
+        //         foreach (var decisionOptionModel in model.NewDecisionOptions)
+        //         {
+        //             GenerateNewPrescription(decisionOptionModel.Name, decisionOptionModel.ConsequentVariable,
+        //                 decisionOptionModel.ConsequentValue, decisionOptionModel.BasedOn,
+        //                 decisionOptionModel.ManagementArea);
+        //         }
+        //
+        //         if (model.NewDecisionOptions.Any())
+        //         {
+        //             _logService.WriteLine("\tSosiel generated new prescriptions:");
+        //             _logService.WriteLine($"\t\t{"Area",-10}{"Name",-20}{"Based on",-20}{"Variable",-40}{"Value",10}");
+        //
+        //             foreach (var decisionOption in model.NewDecisionOptions)
+        //             {
+        //                 _logService.WriteLine(
+        //                     $"\t\t{decisionOption.ManagementArea,-10}{decisionOption.Name,-20}{decisionOption.BasedOn,-20}{decisionOption.ConsequentVariable,-40}{decisionOption.ConsequentValue,10}");
+        //             }
+        //         }
+        //
+        //         _logService.WriteLine($"\tSosiel selected the following prescriptions:");
+        //         _logService.WriteLine($"\t\t{"Area",-10}Prescriptions");
+        //
+        //         foreach (var selectedDecisionPair in model.SelectedDecisions)
+        //         {
+        //             if (selectedDecisionPair.Value.Count == 0)
+        //             {
+        //                 _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
+        //                 continue;
+        //             }
+        //
+        //             var managementArea = _areas[uint.Parse(selectedDecisionPair.Key)];
+        //
+        //             managementArea.Prescriptions.RemoveAll(prescription =>
+        //             {
+        //                 var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
+        //                 return decisionPattern.IsMatch(prescription.Prescription.Name);
+        //             });
+        //
+        //             foreach (var selectedDesignName in selectedDecisionPair.Value)
+        //             {
+        //                 var extendedPrescription =
+        //                     _extendedPrescriptions.FirstOrDefault(ep =>
+        //                         ep.ManagementArea.MapCode.Equals(managementArea.MapCode) &&
+        //                         ep.Name.Equals(selectedDesignName));
+        //                 if (extendedPrescription != null)
+        //                     ApplyPrescription(managementArea, extendedPrescription);
+        //             }
+        //
+        //             var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
+        //
+        //             _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
+        //         }
+        //
+        //         _biomassHarvest.Run();
+        //     }
+        // }
 
         private void AnalyzeHarvestResult()
         {
@@ -341,7 +336,7 @@ namespace Landis.Extension.SOSIELHarvest
                             {
                                 siteBiomass += cohort.Biomass;
 
-                                if (cohort.Age >= modelCore.Species[species.Name].Maturity)
+                                if (cohort.Age >= _modelCore.Species[species.Name].Maturity)
                                     siteSpeciesMaturity += cohort.Biomass;
                             }
 
@@ -371,15 +366,31 @@ namespace Landis.Extension.SOSIELHarvest
                 manageAreaMaturityProportion /= biomassHarvestArea.ManagementArea.StandCount;
 
                 results.ManageAreaBiomass[managementAreaName] =
-                    results.ManageAreaBiomass[managementAreaName] / 100 * modelCore.CellArea;
+                    results.ManageAreaBiomass[managementAreaName] / 100 * _modelCore.CellArea;
 
                 results.ManageAreaHarvested[managementAreaName] =
-                    results.ManageAreaHarvested[managementAreaName] / 100 * modelCore.CellArea;
+                    results.ManageAreaHarvested[managementAreaName] / 100 * _modelCore.CellArea;
 
                 results.ManageAreaMaturityPercent[managementAreaName] = 100 * manageAreaMaturityProportion;
             }
 
-            return results;
+            _algorithmModel.HarvestResults = results;
+        }
+
+        private void RunSosiel()
+        {
+            _logService.WriteLine("\tRun Sosiel with parameters:");
+            foreach (var pair in _algorithmModel.HarvestResults.ManageAreaBiomass)
+            {
+                _logService.WriteLine(
+                    $"\t\t{"Biomass:",-20}{_algorithmModel.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
+                _logService.WriteLine(
+                    $"\t\t{"Harvested:",-20}{_algorithmModel.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
+                _logService.WriteLine(
+                    $"\t\t{"MaturityPercent:",-20}{_algorithmModel.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
+            }
+
+            sosielHarvest.Run(_algorithmModel);
         }
 
         private void GenerateNewPrescription(string newName, string parameter, dynamic value, string basedOn,
@@ -387,7 +398,7 @@ namespace Landis.Extension.SOSIELHarvest
         {
             HarvestManagement.Prescription newPrescription;
 
-            var managementArea = _areas[uint.Parse(managementAreaName)];
+            var area = _areas[managementAreaName];
 
             var appliedPrescription = area.ManagementArea.Prescriptions.First(p => p.Prescription.Name.Equals(basedOn));
 
