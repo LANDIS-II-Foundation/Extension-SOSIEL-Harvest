@@ -17,11 +17,13 @@ namespace Landis.Extension.SOSIELHarvest.Models
         private List<Prescription> _prescriptions;
         private ISiteVar<string> _harvestPrescriptionName;
         private ISiteVar<ISiteCohorts> _siteCohorts;
+        private Dictionary<string, double> _harvested;
 
         public Mode1(ICore core, SheParameters sheParameters)
         {
             _core = core;
             _sheParameters = sheParameters;
+            _harvested = new Dictionary<string, double>();
         }
 
         public override void Initialize()
@@ -61,14 +63,18 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
         public override void Harvest()
         {
-            foreach (var agentToManagementArea in _sheParameters.AgentToManagementAreaList)
+            ClearHarvested();
+            
+            foreach (var agent in Agents)
             {
-                foreach (var areaName in agentToManagementArea.ManagementAreas)
+                var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
+                    .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
+                
+                foreach (var area in areas)
                 {
-                    var area = Areas.First(a => a.Key.Equals(areaName)).Value;
                     var harvestManager =
                         new HarvestManager(area, _prescriptions, _harvestPrescriptionName, _siteCohorts);
-                    var harvested = harvestManager.Harvest();
+                    _harvested[HarvestResults.GetKey(1, agent, area)] = harvestManager.Harvest();
                 }
             }
         }
@@ -77,78 +83,89 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             var results = new HarvestResults();
 
-            foreach (var biomassHarvestArea in Areas.Values)
+            foreach (var agent in Agents)
             {
-                var managementAreaName = biomassHarvestArea.ManagementArea.MapCode.ToString();
-
-                results.ManageAreaBiomass[managementAreaName] = 0;
-                results.ManageAreaHarvested[managementAreaName] = 0;
-                results.ManageAreaMaturityPercent[managementAreaName] = 0;
-
-                double manageAreaMaturityProportion = 0;
-
-                foreach (var stand in biomassHarvestArea.ManagementArea)
+                var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
+                    .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
+                
+                foreach (var area in areas)
                 {
-                    double standMaturityProportion = 0;
+                    results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] = 0;
+                    results.ManageAreaMaturityPercent[HarvestResults.GetKey(1, agent, area)] = 0;
 
-                    foreach (var site in stand)
+                    double manageAreaMaturityProportion = 0;
+
+                    foreach (var stand in area.ManagementArea)
                     {
-                        double siteBiomass = 0;
-                        double siteMaturity = 0;
-                        double siteMaturityProportion;
+                        double standMaturityProportion = 0;
 
-                        foreach (var species in _core.Species)
+                        foreach (var site in stand)
                         {
-                            var cohorts = _siteCohorts[site][species];
+                            double siteBiomass = 0;
+                            double siteMaturity = 0;
+                            double siteMaturityProportion;
 
-                            if (cohorts == null)
-                                continue;
-
-                            double siteSpeciesMaturity = 0;
-
-                            foreach (var cohort in cohorts)
+                            foreach (var species in _core.Species)
                             {
-                                siteBiomass += cohort.Biomass;
+                                var cohorts = _siteCohorts[site][species];
 
-                                if (cohort.Age >= _core.Species[species.Name].Maturity)
-                                    siteSpeciesMaturity += cohort.Biomass;
+                                if (cohorts == null)
+                                    continue;
+
+                                double siteSpeciesMaturity = 0;
+
+                                foreach (var cohort in cohorts)
+                                {
+                                    siteBiomass += cohort.Biomass;
+
+                                    if (cohort.Age >= _core.Species[species.Name].Maturity)
+                                        siteSpeciesMaturity += cohort.Biomass;
+                                }
+
+                                siteMaturity += siteSpeciesMaturity;
                             }
 
-                            siteMaturity += siteSpeciesMaturity;
+                            siteMaturityProportion = Math.Abs(siteBiomass) < 0.0001 ? 0 : siteMaturity / siteBiomass;
+                            standMaturityProportion += siteMaturityProportion;
+
+                            results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] += siteBiomass;
                         }
 
-                        siteMaturityProportion = Math.Abs(siteBiomass) < 0.0001 ? 0 : siteMaturity / siteBiomass;
-                        standMaturityProportion += siteMaturityProportion;
-
-                        results.ManageAreaBiomass[managementAreaName] += siteBiomass;
-
-                        if (_sheParameters.Mode == 1)
-                        {
-                            results.ManageAreaHarvested[managementAreaName] += 0;
-                        }
-                        else if (_sheParameters.Mode == 2)
-                        {
-                            results.ManageAreaHarvested[managementAreaName] +=
-                                BiomassHarvest.SiteVars.BiomassRemoved[site];
-                        }
+                        standMaturityProportion /= stand.Count();
+                        manageAreaMaturityProportion += standMaturityProportion;
                     }
 
-                    standMaturityProportion /= stand.Count();
-                    manageAreaMaturityProportion += standMaturityProportion;
+                    manageAreaMaturityProportion /= area.ManagementArea.StandCount;
+
+                    results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] =
+                        results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] / 100 * _core.CellArea;
+
+                    results.ManageAreaHarvested[HarvestResults.GetKey(1, agent, area)] =
+                        _harvested[HarvestResults.GetKey(1, agent, area)] / 100 * _core.CellArea;
+
+                    results.ManageAreaMaturityPercent[HarvestResults.GetKey(1, agent, area)] = 100 * manageAreaMaturityProportion;
                 }
-
-                manageAreaMaturityProportion /= biomassHarvestArea.ManagementArea.StandCount;
-
-                results.ManageAreaBiomass[managementAreaName] =
-                    results.ManageAreaBiomass[managementAreaName] / 100 * _core.CellArea;
-
-                results.ManageAreaHarvested[managementAreaName] =
-                    results.ManageAreaHarvested[managementAreaName] / 100 * _core.CellArea;
-
-                results.ManageAreaMaturityPercent[managementAreaName] = 100 * manageAreaMaturityProportion;
             }
 
             return results;
+        }
+
+        protected override void OnAgentsSet()
+        {
+            base.OnAgentsSet();
+            ClearHarvested();
+        }
+
+        private void ClearHarvested()
+        {
+            foreach (var agent in Agents)
+            {
+                var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
+                    .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
+                
+                foreach (var area in areas)
+                    _harvested[HarvestResults.GetKey(1, agent, area)] = 0;
+            }
         }
     }
 }

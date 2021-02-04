@@ -99,6 +99,8 @@ namespace Landis.Extension.SOSIELHarvest
             _sosielData = new SosielData(_sheParameters.Mode);
             _sosielHarvestAlgorithm = new SosielHarvestAlgorithm(iterations, _configuration, _mode.Areas.Values);
             _sosielHarvestAlgorithm.Initialize(_sosielData);
+            
+            _mode.SetAgents(_sosielHarvestAlgorithm.ActiveAgents);
 
             //remove old output files
             var di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
