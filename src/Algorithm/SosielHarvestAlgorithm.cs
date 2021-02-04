@@ -20,7 +20,7 @@ using SOSIEL.Processes;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
-    public class SosielHarvestImplementation : SosielAlgorithm<Area>, IAlgorithm<AlgorithmModel>
+    public class SosielHarvestAlgorithm : SosielAlgorithm<Area>, IAlgorithm<SosielData>
     {
         public string Name { get { return "SosielHarvestImplementation"; } }
 
@@ -29,7 +29,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         public Probabilities Probabilities => probabilities;
 
         private ConfigurationModel configuration;
-        private AlgorithmModel _algorithmModel;
+        private SosielData _algorithmModel;
 
         private Area[] activeAreas;
 
@@ -41,7 +41,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <param name="numberOfIterations">Number of internal iterations</param>
         /// <param name="configuration">Parsed agent configuration</param>
         /// <param name="areas">Enumerable of active areas from Landis</param>
-        public SosielHarvestImplementation(int numberOfIterations,
+        public SosielHarvestAlgorithm(int numberOfIterations,
             ConfigurationModel configuration,
             IEnumerable<Area> areas)
             : base(numberOfIterations,
@@ -168,7 +168,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <summary>
         /// Executes algorithm initialization.
         /// </summary>
-        public void Initialize(AlgorithmModel data)
+        public void Initialize(SosielData data)
         {
             _algorithmModel = data;
 
@@ -187,7 +187,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <summary>
         /// Runs as many internal iterations as passed to the constructor.
         /// </summary>
-        public AlgorithmModel Run(AlgorithmModel data)
+        public SosielData Run(SosielData data)
         {
 #if DEBUG
             Debugger.Launch();
