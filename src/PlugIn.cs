@@ -6,6 +6,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Linq;
 using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Configuration;
@@ -133,6 +134,8 @@ namespace Landis.Extension.SOSIELHarvest
             foreach (var pair in _sosielData.HarvestResults.ManageAreaBiomass)
             {
                 _logService.WriteLine(
+                    $"\tArea:{pair.Key}");
+                _logService.WriteLine(
                     $"\t\t{"Biomass:",-20}{_sosielData.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
                 _logService.WriteLine(
                     $"\t\t{"Harvested:",-20}{_sosielData.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
@@ -141,6 +144,34 @@ namespace Landis.Extension.SOSIELHarvest
             }
 
             _sosielHarvestAlgorithm.Run(_sosielData);
+            
+            if (_sosielData.NewDecisionOptions.Any())
+            {
+                _logService.WriteLine("\tSosiel generated new prescriptions:");
+                _logService.WriteLine($"\t\t{"Area",-10}{"Name",-20}{"Based on",-20}{"Variable",-40}{"Value",10}");
+
+                foreach (var decisionOption in _sosielData.NewDecisionOptions)
+                {
+                    _logService.WriteLine(
+                        $"\t\t{decisionOption.ManagementArea,-10}{decisionOption.Name,-20}{decisionOption.BasedOn,-20}{decisionOption.ConsequentVariable,-40}{decisionOption.ConsequentValue,10}");
+                }
+                
+                _logService.WriteLine($"\tSosiel selected the following prescriptions:");
+                _logService.WriteLine($"\t\t{"Area",-10}Prescriptions");
+
+                foreach (var selectedDecisionPair in _sosielData.SelectedDecisions)
+                {
+                    if (selectedDecisionPair.Value.Count == 0)
+                    {
+                        _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
+                        continue;
+                    }
+                    
+                    var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
+
+                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
+                }
+            }
         }
     }
 }

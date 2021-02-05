@@ -67,21 +67,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     decisionOptionModel.ManagementArea);
             }
 
-            if (sosielData.NewDecisionOptions.Any())
-            {
-                _logService.WriteLine("\tSosiel generated new prescriptions:");
-                _logService.WriteLine($"\t\t{"Area",-10}{"Name",-20}{"Based on",-20}{"Variable",-40}{"Value",10}");
-
-                foreach (var decisionOption in sosielData.NewDecisionOptions)
-                {
-                    _logService.WriteLine(
-                        $"\t\t{decisionOption.ManagementArea,-10}{decisionOption.Name,-20}{decisionOption.BasedOn,-20}{decisionOption.ConsequentVariable,-40}{decisionOption.ConsequentValue,10}");
-                }
-            }
-
-            _logService.WriteLine($"\tSosiel selected the following prescriptions:");
-            _logService.WriteLine($"\t\t{"Area",-10}Prescriptions");
-
             foreach (var selectedDecisionPair in sosielData.SelectedDecisions)
             {
                 var managementArea = Areas[selectedDecisionPair.Key].ManagementArea;
@@ -92,12 +77,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     return decisionPattern.IsMatch(prescription.Prescription.Name);
                 });
 
-                if (selectedDecisionPair.Value.Count == 0)
-                {
-                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
-                    continue;
-                }
-
                 foreach (var selectedDesignName in selectedDecisionPair.Value)
                 {
                     var extendedPrescription =
@@ -107,10 +86,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     if (extendedPrescription != null)
                         ApplyPrescription(managementArea, extendedPrescription);
                 }
-
-                var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
-
-                _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
             }
 
             _biomassHarvest.Run();

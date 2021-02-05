@@ -59,5 +59,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
             return copy;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

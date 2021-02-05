@@ -163,7 +163,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                         results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] / 100 * _core.CellArea;
 
                     results.ManageAreaHarvested[HarvestResults.GetKey(1, agent, area)] =
-                        _harvested[HarvestResults.GetKey(1, agent, area)] / 100 * _core.CellArea;
+                        _harvested[HarvestResults.GetKey(1, agent, area)] * _core.CellArea;
 
                     results.ManageAreaMaturityPercent[HarvestResults.GetKey(1, agent, area)] =
                         100 * manageAreaMaturityProportion;
