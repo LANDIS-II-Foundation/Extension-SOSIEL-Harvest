@@ -91,7 +91,7 @@ namespace Landis.Extension.SOSIELHarvest
             if (_sheParameters.Mode == 1)
                 _mode = new Mode1(_core, _sheParameters);
             else if (_sheParameters.Mode == 2)
-                _mode = new Mode2(_biomassHarvest);
+                _mode = new Mode2(_biomassHarvest, _core, _logService);
 
             _mode.Initialize();
 
@@ -99,7 +99,7 @@ namespace Landis.Extension.SOSIELHarvest
             _sosielData = new SosielData(_sheParameters.Mode);
             _sosielHarvestAlgorithm = new SosielHarvestAlgorithm(iterations, _configuration, _mode.Areas.Values);
             _sosielHarvestAlgorithm.Initialize(_sosielData);
-            
+
             _mode.SetAgents(_sosielHarvestAlgorithm.ActiveAgents);
 
             //remove old output files
