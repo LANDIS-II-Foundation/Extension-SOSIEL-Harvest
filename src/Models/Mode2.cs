@@ -51,7 +51,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             }
         }
 
-        public override void Harvest()
+        public override void Harvest(SosielData sosielData)
         {
             //     _logService.WriteLine("Timestamp:\t" + ModelCore.CurrentTime);
             //

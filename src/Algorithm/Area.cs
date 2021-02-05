@@ -23,7 +23,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             _sites = new List<ActiveSite>();
         }
 
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
         public List<string> AssignedAgents { get; set; }
         
@@ -31,6 +31,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
         public void Initialize(ManagementArea managementArea)
         {
+            Name = managementArea.MapCode.ToString();
             ManagementArea = managementArea;
             foreach (var stand in ManagementArea)
             foreach (var activeSite in stand)

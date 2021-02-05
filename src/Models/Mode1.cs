@@ -40,17 +40,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
             {
                 foreach (var managementAreaName in agentToManagementArea.ManagementAreas)
                 {
-                    if (Areas.ContainsKey(managementAreaName) == false)
-                    {
-                        var managementArea = new ManagementArea(ushort.Parse(managementAreaName));
-                        maDataSet.Add(managementArea);
-                        var newArea = new Area {Name = managementAreaName};
-                        newArea.Initialize(managementArea);
-                        Areas.Add(managementAreaName, newArea);
-                    }
-
-                    var area = Areas[managementAreaName];
-                    area.AssignedAgents.Add(agentToManagementArea.Agent);
+                    var managementArea = new ManagementArea(ushort.Parse(managementAreaName));
+                    maDataSet.Add(managementArea);
                 }
             }
 
@@ -59,23 +50,54 @@ namespace Landis.Extension.SOSIELHarvest.Models
             SiteVars.GetExternalVars();
             foreach (ManagementArea mgmtArea in maDataSet)
                 mgmtArea.FinishInitialization();
+
+            foreach (var agentToManagementArea in _sheParameters.AgentToManagementAreaList)
+            {
+                foreach (var managementAreaName in agentToManagementArea.ManagementAreas)
+                {
+                    if (Areas.ContainsKey(managementAreaName) == false)
+                    {
+                        var newArea = new Area();
+                        newArea.Initialize(maDataSet.First(ma => ma.MapCode.ToString().Equals(managementAreaName)));
+                        Areas.Add(managementAreaName, newArea);
+                    }
+
+                    var area = Areas[managementAreaName];
+                    area.AssignedAgents.Add(agentToManagementArea.Agent);
+                }
+            }
         }
 
-        public override void Harvest()
+        public override void Harvest(SosielData sosielData)
         {
             ClearHarvested();
-            
+
+            GenerateNewPrescriptions(sosielData);
+
             foreach (var agent in Agents)
             {
                 var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
                     .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
-                
+
                 foreach (var area in areas)
                 {
+                    var selectedPrescriptionNames = sosielData.SelectedDecisions[HarvestResults.GetKey(1, agent, area)];
+                    var selectedPrescriptions = _prescriptions.Where(p => selectedPrescriptionNames.Contains(p.Name));
+
                     var harvestManager =
-                        new HarvestManager(area, _prescriptions, _harvestPrescriptionName, _siteCohorts);
+                        new HarvestManager(area, selectedPrescriptions, _harvestPrescriptionName, _siteCohorts);
                     _harvested[HarvestResults.GetKey(1, agent, area)] = harvestManager.Harvest();
                 }
+            }
+        }
+
+        private void GenerateNewPrescriptions(SosielData sosielData)
+        {
+            foreach (var newDecisionOption in sosielData.NewDecisionOptions)
+            {
+                var prescription = _prescriptions.First(p => p.Name.Equals(newDecisionOption.BasedOn));
+                _prescriptions.Add(prescription.Copy(newDecisionOption.Name,
+                    (float) newDecisionOption.ConsequentValue));
             }
         }
 
@@ -87,7 +109,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             {
                 var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
                     .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
-                
+
                 foreach (var area in areas)
                 {
                     results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] = 0;
@@ -143,7 +165,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     results.ManageAreaHarvested[HarvestResults.GetKey(1, agent, area)] =
                         _harvested[HarvestResults.GetKey(1, agent, area)] / 100 * _core.CellArea;
 
-                    results.ManageAreaMaturityPercent[HarvestResults.GetKey(1, agent, area)] = 100 * manageAreaMaturityProportion;
+                    results.ManageAreaMaturityPercent[HarvestResults.GetKey(1, agent, area)] =
+                        100 * manageAreaMaturityProportion;
                 }
             }
 
@@ -162,7 +185,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             {
                 var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
                     .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
-                
+
                 foreach (var area in areas)
                     _harvested[HarvestResults.GetKey(1, agent, area)] = 0;
             }

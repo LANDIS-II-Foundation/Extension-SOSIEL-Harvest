@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
@@ -8,7 +9,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
 {
     public class HarvestManager
     {
-        private readonly Area _area;
         private readonly IEnumerable<Prescription> _prescriptions;
         private readonly ISiteVar<string> _harvestPrescriptionName;
         private readonly ISiteVar<ISiteCohorts> _siteCohorts;
@@ -19,7 +19,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public HarvestManager(Area area, IEnumerable<Prescription> prescriptions,
             ISiteVar<string> harvestPrescriptionName, ISiteVar<ISiteCohorts> siteCohorts)
         {
-            _area = area;
             _prescriptions = prescriptions;
             _harvestPrescriptionName = harvestPrescriptionName;
             _siteCohorts = siteCohorts;
@@ -32,27 +31,30 @@ namespace Landis.Extension.SOSIELHarvest.Models
             if (_isHarvestingFinished)
                 throw new InvalidOperationException();
 
-            int harvested = 0;
+            var harvested = new Dictionary<Prescription, int>();
+
+            foreach (var prescription in _prescriptions)
+                harvested[prescription] = 0;
 
             foreach (var availableSite in _availableSites)
             {
                 foreach (var prescription in _prescriptions)
                 {
-                    var prescriptionHarvested = 0;
                     var siteCohorts = _siteCohorts[availableSite];
                     if (prescription.CheckSiteToHarvest(siteCohorts))
                     {
-                        _harvestPrescriptionName[availableSite] = prescription.Name;
-                        prescriptionHarvested += HarvestSite(prescription, availableSite, siteCohorts);
-                        if(prescriptionHarvested >= prescription.TargetHarvestSize)
+                        if (harvested.ContainsKey(prescription) &&
+                            harvested[prescription] >= prescription.TargetHarvestSize)
                             continue;
-                        harvested += prescriptionHarvested;
+
+                        _harvestPrescriptionName[availableSite] = prescription.Name;
+                        harvested[prescription] += HarvestSite(prescription, availableSite, siteCohorts);
                     }
                 }
             }
 
             _isHarvestingFinished = true;
-            return harvested;
+            return harvested.Sum(pair => pair.Value);
         }
 
         private int HarvestSite(Prescription prescription, ActiveSite activeSite, ISiteCohorts siteCohorts)

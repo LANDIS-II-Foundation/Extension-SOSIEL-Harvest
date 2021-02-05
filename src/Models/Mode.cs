@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Landis.Extension.SOSIELHarvest.Algorithm;
@@ -25,7 +24,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             OnAgentsSet();
         }
 
-        public abstract void Harvest();
+        public abstract void Harvest(SosielData sosielData);
 
         public abstract HarvestResults AnalyzeHarvestingResult();
 

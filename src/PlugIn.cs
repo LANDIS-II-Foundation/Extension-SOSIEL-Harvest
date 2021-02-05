@@ -114,7 +114,7 @@ namespace Landis.Extension.SOSIELHarvest
             {
                 _sosielData.HarvestResults = _mode.AnalyzeHarvestingResult();
                 RunSosiel();
-                _mode.Harvest();
+                _mode.Harvest(_sosielData);
             }
             catch (Exception e)
             {

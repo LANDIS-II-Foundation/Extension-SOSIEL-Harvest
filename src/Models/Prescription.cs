@@ -1,7 +1,5 @@
-using System;
 using System.Collections.ObjectModel;
 using Landis.Library.BiomassCohorts;
-using Landis.SpatialModeling;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
@@ -47,6 +45,19 @@ namespace Landis.Extension.SOSIELHarvest.Models
             }
 
             return true;
+        }
+
+        public Prescription Copy(string name, float targetHarvestSize)
+        {
+            var copy = new Prescription(name) {TargetHarvestSize = targetHarvestSize};
+
+            foreach (var siteSelectionRule in _siteSelectionRules)
+                copy.AddSiteSelectionRule(siteSelectionRule);
+
+            foreach (var siteHarvestingRule in _siteHarvestingRules)
+                copy.AddSiteHarvestingRule(siteHarvestingRule);
+
+            return copy;
         }
     }
 }
