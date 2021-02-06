@@ -45,4 +45,5 @@ If you come across any issue or suspected bug when using SHE, please post about 
 # Authors
 
 [Garry Sotnik](https://www.sosiel.org/), Brooke A. Cassell, and Robert M. Scheller
+
 Mail: contact@sosiel.org
