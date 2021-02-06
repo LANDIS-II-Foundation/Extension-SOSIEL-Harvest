@@ -1,6 +1,6 @@
 # What is the SOSIEL Harvest Extension (SHE)?
 
-The SOSIEL (Self-Organized Social & Inductive Evolutionary Learning) Harvest Extension (SHE) implements boundedly-rational decision-making by one or more agents. Each SOSIEL agent makes decisions using a cognitive architecture that consists of nine cognitive processes that enable each agent to interact with other agents, learn from its own experience and that of others, and make decisions about taking, and then take, (potentially collective) actions. Together, LANDIS-II with SHE has the potential to simulate adaptive management in coevolving coupled human and forest landscapes. 
+The SOSIEL (Self-Organizing Social & Inductive Evolutionary Learning) Harvest Extension (SHE) implements boundedly-rational decision-making by one or more agents. Each SOSIEL agent makes decisions using a cognitive architecture that consists of nine cognitive processes that enable each agent to interact with other agents, learn from its own experience and that of others, and make decisions about taking, and then take, (potentially collective) actions. Together, LANDIS-II with SHE has the potential to simulate adaptive management in coevolving coupled human and forest landscapes. 
 
 # Features
 
