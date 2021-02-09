@@ -36,19 +36,19 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var moduleName = new InputVar<string>("ModuleName");
             var initializationFileName = new InputVar<string>("InitializationFileName");
 
-            while (!CurrentName.Equals("DecisionOptions"))
+            while (!CurrentName.Equals("DecisionOptions") && !CurrentName.Equals("AgentToManagementArea"))
             {
                 var currentLine = new StringReader(CurrentLine);
-                
+
                 ReadValue(moduleName, currentLine);
                 ReadValue(initializationFileName, currentLine);
 
                 switch (moduleName.Value)
                 {
-                    case "SOSIELHarvest":
+                    case "SOSIEL Harvest":
                         sheParameters.SosielInitializationFileName = initializationFileName.Value;
                         break;
-                    case "BiomassHarvest":
+                    case "Biomass Harvest":
                         sheParameters.BiomassHarvestInitializationFileName = initializationFileName.Value;
                         break;
                     case "ManagementAreas":
@@ -62,34 +62,11 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 GetNextLine();
             }
 
-            sheParameters.Prescriptions = ParsePrescriptions();
+            if (CurrentName.Equals("DecisionOptions"))
+                sheParameters.Prescriptions = ParsePrescriptions();
 
-            sheParameters.AgentToManagementAreaList = ParseAgentToManagementAreaList();
-
-            GetNextLine();
-            
-            while (!AtEndOfInput)
-            {
-                var currentLine = new StringReader(CurrentLine);
-                
-                ReadValue(moduleName, currentLine);
-                ReadValue(initializationFileName, currentLine);
-
-                switch (moduleName.Value)
-                {
-                    case "PrescriptionMaps":
-                        sheParameters.PrescriptionMapsOutput = initializationFileName.Value;
-                        break;
-                    case "EventLog":
-                        sheParameters.EventLogOutput = initializationFileName.Value;
-                        break;
-                    case "SummaryLog":
-                        sheParameters.SummaryOutput = initializationFileName.Value;
-                        break;
-                }
-
-                GetNextLine();
-            }
+            if (CurrentName.Equals("AgentToManagementArea"))
+                sheParameters.AgentToManagementAreaList = ParseAgentToManagementAreaList(sheParameters.Mode);
 
             return sheParameters;
         }
@@ -161,7 +138,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return prescriptions;
         }
 
-        private List<AgentToManagementArea> ParseAgentToManagementAreaList()
+        private List<AgentToManagementArea> ParseAgentToManagementAreaList(int mode)
         {
             var agentToManagementList = new List<AgentToManagementArea>();
 
@@ -186,9 +163,12 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 ReadValue(managementArea, currentLine);
                 agentToManagementArea.ManagementAreas.AddRange(managementArea.Value.String.Split(','));
 
-                ReadValue(siteSelectionMethod, currentLine);
-                agentToManagementArea.SiteSelectionMethod =
-                    (SiteSelectionMethod) Enum.Parse(typeof(SiteSelectionMethod), siteSelectionMethod.Value.String);
+                if (mode == 1)
+                {
+                    ReadValue(siteSelectionMethod, currentLine);
+                    agentToManagementArea.SiteSelectionMethod =
+                        (SiteSelectionMethod) Enum.Parse(typeof(SiteSelectionMethod), siteSelectionMethod.Value.String);
+                }
 
                 agentToManagementList.Add(agentToManagementArea);
 

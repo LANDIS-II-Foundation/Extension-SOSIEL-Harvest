@@ -21,7 +21,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public Percentage Percentage { get; }
     }
 
-    public readonly struct Disturbance : IDisturbance
+    public struct Disturbance : IDisturbance
     {
         private readonly SiteHarvestingRule _siteHarvestingRule;
 

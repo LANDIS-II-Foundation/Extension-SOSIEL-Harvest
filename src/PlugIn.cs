@@ -35,7 +35,7 @@ namespace Landis.Extension.SOSIELHarvest
 
         private Mode _mode;
 
-        private static ICore _core;
+        public static ICore Core { get; private set; }
 
         private readonly LogService _logService;
 
@@ -48,10 +48,7 @@ namespace Landis.Extension.SOSIELHarvest
             _logService = new LogService();
             _logService.StartService();
         }
-
-        //---------------------------------------------------------------------
-
-        public static ICore ModelCore => _core;
+        
         //---------------------------------------------------------------------
 
         public override void LoadParameters(string dataFile, ICore mCore)
@@ -59,23 +56,27 @@ namespace Landis.Extension.SOSIELHarvest
 #if DEBUG
             Debugger.Launch();
 #endif
-            _core = mCore;
-            Main.InitializeLib(_core);
+            Core = mCore;
 
-            ModelCore.UI.WriteLine("  Loading parameters from {0}", dataFile);
+            Core.UI.WriteLine("  Loading parameters from {0}", dataFile);
             var sheParameterParser = new SheParameterParser();
             _sheParameters = Data.Load(dataFile, sheParameterParser);
 
-            ModelCore.UI.WriteLine("  Loading parameters from {0}", _sheParameters.SosielInitializationFileName);
+            Core.UI.WriteLine("  Loading parameters from {0}", _sheParameters.SosielInitializationFileName);
             var sosielParameterParser = new SosielParameterParser();
             _sosielParameters = Data.Load(_sheParameters.SosielInitializationFileName, sosielParameterParser);
 
+            if (_sheParameters.Mode == 1)
+            {
+                Main.InitializeLib(Core);
+            }
+            
             if (_sheParameters.Mode == 2)
             {
-                ModelCore.UI.WriteLine("  Loading parameters from {0}",
+                Core.UI.WriteLine("  Loading parameters from {0}",
                     _sheParameters.BiomassHarvestInitializationFileName);
                 _biomassHarvest = new BiomassHarvest.PlugIn();
-                _biomassHarvest.LoadParameters(_sheParameters.BiomassHarvestInitializationFileName, ModelCore);
+                _biomassHarvest.LoadParameters(_sheParameters.BiomassHarvestInitializationFileName, Core);
             }
         }
 
@@ -83,16 +84,16 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void Initialize()
         {
-            ModelCore.UI.WriteLine("Initializing {0}...", Name);
+            Core.UI.WriteLine("Initializing {0}...", Name);
             Timestep = _sheParameters.Timestep;
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
             // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration.
             int iterations = 1;
 
             if (_sheParameters.Mode == 1)
-                _mode = new Mode1(_core, _sheParameters);
+                _mode = new Mode1(Core, _sheParameters);
             else if (_sheParameters.Mode == 2)
-                _mode = new Mode2(_biomassHarvest, _core, _logService);
+                _mode = new Mode2(Core, _sheParameters, _biomassHarvest);
 
             _mode.Initialize();
 
@@ -124,7 +125,7 @@ namespace Landis.Extension.SOSIELHarvest
                 throw;
             }
 
-            if (ModelCore.CurrentTime == ModelCore.EndTime)
+            if (Core.CurrentTime == Core.EndTime)
                 _logService.StopService();
         }
 

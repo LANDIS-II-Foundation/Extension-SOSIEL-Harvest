@@ -6,7 +6,7 @@ using System.Text.RegularExpressions;
 using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Helpers;
-using Landis.Extension.SOSIELHarvest.Services;
+using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Library.HarvestManagement;
 using Landis.Utilities;
 using HarvestManagement = Landis.Library.HarvestManagement;
@@ -16,15 +16,12 @@ namespace Landis.Extension.SOSIELHarvest.Models
     public class Mode2 : Mode
     {
         private readonly BiomassHarvest.PlugIn _biomassHarvest;
-        private readonly ICore _core;
-        private readonly LogService _logService;
         private readonly List<ExtendedPrescription> _extendedPrescriptions;
 
-        public Mode2(BiomassHarvest.PlugIn biomassHarvest, ICore core, LogService logService)
+        public Mode2(ICore core, SheParameters sheParameters, BiomassHarvest.PlugIn biomassHarvest) : base(core,
+            sheParameters)
         {
             _biomassHarvest = biomassHarvest;
-            _core = core;
-            _logService = logService;
             _extendedPrescriptions = new List<ExtendedPrescription>();
         }
 
@@ -38,12 +35,9 @@ namespace Landis.Extension.SOSIELHarvest.Models
             if (managementAreasField == null)
                 throw new Exception();
 
-            var managementAreas =
-                ((IManagementAreaDataset) managementAreasField.GetValue(_biomassHarvest)).ToDictionary(
-                    area => area.MapCode.ToString(), area => area);
-
             Areas = ((IManagementAreaDataset) managementAreasField.GetValue(_biomassHarvest)).ToDictionary(
-                area => area.MapCode.ToString(), managementArea =>
+                area => area.MapCode.ToString(),
+                managementArea =>
                 {
                     var area = new Area();
                     area.Initialize(managementArea);
@@ -55,6 +49,15 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 foreach (var appliedPrescription in biomassHarvestArea.ManagementArea.Prescriptions)
                     _extendedPrescriptions.Add(
                         appliedPrescription.ToExtendedPrescription(biomassHarvestArea.ManagementArea));
+            }
+
+            foreach (var agentToManagementArea in SheParameters.AgentToManagementAreaList)
+            {
+                foreach (var managementAreaName in agentToManagementArea.ManagementAreas)
+                {
+                    var area = Areas[managementAreaName];
+                    area.AssignedAgents.Add(agentToManagementArea.Agent);
+                }
             }
         }
 
@@ -115,7 +118,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                         double siteMaturity = 0;
                         double siteMaturityProportion = 0;
 
-                        foreach (var species in _core.Species)
+                        foreach (var species in Core.Species)
                         {
                             var cohorts = BiomassHarvest.SiteVars.Cohorts[site][species];
 
@@ -128,7 +131,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                             {
                                 siteBiomass += cohort.Biomass;
 
-                                if (cohort.Age >= _core.Species[species.Name].Maturity)
+                                if (cohort.Age >= Core.Species[species.Name].Maturity)
                                     siteSpeciesMaturity += cohort.Biomass;
                             }
 
@@ -150,10 +153,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 manageAreaMaturityProportion /= biomassHarvestArea.StandCount;
 
                 results.ManageAreaBiomass[managementAreaName] =
-                    results.ManageAreaBiomass[managementAreaName] / 100 * _core.CellArea;
+                    results.ManageAreaBiomass[managementAreaName] / 100 * Core.CellArea;
 
                 results.ManageAreaHarvested[managementAreaName] =
-                    results.ManageAreaHarvested[managementAreaName] / 100 * _core.CellArea;
+                    results.ManageAreaHarvested[managementAreaName] / 100 * Core.CellArea;
 
                 results.ManageAreaMaturityPercent[managementAreaName] = 100 * manageAreaMaturityProportion;
             }
@@ -179,7 +182,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
             {
                 case "PercentOfHarvestArea":
                     var newAreaToHarvest = new Percentage(value / 100);
-                    double cuttingMultiplier = areaToHarvest.Value > 0 ? newAreaToHarvest.Value / areaToHarvest.Value : 1;
+                    double cuttingMultiplier =
+                        areaToHarvest.Value > 0 ? newAreaToHarvest.Value / areaToHarvest.Value : 1;
                     areaToHarvest = newAreaToHarvest;
                     newPrescription = appliedPrescription.Prescription.Copy(newName, cuttingMultiplier);
                     break;
@@ -187,7 +191,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     throw new Exception();
             }
 
-            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, managementArea, areaToHarvest, standsToHarvest,
+            _extendedPrescriptions.Add(new ExtendedPrescription(newPrescription, managementArea, areaToHarvest,
+                standsToHarvest,
                 beginTime, endTime));
         }
 

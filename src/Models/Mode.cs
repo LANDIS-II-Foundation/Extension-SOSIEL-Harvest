@@ -1,14 +1,21 @@
 using System.Collections.Generic;
 using System.Linq;
+using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
+using Landis.Extension.SOSIELHarvest.Input;
 using SOSIEL.Entities;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
     public abstract class Mode
     {
-        protected Mode()
+        protected readonly ICore Core;
+        protected readonly SheParameters SheParameters;
+
+        protected Mode(ICore core, SheParameters sheParameters)
         {
+            Core = core;
+            SheParameters = sheParameters;
             Areas = new Dictionary<string, Area>();
         }
 

@@ -12,31 +12,27 @@ namespace Landis.Extension.SOSIELHarvest.Models
 {
     public class Mode1 : Mode
     {
-        private readonly ICore _core;
-        private readonly SheParameters _sheParameters;
         private List<Prescription> _prescriptions;
         private ISiteVar<string> _harvestPrescriptionName;
         private ISiteVar<ISiteCohorts> _siteCohorts;
-        private Dictionary<string, double> _harvested;
+        private readonly Dictionary<string, double> _harvested;
 
-        public Mode1(ICore core, SheParameters sheParameters)
+        public Mode1(ICore core, SheParameters sheParameters) : base(core, sheParameters)
         {
-            _core = core;
-            _sheParameters = sheParameters;
             _harvested = new Dictionary<string, double>();
         }
 
         public override void Initialize()
         {
-            _prescriptions = _sheParameters.Prescriptions;
+            _prescriptions = SheParameters.Prescriptions;
 
-            _harvestPrescriptionName = _core.GetSiteVar<string>("Harvest.PrescriptionName");
+            _harvestPrescriptionName = Core.GetSiteVar<string>("Harvest.PrescriptionName");
 
-            _siteCohorts = _core.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
+            _siteCohorts = Core.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
 
             var maDataSet = new ManagementAreaDataset();
 
-            foreach (var agentToManagementArea in _sheParameters.AgentToManagementAreaList)
+            foreach (var agentToManagementArea in SheParameters.AgentToManagementAreaList)
             {
                 foreach (var managementAreaName in agentToManagementArea.ManagementAreas)
                 {
@@ -45,13 +41,13 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 }
             }
 
-            ManagementAreas.ReadMap(_sheParameters.ManagementAreaFileName, maDataSet);
-            Stands.ReadMap(_sheParameters.StandsFileName);
+            ManagementAreas.ReadMap(SheParameters.ManagementAreaFileName, maDataSet);
+            Stands.ReadMap(SheParameters.StandsFileName);
             SiteVars.GetExternalVars();
             foreach (ManagementArea mgmtArea in maDataSet)
                 mgmtArea.FinishInitialization();
 
-            foreach (var agentToManagementArea in _sheParameters.AgentToManagementAreaList)
+            foreach (var agentToManagementArea in SheParameters.AgentToManagementAreaList)
             {
                 foreach (var managementAreaName in agentToManagementArea.ManagementAreas)
                 {
@@ -76,7 +72,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
             foreach (var agent in Agents)
             {
-                var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
+                var areas = SheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
                     .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
 
                 foreach (var area in areas)
@@ -107,7 +103,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
             foreach (var agent in Agents)
             {
-                var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
+                var areas = SheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
                     .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
 
                 foreach (var area in areas)
@@ -127,7 +123,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                             double siteMaturity = 0;
                             double siteMaturityProportion;
 
-                            foreach (var species in _core.Species)
+                            foreach (var species in Core.Species)
                             {
                                 var cohorts = _siteCohorts[site][species];
 
@@ -140,7 +136,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                                 {
                                     siteBiomass += cohort.Biomass;
 
-                                    if (cohort.Age >= _core.Species[species.Name].Maturity)
+                                    if (cohort.Age >= Core.Species[species.Name].Maturity)
                                         siteSpeciesMaturity += cohort.Biomass;
                                 }
 
@@ -160,10 +156,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     manageAreaMaturityProportion /= area.ManagementArea.StandCount;
 
                     results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] =
-                        results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] / 100 * _core.CellArea;
+                        results.ManageAreaBiomass[HarvestResults.GetKey(1, agent, area)] / 100 * Core.CellArea;
 
                     results.ManageAreaHarvested[HarvestResults.GetKey(1, agent, area)] =
-                        _harvested[HarvestResults.GetKey(1, agent, area)] * _core.CellArea;
+                        _harvested[HarvestResults.GetKey(1, agent, area)] * Core.CellArea;
 
                     results.ManageAreaMaturityPercent[HarvestResults.GetKey(1, agent, area)] =
                         100 * manageAreaMaturityProportion;
@@ -183,7 +179,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             foreach (var agent in Agents)
             {
-                var areas = _sheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
+                var areas = SheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
                     .ManagementAreas.Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
 
                 foreach (var area in areas)
