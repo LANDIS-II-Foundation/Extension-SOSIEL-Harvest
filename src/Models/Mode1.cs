@@ -70,6 +70,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
             GenerateNewPrescriptions(sosielData);
 
+            Core.UI.WriteLine("Run Mode1 harvesting ...");
+
             foreach (var agent in Agents)
             {
                 var areas = SheParameters.AgentToManagementAreaList.First(map => map.Agent.Equals(agent.Id))
@@ -83,6 +85,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     var harvestManager =
                         new HarvestManager(area, selectedPrescriptions, _harvestPrescriptionName, _siteCohorts);
                     _harvested[HarvestResults.GetKey(1, agent, area)] = harvestManager.Harvest();
+                    Core.UI.WriteLine($"\t\t{agent.Id}_{area.Name}: harvested {harvestManager.HarvestedSitesNumber} sites");
                 }
             }
         }

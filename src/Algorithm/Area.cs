@@ -26,7 +26,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         public string Name { get; private set; }
 
         public List<string> AssignedAgents { get; set; }
-        
+
         public ManagementArea ManagementArea { get; private set; }
 
         public void Initialize(ManagementArea managementArea)
@@ -46,9 +46,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             return _sites[index];
         }
 
-        public List<ActiveSite> GetActiveSites()
+        public Dictionary<Location, ActiveSite> GetActiveSites()
         {
-            return _sites.ToList();
+            return _sites.ToDictionary(site => site.Location, site => site);
         }
     }
 }
