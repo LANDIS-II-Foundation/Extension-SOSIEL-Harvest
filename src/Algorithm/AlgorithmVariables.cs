@@ -20,5 +20,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         public const string StdDev = "StdDev";
 
         public const string Group = "Group";
+
+        public const string TargetHarvestSize = "TargetHarvestSize";
     }
 }

@@ -3,6 +3,7 @@
 /// Authors: Multiple.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
+using System;
 using System.Collections.Generic;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
@@ -31,27 +32,112 @@ namespace Landis.Extension.SOSIELHarvest.Input
             ReadVar(timestep);
             sheParameters.Timestep = timestep.Value;
 
-            InputVar<string> moduleName = new InputVar<string>("ModuleName");
-            InputVar<string> initializationFileName = new InputVar<string>("InitializationFileName");
+            var moduleName = new InputVar<string>("ModuleName");
+            var initializationFileName = new InputVar<string>("InitializationFileName");
 
-            var currentLine = new StringReader(CurrentLine);
-            ReadValue(moduleName, currentLine);
-            ReadValue(initializationFileName, currentLine);
-            sheParameters.SosielInitializationFileName = initializationFileName.Value;
+            while (!CurrentName.Equals("DecisionOptions") && !CurrentName.Equals("AgentToManagementArea"))
+            {
+                var currentLine = new StringReader(CurrentLine);
 
-            GetNextLine();
+                ReadValue(moduleName, currentLine);
+                ReadValue(initializationFileName, currentLine);
 
-            currentLine = new StringReader(CurrentLine);
-            ReadValue(moduleName, currentLine);
-            ReadValue(initializationFileName, currentLine);
-            sheParameters.BiomassHarvestInitializationFileName = initializationFileName.Value;
+                switch (moduleName.Value)
+                {
+                    case "SOSIEL Harvest":
+                        sheParameters.SosielInitializationFileName = initializationFileName.Value;
+                        break;
+                    case "Biomass Harvest":
+                        sheParameters.BiomassHarvestInitializationFileName = initializationFileName.Value;
+                        break;
+                    case "ManagementAreas":
+                        sheParameters.ManagementAreaFileName = initializationFileName.Value;
+                        break;
+                    case "Stands":
+                        sheParameters.StandsFileName = initializationFileName.Value;
+                        break;
+                }
 
-            sheParameters.AgentToManagementAreaList = ParseAgentToManagementAreaList();
+                GetNextLine();
+            }
+
+            if (CurrentName.Equals("DecisionOptions"))
+                sheParameters.Prescriptions = ParsePrescriptions();
+
+            if (CurrentName.Equals("AgentToManagementArea"))
+                sheParameters.AgentToManagementAreaList = ParseAgentToManagementAreaList(sheParameters.Mode);
 
             return sheParameters;
         }
 
-        private List<AgentToManagementArea> ParseAgentToManagementAreaList()
+        private List<Prescription> ParsePrescriptions()
+        {
+            var prescriptions = new List<Prescription>();
+
+            while (CurrentName != "DecisionOptions")
+                GetNextLine();
+
+            while (CurrentName != "DO")
+                GetNextLine();
+
+            while (CurrentName == "DO")
+            {
+                var moduleName = new InputVar<string>("DO");
+                ReadVar(moduleName);
+
+                var targetHarvestSize = new InputVar<float>("TargetHarvestSize");
+                ReadVar(targetHarvestSize);
+
+                var prescription = new Prescription(moduleName.Value) {TargetHarvestSize = targetHarvestSize.Value};
+
+                while (CurrentName != "ForestType")
+                    GetNextLine();
+
+                GetNextLine();
+
+                while (CurrentName != "CohortsRemoved")
+                {
+                    var currentLine = new StringReader(CurrentLine);
+                    var speciesName = new InputVar<string>("SpeciesName");
+                    var speciesAgeString = new InputVar<string>("SpeciesAge");
+                    var speciesPercentString = new InputVar<float>("SpeciesPercent");
+                    ReadValue(speciesName, currentLine);
+                    ReadValue(speciesAgeString, currentLine);
+                    ReadValue(speciesPercentString, currentLine);
+                    var age = speciesAgeString.Value.String.Split('-');
+                    var percent = new Percentage(speciesPercentString.Value / 100);
+                    var selectionRule = new SiteSelectionRule(speciesName.Value, int.Parse(age[0]), int.Parse(age[1]),
+                        percent);
+                    prescription.AddSiteSelectionRule(selectionRule);
+                    GetNextLine();
+                }
+
+                GetNextLine();
+
+                while (CurrentName != "AgentToManagementArea" && CurrentName != "DO")
+                {
+                    var currentLine = new StringReader(CurrentLine);
+                    var speciesName = new InputVar<string>("SpeciesName");
+                    var speciesAgeString = new InputVar<string>("SpeciesAge");
+                    var speciesPercentString = new InputVar<float>("SpeciesPercent");
+                    ReadValue(speciesName, currentLine);
+                    ReadValue(speciesAgeString, currentLine);
+                    ReadValue(speciesPercentString, currentLine);
+                    var age = speciesAgeString.Value.String.Split('-');
+                    var percent = new Percentage(speciesPercentString.Value / 100);
+                    var harvestingRule = new SiteHarvestingRule(speciesName.Value, int.Parse(age[0]), int.Parse(age[1]),
+                        percent);
+                    prescription.AddSiteHarvestingRule(harvestingRule);
+                    GetNextLine();
+                }
+
+                prescriptions.Add(prescription);
+            }
+
+            return prescriptions;
+        }
+
+        private List<AgentToManagementArea> ParseAgentToManagementAreaList(int mode)
         {
             var agentToManagementList = new List<AgentToManagementArea>();
 
@@ -62,8 +148,9 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             var agent = new InputVar<string>("Agent");
             var managementArea = new InputVar<string>("ManagementArea");
+            var siteSelectionMethod = new InputVar<string>("SiteSelectionMethod");
 
-            while (!AtEndOfInput)
+            while (!AtEndOfInput && CurrentName != "OUTPUTS")
             {
                 var agentToManagementArea = new AgentToManagementArea();
 
@@ -73,7 +160,14 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 agentToManagementArea.Agent = agent.Value;
 
                 ReadValue(managementArea, currentLine);
-                agentToManagementArea.ManagementArea = managementArea.Value;
+                agentToManagementArea.ManagementAreas.AddRange(managementArea.Value.String.Split(','));
+
+                if (mode == 1)
+                {
+                    ReadValue(siteSelectionMethod, currentLine);
+                    agentToManagementArea.SiteSelectionMethod =
+                        (SiteSelectionMethod) Enum.Parse(typeof(SiteSelectionMethod), siteSelectionMethod.Value.String);
+                }
 
                 agentToManagementList.Add(agentToManagementArea);
 

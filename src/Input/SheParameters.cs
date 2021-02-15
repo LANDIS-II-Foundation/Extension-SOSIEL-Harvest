@@ -40,7 +40,19 @@ namespace Landis.Extension.SOSIELHarvest.Input
         public string SosielInitializationFileName { get; set; }
 
         public string BiomassHarvestInitializationFileName { get; set; }
+        
+        public string ManagementAreaFileName { get; set; }
+
+        public string StandsFileName { get; set; }
 
         public List<AgentToManagementArea> AgentToManagementAreaList { get; set; }
+
+        public List<Prescription> Prescriptions { get; set; }
+        
+        public string PrescriptionMapsOutput { get; set; }
+        
+        public string EventLogOutput { get; set; }
+        
+        public string SummaryOutput { get; set; }
     }
 }

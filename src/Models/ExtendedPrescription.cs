@@ -5,12 +5,13 @@
 
 using Landis.Library.HarvestManagement;
 using Landis.Utilities;
+using HarvestManagement = Landis.Library.HarvestManagement;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
     public class ExtendedPrescription
     {
-        public ExtendedPrescription(Prescription prescription, ManagementArea managementArea, Percentage harvestAreaPercent,
+        public ExtendedPrescription(HarvestManagement.Prescription prescription, ManagementArea managementArea, Percentage harvestAreaPercent,
             Percentage harvestStandsAreaPercent, 
             int startTime, int endTime)
         {
@@ -22,7 +23,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             EndTime = endTime;
         }
 
-        public Prescription Prescription { get; }
+        public HarvestManagement.Prescription Prescription { get; }
         public ManagementArea ManagementArea { get; }
 
         public Percentage HarvestAreaPercent { get; }

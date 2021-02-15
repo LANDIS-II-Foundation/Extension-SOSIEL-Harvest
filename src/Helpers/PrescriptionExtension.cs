@@ -153,7 +153,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         {
             var tableCopy = new EconomicRankTable();
 
-            foreach (var species in PlugIn.ModelCore.Species)
+            foreach (var species in PlugIn.Core.Species)
                 tableCopy[species] = new EconomicRankParameters(rankTable[species].Rank, rankTable[species].MinimumAge);
 
             return tableCopy;

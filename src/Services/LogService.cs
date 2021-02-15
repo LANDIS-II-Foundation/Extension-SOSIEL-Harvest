@@ -26,7 +26,7 @@ namespace Landis.Extension.SOSIELHarvest.Services
 
         public void WriteLine(string logEntry)
         {
-            PlugIn.ModelCore.UI.WriteLine(logEntry);
+            PlugIn.Core.UI.WriteLine(logEntry);
             _streamWriter.WriteLine(logEntry);
             _streamWriter.Flush();
         }

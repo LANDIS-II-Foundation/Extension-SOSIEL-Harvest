@@ -3,7 +3,7 @@
 /// Authors: Multiple.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Landis.Extension.SOSIELHarvest.Models;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
@@ -11,8 +11,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
     /// <summary>
     /// The model used to pass external data.
     /// </summary>
-    public class AlgorithmModel
+    public class SosielData
     {
+        public SosielData(int mode)
+        {
+            Mode = mode;
+        }
+
+        public int Mode { get; }
+
         public List<NewDecisionOptionModel> NewDecisionOptions { get; set; }
 
         // Management area to selected decision options list.
