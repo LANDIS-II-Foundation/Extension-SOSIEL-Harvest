@@ -1,4 +1,9 @@
-﻿using System;
+﻿/// Name: LogService.cs
+/// Description: 
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System;
 using System.IO;
 
 namespace Landis.Extension.SOSIELHarvest.Services

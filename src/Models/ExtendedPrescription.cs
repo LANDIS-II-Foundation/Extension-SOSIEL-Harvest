@@ -1,4 +1,9 @@
-﻿using Landis.Library.HarvestManagement;
+﻿/// Name: ExtendedPrescription.cs
+/// Description:
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using Landis.Library.HarvestManagement;
 using Landis.Utilities;
 using HarvestManagement = Landis.Library.HarvestManagement;
 

@@ -1,4 +1,9 @@
-﻿using CsvHelper.Configuration.Attributes;
+﻿/// Name: AgentGoalAttribute.cs
+/// Description:
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using CsvHelper.Configuration.Attributes;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {

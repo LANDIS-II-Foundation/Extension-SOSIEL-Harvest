@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+/// Name: AgentToManagementArea.cs
+/// Description:
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Collections.Generic;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {

@@ -1,4 +1,9 @@
-﻿using System.Collections.Generic;
+/// Name: HarvestResults.cs
+/// Description:
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+using System.Collections.Generic;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using SOSIEL.Entities;
 

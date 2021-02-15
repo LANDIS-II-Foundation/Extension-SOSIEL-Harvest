@@ -1,4 +1,9 @@
-﻿namespace Landis.Extension.SOSIELHarvest.Models
+﻿/// Name: GoalAttribute.cs
+/// Description:
+/// Authors: Multiple.
+/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+
+namespace Landis.Extension.SOSIELHarvest.Models
 {
     public class GoalAttribute
     {
