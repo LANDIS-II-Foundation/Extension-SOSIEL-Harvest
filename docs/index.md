@@ -11,7 +11,7 @@ The SOSIEL (Self-Organizing Social & Inductive Evolutionary Learning) Harvest Ex
 # Release Notes
 
 - Latest official release: Version 1.1.12 — February 2021
-- [SHE User Guide]( https://docs.google.com/document/d/1YBKuFaQ5Hsh3OjYsMJoXoHgtg7gv8Us0wZjcTaqSCOc/edit?usp=sharing).
+- [SHE User Guide](https://docs.google.com/document/d/1YBKuFaQ5Hsh3OjYsMJoXoHgtg7gv8Us0wZjcTaqSCOc/edit?usp=sharing).
 - Full release details found in the SHE User Guide and on GitHub.
 
 # Requirements
@@ -27,7 +27,7 @@ Version 1.1.12 can be downloaded [here]( https://github.com/LANDIS-II-Foundation
 
 # Citation
 
-Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (Submitted) A new agent-based model provides insight into assumptions in modeling forest management under deep uncertainty.
+Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (Submitted) [A new agent-based model provides insight into assumptions in modeling forest management under deep uncertainty](https://assets.researchsquare.com/files/rs-192142/v1/e85672a6-95c6-463c-af1e-67df8b7e280c.pdf).
 
 # Example Files
 
