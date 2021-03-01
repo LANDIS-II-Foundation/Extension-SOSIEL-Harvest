@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <RootNamespace>Landis.Extension.SOSIELHarvest</RootNamespace>
-    <AssemblyName>Landis.Extension.SOSIELHarvest-v1</AssemblyName>
-    <AssemblyTitle>Landis.Extension.SOSIELHuman-v2</AssemblyTitle>
+    <AssemblyName>Landis.Extension.SOSIELHarvest-v2</AssemblyName>
+    <AssemblyTitle>Landis.Extension.SOSIELHarvest-v2</AssemblyTitle>
     <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
-    <AssemblyProduct>Landis.Extension.SOSIELHuman-v2</AssemblyProduct>
+    <AssemblyProduct>Landis.Extension.SOSIELHarvest-v2</AssemblyProduct>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
-    <AssemblyVersion>1.1.12</AssemblyVersion>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest</RepositoryUrl>
@@ -16,13 +16,13 @@
     <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
     <NeutralLanguage>English</NeutralLanguage>
     <Authors>Garry Sotnik</Authors>
-    <Product>Landis.Extension.SOSIELHarvest-v1</Product>
+    <Product>Landis.Extension.SOSIELHarvest-v2</Product>
     <Copyright>Landis-II-Foundation</Copyright>
-    <Version>1.1.12</Version>
+    <Version>2.0</Version>
     <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
     <Description>SOSIEL Harvest Extension</Description>
     <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
-    <FileVersion>1.1.11</FileVersion>
+    <FileVersion>2.0.0</FileVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
@@ -33,8 +33,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="12.2.2" />
+    <PackageReference Include="CsvHelper" Version="19.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\sosiel-harvest-sosiel-extension-support\sosiel-harvest-sosiel-extension-support.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -48,31 +52,31 @@
       <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.BiomassCohorts-v3.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.BiomassHarvest-v3">
-      <HintPath>lib\Landis.Library.BiomassHarvest-v3.dll</HintPath>
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.BiomassHarvest-v3.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Cohorts-v2">
       <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.Cohorts-v2.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.HarvestManagement-v4">
-      <HintPath>lib\Landis.Library.HarvestManagement-v4.dll</HintPath>
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.HarvestManagement-v4.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.SiteHarvest-v2">
-      <HintPath>lib\Landis.Library.SiteHarvest-v2.dll</HintPath>
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.SiteHarvest-v2.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Succession-v8">
-      <HintPath>lib\Landis.Library.Succession-v8.dll</HintPath>
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.Succession-v8.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Core">
-      <HintPath>lib\Landis.Core.dll</HintPath>
+      <HintPath>C:\Program Files\LANDIS-II-v7\v7\Landis.Core.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Utilities">
-      <HintPath>lib\Landis.Utilities.dll</HintPath>
+      <HintPath>C:\Program Files\LANDIS-II-v7\v7\Landis.Utilities.dll</HintPath>
     </Reference>
     <Reference Include="Landis.SpatialModeling">
-      <HintPath>lib\Landis.SpatialModeling.dll</HintPath>
+      <HintPath>C:\Program Files\LANDIS-II-v7\v7\Landis.SpatialModeling.dll</HintPath>
     </Reference>
-    <Reference Include="SOSIEL-v2.4.5">
-      <HintPath>lib\SOSIEL-v2.4.5.dll</HintPath>
+    <Reference Include="SOSIEL-v3.0.0, Version=3.0.0.0, Culture=neutral, PublicKeyToken=null">
+      <HintPath>..\lib\SOSIEL-v3.0.0.dll</HintPath>
     </Reference>
   </ItemGroup>
 
@@ -81,5 +85,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-</Project>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(ProjectDir)postbuild.bat" />
+  </Target>
+
+</Project>

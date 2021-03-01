@@ -420,9 +420,10 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 {
                     var goal = new Goal
                     {
+                        Index = goals.Count,
                         Name = archetypeGoal.Name,
                         ReferenceVariable = archetypeGoal.ReferenceVariable,
-                        Tendency = archetypeGoal.GoalTendency,
+                        Type = archetypeGoal.GoalType,
                         IsCumulative = archetypeGoal.IsCumulative,
                         ChangeFocalValueOnPrevious = archetypeGoal.ChangeValueOnPrior
                         //FocalValue =  now it is agent specific value if i'm not mistaken

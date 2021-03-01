@@ -1,9 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.852
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30804.86
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sosiel-harvest", "sosiel-harvest.csproj", "{3FB3C0CD-9001-4B0C-B97F-F07452B91560}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sosiel-harvest", "sosiel-harvest\sosiel-harvest.csproj", "{3FB3C0CD-9001-4B0C-B97F-F07452B91560}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sosiel-harvest-sosiel-extension-support", "sosiel-harvest-sosiel-extension-support\sosiel-harvest-sosiel-extension-support.csproj", "{A15438E6-D815-4744-8737-4790DDEB6089}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sosiel-harvest-sosiel-vbgp-extension", "sosiel-harvest-sosiel-vbgp-extension\sosiel-harvest-sosiel-vbgp-extension.csproj", "{B999BCA3-0D79-4DC7-8388-7889F7CA76E6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{3FB3C0CD-9001-4B0C-B97F-F07452B91560}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3FB3C0CD-9001-4B0C-B97F-F07452B91560}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3FB3C0CD-9001-4B0C-B97F-F07452B91560}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A15438E6-D815-4744-8737-4790DDEB6089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A15438E6-D815-4744-8737-4790DDEB6089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A15438E6-D815-4744-8737-4790DDEB6089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A15438E6-D815-4744-8737-4790DDEB6089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B999BCA3-0D79-4DC7-8388-7889F7CA76E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B999BCA3-0D79-4DC7-8388-7889F7CA76E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B999BCA3-0D79-4DC7-8388-7889F7CA76E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B999BCA3-0D79-4DC7-8388-7889F7CA76E6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

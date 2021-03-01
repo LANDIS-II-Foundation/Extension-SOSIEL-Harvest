@@ -1,0 +1,19 @@
+{
+  "category": "GoalPrioritizing",
+  "id": "SOSIEL.VBGP",
+  "name": "Value-based Goal Prioritizing Process",
+  "description": [ "An alternative goal prioritizing algorithm." ],
+  "assemblyPath": ".\\Landis.Extension.SOSIELHarvest.SOSIELVBGPExtension-v2.dll",
+  "configurable": true,
+  "configurationDirective": "ValueBasedGoalPrioritizing",
+  "customProperties": [
+    {
+      "key": "dumpGainsAndLosses",
+      "value": "false",
+      "comments": [
+        "This is sample custom property",
+        "Set this property to 'true' to see detailed configuration dump in the log"
+      ]
+    }
+  ]
+}

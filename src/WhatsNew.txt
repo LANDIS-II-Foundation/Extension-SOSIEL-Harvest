@@ -1,3 +1,18 @@
+Integration 2.0.0.0 2021-01-05
+
+Key changes:
+ - Refactored project layout
+ - Upgraded to SOSIEL 3.0
+ - Upgraded to CsvHelper 19.0.0
+ - Now need to ship following additional assemblies:
+   - Microsoft.Bcl.AsyncInterfaces.dll 
+   - Microsoft.Bcl.HashCode.dll
+
+New features:
+ - SOSIEL extensions interface (for now only for the goal prioritizing)
+ - Added VBGP (Value-Based Goal Prioritizing) extension
+
+
 Integration 1.0.7.6841 2018-09-24
 
 New features:

@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Landis.Extension.SOSIELHarvest</RootNamespace>
+    <AssemblyName>Landis.Extension.SOSIELHarvest.SOSIELExtensionSupport</AssemblyName>
+    <AssemblyTitle>Landis.Extension.SOSIELHarvest.SOSIELExtensionSupport</AssemblyTitle>
+    <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
+    <AssemblyProduct>Landis.Extension.SOSIELHarvest-v2</AssemblyProduct>
+    <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
+    <AssemblyVersion>2.0.0</AssemblyVersion>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
+    <NeutralLanguage>English</NeutralLanguage>
+    <Authors>Garry Sotnik</Authors>
+    <Product>Landis.Extension.SOSIELHarvest-v2</Product>
+    <Copyright>Landis-II-Foundation</Copyright>
+    <Version>2.0</Version>
+    <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
+    <Description>SOSIEL Harvest Extension</Description>
+    <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
+    <FileVersion>2.0.0</FileVersion>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="$(ProjectDir)postbuild.bat" />
+  </Target>
+
+</Project>

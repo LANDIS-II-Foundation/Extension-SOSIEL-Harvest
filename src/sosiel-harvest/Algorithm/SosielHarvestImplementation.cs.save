@@ -5,14 +5,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
+
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Extension.SOSIELHarvest.Output;
+using Landis.Extension.SOSIELHarvest.Services;
+
 using Newtonsoft.Json;
+
 using SOSIEL.Algorithm;
 using SOSIEL.Configuration;
 using SOSIEL.Entities;
@@ -31,6 +34,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
         public Probabilities Probabilities => probabilities;
 
+        private readonly LogService _log;
         private ConfigurationModel configuration;
         private SosielData _algorithmModel;
 
@@ -39,18 +43,21 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <summary>
         /// Initializes Luhy lite implementation
         /// </summary>
-        /// <param name="numberOfIterations">Number of internal iterations</param>
-        /// <param name="configuration">Parsed agent configuration</param>
-        /// <param name="areas">Enumerable of active areas from Landis</param>
-        public SosielHarvestAlgorithm(int numberOfIterations,
+        /// <param name="log">Logging service.</param>
+        /// <param name="numberOfIterations">Number of internal iterations.</param>
+        /// <param name="configuration">Parsed agent configuration.</param>
+        /// <param name="areas">Enumerable of active areas from Landis.</param>
+        /// <param name="goalPrioritiing">Goal prioritizing algorithm</param>
+        public SosielHarvestImplementation(LogService log, int numberOfIterations,
             ConfigurationModel configuration,
-            IEnumerable<Area> areas)
+            IEnumerable<Area> areas, IGoalPrioritizing goalPrioritizing)
             : base(numberOfIterations,
-                  ProcessesConfiguration.GetProcessesConfiguration(configuration.AlgorithmConfiguration.CognitiveLevel))
+                  ProcessesConfiguration.GetProcessesConfiguration(configuration.AlgorithmConfiguration.CognitiveLevel),
+                  goalPrioritizing)
         {
+            _log = log;
             this.configuration = configuration;
-
-            this.activeAreas = areas.ToArray();
+            activeAreas = areas.ToArray();
         }
 
         /// <summary>
@@ -112,17 +119,17 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         {
             var probabilitiesList = new Probabilities();
 
-            foreach (var probabilityElementConfiguration in configuration.AlgorithmConfiguration.ProbabilitiesConfiguration)
+            int i = 0;
+            foreach (var config in configuration.AlgorithmConfiguration.ProbabilitiesConfiguration)
             {
-                var variableType = VariableTypeHelper.ConvertStringToType(probabilityElementConfiguration.VariableType);
+                ++i;
+                var variableType = VariableTypeHelper.ConvertStringToType(config.VariableType);
                 var parseTableMethod = ReflectionHelper.GetGenerecMethod(variableType, typeof(ProbabilityTableParser), "Parse");
-
-                dynamic table = parseTableMethod.Invoke(null, new object[] { probabilityElementConfiguration.FilePath, probabilityElementConfiguration.WithHeader });
+                dynamic table = parseTableMethod.Invoke(null, new object[] { config.FilePath, config.WithHeader });
 
                 var addToListMethod =
                     ReflectionHelper.GetGenerecMethod(variableType, typeof(Probabilities), "AddProbabilityTable");
-
-                addToListMethod.Invoke(probabilitiesList, new object[] { probabilityElementConfiguration.Variable, table });
+                addToListMethod.Invoke(probabilitiesList, new object[] { config.Variable, table });
             }
 
             probabilities = probabilitiesList;
@@ -191,7 +198,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         public SosielData Run(SosielData data)
         {
 #if DEBUG
-            Debugger.Launch();
+            System.Diagnostics.Debugger.Launch();
 #endif
             RunSosiel(activeAreas);
 
@@ -363,12 +370,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
                 var data = JsonConvert.SerializeObject(iterations.Last.Value, settings);
-
                 File.WriteAllText($"output_SOSIEL_Harvest_DUMP_{iteration}.json", data);
             }
-            catch(Exception e)
+            catch(Exception)
             {
-
+                // ignore
             }
 
 

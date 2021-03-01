@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
 
@@ -16,7 +17,14 @@ namespace Landis.Extension.SOSIELHarvest.Input
     /// </summary>
     public class SheParameterParser : TextParser<SheParameters>
     {
-        public override string LandisDataValue => PlugIn.ExtensionName;
+        readonly string _extensionName;
+
+        public override string LandisDataValue => _extensionName;
+
+        public SheParameterParser(string extensionName)
+        {
+            _extensionName = extensionName;
+        }
 
         protected override SheParameters Parse()
         {

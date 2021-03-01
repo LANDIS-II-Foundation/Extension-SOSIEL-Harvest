@@ -4,8 +4,8 @@
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System;
-using System.Diagnostics;
 using System.Linq;
+
 using Landis.Core;
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Configuration;
@@ -33,10 +33,11 @@ namespace Landis.Extension.SOSIELHarvest
 
 
         private Mode _mode;
+        //private string _outputFolder;
 
         public static ICore Core { get; private set; }
 
-        private readonly LogService _logService;
+        private LogService _log;
 
 
         //---------------------------------------------------------------------
@@ -44,38 +45,57 @@ namespace Landis.Extension.SOSIELHarvest
         public PlugIn()
             : base(ExtensionName, ExtType)
         {
-            _logService = new LogService();
-            _logService.StartService();
+            _log = new LogService();
+            _log.StartService();
         }
         
         //---------------------------------------------------------------------
 
         public override void LoadParameters(string dataFile, ICore mCore)
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
-            Core = mCore;
+
+
+            try
+            {
 
             Core.UI.WriteLine("  Loading parameters from {0}", dataFile);
-            var sheParameterParser = new SheParameterParser();
-            _sheParameters = Data.Load(dataFile, sheParameterParser);
+                var sheParameterParser = new SheParameterParser(ExtensionName);
+                _sheParameters = Data.Load(dataFile, sheParameterParser);
 
             Core.UI.WriteLine("  Loading parameters from {0}", _sheParameters.SosielInitializationFileName);
-            var sosielParameterParser = new SosielParameterParser();
-            _sosielParameters = Data.Load(_sheParameters.SosielInitializationFileName, sosielParameterParser);
+                var sosielParameterParser = new SosielParameterParser(_log);
+                _sosielParameters = Data.Load(_sheParameters.SosielInitializationFileName, sosielParameterParser);
 
             if (_sheParameters.Mode == 1)
             {
                 Main.InitializeLib(Core);
             }
             
-            if (_sheParameters.Mode == 2)
-            {
+                if (_sheParameters.Mode == 2)
+                {
                 Core.UI.WriteLine("  Loading parameters from {0}",
-                    _sheParameters.BiomassHarvestInitializationFileName);
-                _biomassHarvest = new BiomassHarvest.PlugIn();
+                        _sheParameters.BiomassHarvestInitializationFileName);
+                    _biomassHarvest = new BiomassHarvest.PlugIn();
                 _biomassHarvest.LoadParameters(_sheParameters.BiomassHarvestInitializationFileName, Core);
+                }
+            }
+            catch (Exception ex)
+            {
+                var msg = $"\nException: {ex.GetType().FullName}: {ex.Message}\nStack trace:\n{ex.StackTrace}";
+                if (ex.InnerException != null)
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.Append(msg);
+                    for (Exception innerEx = ex.InnerException; innerEx != null; innerEx = innerEx.InnerException)
+                    {
+                        sb.Append($"\n... caused by: {innerEx.GetType().FullName}: {innerEx.Message}\nStack trace:\n{innerEx.StackTrace}");
+                    }
+                    sb.Append("\n");
+                    msg = sb.ToString();
+                }
+                _log.WriteLine(msg);
+                _log.StopService();
+                throw;
             }
         }
 
@@ -84,10 +104,12 @@ namespace Landis.Extension.SOSIELHarvest
         public override void Initialize()
         {
             Core.UI.WriteLine("Initializing {0}...", Name);
+
             Timestep = _sheParameters.Timestep;
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
             // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration.
             int iterations = 1;
+
 
             if (_sheParameters.Mode == 1)
                 _mode = new Mode1(Core, _sheParameters);
@@ -117,29 +139,41 @@ namespace Landis.Extension.SOSIELHarvest
                 RunSosiel();
                 _mode.Harvest(_sosielData);
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                _logService.WriteLine("Exception: " + e.Message);
-                _logService.StopService();
+                var msg = $"\nException: {ex.GetType().FullName}: {ex.Message}\nStack trace:\n{ex.StackTrace}";
+                if (ex.InnerException != null)
+                {
+                    var sb = new System.Text.StringBuilder();
+                    sb.Append(msg);
+                    for (var innerEx = ex.InnerException; innerEx != null; innerEx = innerEx.InnerException)
+                    {
+                        sb.Append($"\n... caused by: {innerEx.GetType().FullName}: {innerEx.Message}\nStack trace:\n{innerEx.StackTrace}");
+                    }
+                    sb.Append("\n");
+                    msg = sb.ToString();
+                }
+                _log.WriteLine(msg);
+                _log.StopService();
                 throw;
             }
 
             if (Core.CurrentTime == Core.EndTime)
-                _logService.StopService();
+                _log.StopService();
         }
 
         private void RunSosiel()
         {
-            _logService.WriteLine("\tRun Sosiel with parameters:");
+            _log.WriteLine("\tRun Sosiel with parameters:");
             foreach (var pair in _sosielData.HarvestResults.ManageAreaBiomass)
             {
-                _logService.WriteLine(
+                _log.WriteLine(
                     $"\tArea:{pair.Key}");
-                _logService.WriteLine(
+                _log.WriteLine(
                     $"\t\t{"Biomass:",-20}{_sosielData.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
-                _logService.WriteLine(
+                _log.WriteLine(
                     $"\t\t{"Harvested:",-20}{_sosielData.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
-                _logService.WriteLine(
+                _log.WriteLine(
                     $"\t\t{"MaturityPercent:",-20}{_sosielData.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
             }
 
@@ -147,29 +181,29 @@ namespace Landis.Extension.SOSIELHarvest
             
             if (_sosielData.NewDecisionOptions.Any())
             {
-                _logService.WriteLine("\tSosiel generated new prescriptions:");
-                _logService.WriteLine($"\t\t{"Area",-10}{"Name",-20}{"Based on",-20}{"Variable",-40}{"Value",10}");
+                _log.WriteLine("\tSosiel generated new prescriptions:");
+                _log.WriteLine($"\t\t{"Area",-10}{"Name",-20}{"Based on",-20}{"Variable",-40}{"Value",10}");
 
                 foreach (var decisionOption in _sosielData.NewDecisionOptions)
                 {
-                    _logService.WriteLine(
+                    _log.WriteLine(
                         $"\t\t{decisionOption.ManagementArea,-10}{decisionOption.Name,-20}{decisionOption.BasedOn,-20}{decisionOption.ConsequentVariable,-40}{decisionOption.ConsequentValue,10}");
                 }
                 
-                _logService.WriteLine($"\tSosiel selected the following prescriptions:");
-                _logService.WriteLine($"\t\t{"Area",-10}Prescriptions");
+                _log.WriteLine($"\tSosiel selected the following prescriptions:");
+                _log.WriteLine($"\t\t{"Area",-10}Prescriptions");
 
                 foreach (var selectedDecisionPair in _sosielData.SelectedDecisions)
                 {
                     if (selectedDecisionPair.Value.Count == 0)
                     {
-                        _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
+                        _log.WriteLine($"\t\t{selectedDecisionPair.Key,-10}none");
                         continue;
                     }
                     
                     var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
 
-                    _logService.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
+                    _log.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
                 }
             }
         }

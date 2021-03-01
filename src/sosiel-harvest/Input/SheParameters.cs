@@ -4,6 +4,8 @@
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System.Collections.Generic;
+using System.Globalization;
+
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
 
