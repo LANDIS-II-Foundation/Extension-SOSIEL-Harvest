@@ -52,9 +52,6 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void LoadParameters(string dataFile, ICore mCore)
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
             Core = mCore;
 
             Core.UI.WriteLine("  Loading parameters from {0}", dataFile);
@@ -62,7 +59,7 @@ namespace Landis.Extension.SOSIELHarvest
             _sheParameters = Data.Load(dataFile, sheParameterParser);
 
             Core.UI.WriteLine("  Loading parameters from {0}", _sheParameters.SosielInitializationFileName);
-            var sosielParameterParser = new SosielParameterParser();
+            var sosielParameterParser = new SosielParameterParser(_logService);
             _sosielParameters = Data.Load(_sheParameters.SosielInitializationFileName, sosielParameterParser);
 
             if (_sheParameters.Mode == 1)
@@ -72,11 +69,12 @@ namespace Landis.Extension.SOSIELHarvest
             
             if (_sheParameters.Mode == 2)
             {
-                Core.UI.WriteLine("  Loading parameters from {0}",
-                    _sheParameters.BiomassHarvestInitializationFileName);
+                Core.UI.WriteLine("  Loading parameters from {0}", _sheParameters.BiomassHarvestInitializationFileName);
                 _biomassHarvest = new BiomassHarvest.PlugIn();
                 _biomassHarvest.LoadParameters(_sheParameters.BiomassHarvestInitializationFileName, Core);
             }
+
+            Core.UI.WriteLine("  All parameters loaded.");
         }
 
         //---------------------------------------------------------------------
@@ -86,27 +84,36 @@ namespace Landis.Extension.SOSIELHarvest
             Core.UI.WriteLine("Initializing {0}...", Name);
             Timestep = _sheParameters.Timestep;
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
+
             // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration.
             int iterations = 1;
 
+            Core.UI.WriteLine($"  Creating operation mode #{_sheParameters.Mode} instane");
             if (_sheParameters.Mode == 1)
                 _mode = new Mode1(Core, _sheParameters);
             else if (_sheParameters.Mode == 2)
                 _mode = new Mode2(Core, _sheParameters, _biomassHarvest);
 
+            Core.UI.WriteLine($"  Initializing operation mode #{_sheParameters.Mode} instance");
             _mode.Initialize();
 
-            //create algorithm instance
+            Core.UI.WriteLine("  Creating SOSIEL algorithm instance");
             _sosielData = new SosielData(_sheParameters.Mode);
-            _sosielHarvestAlgorithm = new SosielHarvestAlgorithm(iterations, _configuration, _mode.Areas.Values);
+            _sosielHarvestAlgorithm = new SosielHarvestAlgorithm(
+                _logService, iterations, _configuration, _mode.Areas.Values);
+
+            Core.UI.WriteLine("  Initializing SOSIEL algorithm instance");
             _sosielHarvestAlgorithm.Initialize(_sosielData);
 
+            Core.UI.WriteLine("  Setting agents");
             _mode.SetAgents(_sosielHarvestAlgorithm.ActiveAgents);
 
-            //remove old output files
+            Core.UI.WriteLine("  Removing old output files...");
             var di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
             foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
                 fi.Delete();
+
+            Core.UI.WriteLine("  Initialization complete.");
         }
 
         public override void Run()

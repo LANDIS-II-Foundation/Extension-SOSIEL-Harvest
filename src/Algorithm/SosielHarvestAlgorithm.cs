@@ -12,6 +12,8 @@ using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Extension.SOSIELHarvest.Output;
+using Landis.Extension.SOSIELHarvest.Services;
+
 using Newtonsoft.Json;
 using SOSIEL.Algorithm;
 using SOSIEL.Configuration;
@@ -31,10 +33,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
         public Probabilities Probabilities => probabilities;
 
-        private ConfigurationModel configuration;
+        private LogService _logService;
+        private ConfigurationModel _configuration;
         private SosielData _algorithmModel;
-
-        private Area[] activeAreas;
+        private Area[] _activeAreas;
 
         /// <summary>
         /// Initializes Luhy lite implementation
@@ -42,15 +44,14 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <param name="numberOfIterations">Number of internal iterations</param>
         /// <param name="configuration">Parsed agent configuration</param>
         /// <param name="areas">Enumerable of active areas from Landis</param>
-        public SosielHarvestAlgorithm(int numberOfIterations,
-            ConfigurationModel configuration,
-            IEnumerable<Area> areas)
+        public SosielHarvestAlgorithm(
+            LogService logService, int numberOfIterations, ConfigurationModel configuration, IEnumerable<Area> areas)
             : base(numberOfIterations,
                   ProcessesConfiguration.GetProcessesConfiguration(configuration.AlgorithmConfiguration.CognitiveLevel))
         {
-            this.configuration = configuration;
-
-            this.activeAreas = areas.ToArray();
+            _logService = logService;
+            _configuration = configuration;
+            _activeAreas = areas.ToArray();
         }
 
         /// <summary>
@@ -58,16 +59,18 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// </summary>
         protected override void InitializeAgents()
         {
+            _logService.WriteLine("  SosielHarvestAlgorithm: Initializing agents...");
+
             var agents = new List<IAgent>();
 
-            Dictionary<string, AgentArchetype> agentPrototypes = configuration.AgentConfiguration;
+            Dictionary<string, AgentArchetype> agentPrototypes = _configuration.AgentConfiguration;
 
             if (agentPrototypes.Count == 0)
             {
                 throw new SosielAlgorithmException("Agent prototypes were not defined. See configuration file");
             }
 
-            InitialStateConfiguration initialState = configuration.InitialState;
+            InitialStateConfiguration initialState = _configuration.InitialState;
 
             // Create agents, groupby is used for saving agents numeration, e.g. FE1, HM1, HM2, etc.
             initialState.AgentsState.GroupBy(state => state.PrototypeOfAgent).ForEach((agentStateGroup) =>
@@ -110,13 +113,16 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
         private void InitializeProbabilities()
         {
+            _logService.WriteLine("  SosielHarvestAlgorithm: Initializing probabilities...");
+
             var probabilitiesList = new Probabilities();
 
-            foreach (var probabilityElementConfiguration in configuration.AlgorithmConfiguration.ProbabilitiesConfiguration)
+            foreach (var probabilityElementConfiguration in _configuration.AlgorithmConfiguration.ProbabilitiesConfiguration)
             {
                 var variableType = VariableTypeHelper.ConvertStringToType(probabilityElementConfiguration.VariableType);
                 var parseTableMethod = ReflectionHelper.GetGenerecMethod(variableType, typeof(ProbabilityTableParser), "Parse");
 
+                // Debugger.Launch();
                 dynamic table = parseTableMethod.Invoke(null, new object[] { probabilityElementConfiguration.FilePath, probabilityElementConfiguration.WithHeader });
 
                 var addToListMethod =
@@ -130,9 +136,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
         protected override void UseDemographic()
         {
+            _logService.WriteLine("  SosielHarvestAlgorithm: Enabling demographics...");
             base.UseDemographic();
-
-            demographic = new Demographic<Area>(configuration.AlgorithmConfiguration.DemographicConfiguration,
+            demographic = new Demographic<Area>(_configuration.AlgorithmConfiguration.DemographicConfiguration,
                 probabilities.GetProbabilityTable<int>(AlgorithmProbabilityTables.BirthProbabilityTable),
                 probabilities.GetProbabilityTable<int>(AlgorithmProbabilityTables.DeathProbabilityTable));
         }
@@ -144,6 +150,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         ///
         protected override Dictionary<IAgent, AgentState<Area>> InitializeFirstIterationState()
         {
+            _logService.WriteLine("  SosielHarvestAlgorithm: Initializing first iteration...");
+
             var states = new Dictionary<IAgent, AgentState<Area>>();
 
             agentList.Agents.ForEach(agent =>
@@ -172,16 +180,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         public void Initialize(SosielData data)
         {
             _algorithmModel = data;
-
             InitializeAgents();
-
             InitializeProbabilities();
-
-            if (configuration.AlgorithmConfiguration.UseDimographicProcesses)
-            {
+            if (_configuration.AlgorithmConfiguration.UseDimographicProcesses)
                 UseDemographic();
-            }
-
             AfterInitialization();
         }
 
@@ -190,11 +192,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// </summary>
         public SosielData Run(SosielData data)
         {
-#if DEBUG
-            Debugger.Launch();
-#endif
-            RunSosiel(activeAreas);
-
+            RunSosiel(_activeAreas);
             return data;
         }
 
@@ -208,7 +206,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             //----
             // Set default values, which were not defined in configuration file.
-
             //var fmAgents = agentList.GetAgentsWithPrefix("FM");
         }
 
@@ -223,14 +220,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             base.PreIterationCalculations(iteration);
 
             _algorithmModel.NewDecisionOptions = new List<NewDecisionOptionModel>();
-#if DEBUG
-            Debugger.Launch();
-#endif
-            var fmAgents = agentList.GetAgentsWithPrefix("FM");
 
+            var fmAgents = agentList.GetAgentsWithPrefix("FM");
             fmAgents.ForEach(fm =>
             {
-                var manageAreas = activeAreas.Where(a => a.AssignedAgents.Contains(fm.Id)).ToArray();
+                var manageAreas = _activeAreas.Where(a => a.AssignedAgents.Contains(fm.Id)).ToArray();
 
                 fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(area => _algorithmModel.HarvestResults.ManageAreaHarvested[HarvestResults.GetKey(_algorithmModel.Mode, fm, area)]).Average();
                 fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(area => _algorithmModel.HarvestResults.ManageAreaMaturityPercent[HarvestResults.GetKey(_algorithmModel.Mode, fm, area)]).Average();
@@ -297,9 +291,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         protected override void PostIterationCalculations(int iteration)
         {
             var iterationState = iterations.Last.Value;
-
             var fmAgents = agentList.GetAgentsWithPrefix("FM");
-
             var iterationSelection = new Dictionary<string, List<string>>();
 
             foreach (var fmAgent in fmAgents)
@@ -352,9 +344,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         protected override void PostIterationStatistic(int iteration)
         {
             base.PostIterationStatistic(iteration);
-#if DEBUG
-            Debugger.Launch();
-#endif
 
             try
             {
@@ -363,14 +352,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore
                 };
                 var data = JsonConvert.SerializeObject(iterations.Last.Value, settings);
-
                 File.WriteAllText($"output_SOSIEL_Harvest_DUMP_{iteration}.json", data);
             }
-            catch(Exception e)
+            catch(Exception)
             {
-
             }
-
 
             // Save statistics for each agent
             agentList.ActiveAgents.ForEach(agent =>

@@ -149,7 +149,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                     FilePath = p.FileName,
                     Variable = p.VariableParameter,
                     VariableType = p.VariableType,
-                    WithHeader = !p.IgnoreFirstLine
+                    WithHeader = p.IgnoreFirstLine // ignore first line means there is a header
                 }).ToArray(),
                 UseDimographicProcesses = demographic.DemographicChange
             };
