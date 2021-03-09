@@ -15,14 +15,14 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         /// <summary>
         /// Parses the specified probability table.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Probability table key type</typeparam>
         /// <param name="fileName">Name of the file.</param>
-        /// <param name="headerExists"></param>
-        /// <returns></returns>
-        public static ProbabilityTable<T> Parse<T>(string fileName, bool headerExists)
+        /// <param name="hasHeader">Indicates that probability file has a header line</param>
+        /// <returns>Parsed probability table.</returns>
+        public static ProbabilityTable<T> Parse<T>(string fileName, bool hasHeader)
         {
-            var probabilities = CSVHelper.ReadAllRecords<ProbabilityRecord<T>>(fileName, headerExists, typeof(ProbabilityRecordMap<T>));
-
+            var probabilities = CSVHelper.ReadAllRecords<ProbabilityRecord<T>>(
+                fileName, hasHeader, typeof(ProbabilityRecordMap<T>));
             return new ProbabilityTable<T>(probabilities.ToDictionary(p => p.Value, p => p.Probability));
         }
     }
