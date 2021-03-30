@@ -23,7 +23,7 @@ To use SHE, you need:
 
 # Download
 
-Version 1.1.12 can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/deploy/installer/LANDIS-II-V7%20SOSIEL%20Harvest%201.1.14-setup.exe). To install it on your computer, just launch the installer.
+Version 1.1.14 can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/deploy/installer/LANDIS-II-V7%20SOSIEL%20Harvest%201.1.14-setup.exe). To install it on your computer, just launch the installer.
 
 # Citation
 
