@@ -11,7 +11,7 @@ The SOSIEL (Self-Organizing Social & Inductive Evolutionary Learning) Harvest Ex
 # Release Notes
 
 - Latest official release: Version 1.1.12 — February 2021
-- [SHE User Guide](https://docs.google.com/document/d/1YBKuFaQ5Hsh3OjYsMJoXoHgtg7gv8Us0wZjcTaqSCOc/edit?usp=sharing).
+- [SHE User Guide](https://docs.google.com/document/d/1YBKuFaQ5Hsh3OjYsMJoXoHgtg7gv8Us0wZjcTaqSCOc/edit).
 - Full release details found in the SHE User Guide and on GitHub.
 
 # Requirements
@@ -23,7 +23,7 @@ To use SHE, you need:
 
 # Download
 
-Version 1.1.12 can be downloaded [here]( https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/deploy/installer/LANDIS-II-V7%20SOSIEL%20Harvest%201.1.12-setup.exe). To install it on your computer, just launch the installer.
+Version 1.1.12 can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/deploy/installer/LANDIS-II-V7%20SOSIEL%20Harvest%201.1.12-setup.exe). To install it on your computer, just launch the installer.
 
 # Citation
 
