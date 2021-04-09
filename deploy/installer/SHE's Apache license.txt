@@ -1,4 +1,4 @@
-Copyright 2020 Garry Sotnik, Brooke A. Cassell, and Robert M. Scheller
+Copyright 2020-2021 Garry Sotnik, Brooke A. Cassell, and Robert M. Scheller
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this software except in compliance with the License.

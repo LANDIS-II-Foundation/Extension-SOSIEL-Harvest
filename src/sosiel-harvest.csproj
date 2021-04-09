@@ -3,11 +3,11 @@
   <PropertyGroup>
     <RootNamespace>Landis.Extension.SOSIELHarvest</RootNamespace>
     <AssemblyName>Landis.Extension.SOSIELHarvest-v1</AssemblyName>
-    <AssemblyTitle>Landis.Extension.SOSIELHuman-v2</AssemblyTitle>
+    <AssemblyTitle>Landis.Extension.SOSIELHarvest-v1</AssemblyTitle>
     <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
-    <AssemblyProduct>Landis.Extension.SOSIELHuman-v2</AssemblyProduct>
+    <AssemblyProduct>Landis.Extension.SOSIELHarvest-v1</AssemblyProduct>
     <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
-    <AssemblyVersion>1.1.15</AssemblyVersion>
+    <AssemblyVersion>1.2.0</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <RepositoryUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest</RepositoryUrl>
@@ -18,11 +18,11 @@
     <Authors>Garry Sotnik</Authors>
     <Product>Landis.Extension.SOSIELHarvest-v1</Product>
     <Copyright>Landis-II-Foundation</Copyright>
-    <Version>1.1.15</Version>
+    <Version>1.2.0</Version>
     <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
     <Description>SOSIEL Harvest Extension</Description>
     <PackageReleaseNotes>.NET Standard 2.0 update</PackageReleaseNotes>
-    <FileVersion>1.1.15</FileVersion>
+    <FileVersion>1.2.0</FileVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     <LangVersion>7</LangVersion>
   </PropertyGroup>
@@ -34,7 +34,10 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.2.3" />
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="Landis.Core" Version="2.0.0" />
+    <PackageReference Include="Landis.Utilities" Version="2.0.0" />
+    <PackageReference Include="Landis.SpatialModeling" Version="2.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,37 +45,28 @@
       <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Extension.BiomassHarvest-v4.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
+      <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.BiomassCohorts-v3">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.BiomassCohorts-v3.dll</HintPath>
+      <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.BiomassCohorts-v3.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.BiomassHarvest-v3">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.BiomassHarvest-v3.dll</HintPath>
+      <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.BiomassHarvest-v3.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Cohorts-v2">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.Cohorts-v2.dll</HintPath>
+      <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.Cohorts-v2.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.HarvestManagement-v4">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.HarvestManagement-v4.dll</HintPath>
+      <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.HarvestManagement-v4.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.SiteHarvest-v2">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.SiteHarvest-v2.dll</HintPath>
+      <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.SiteHarvest-v2.dll</HintPath>
     </Reference>
     <Reference Include="Landis.Library.Succession-v8">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Library.Succession-v8.dll</HintPath>
+      <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.Succession-v8.dll</HintPath>
     </Reference>
-    <Reference Include="Landis.Core">
-      <HintPath>C:\Program Files\LANDIS-II-v7\v7\Landis.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.Utilities">
-      <HintPath>C:\Program Files\LANDIS-II-v7\v7\Landis.Utilities.dll</HintPath>
-    </Reference>
-    <Reference Include="Landis.SpatialModeling">
-      <HintPath>C:\Program Files\LANDIS-II-v7\v7\Landis.SpatialModeling.dll</HintPath>
-    </Reference>
-    <Reference Include="SOSIEL-v2.4.6">
-      <HintPath>lib\SOSIEL-v2.4.6.dll</HintPath>
+    <Reference Include="SOSIEL-v3">
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\SOSIEL-v3.dll</HintPath>
     </Reference>
   </ItemGroup>
 

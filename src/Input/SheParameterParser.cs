@@ -24,9 +24,13 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             var sheParameters = new SheParameters();
 
-            InputVar<int> mode = new InputVar<int>("Mode");
-            ReadVar(mode);
-            sheParameters.Mode = mode.Value;
+            // Default mode 2 is set in the SheParameters
+            if (CurrentName.Equals("Mode"))
+            {
+                var mode = new InputVar<int>("Mode");
+                ReadVar(mode);
+                sheParameters.Mode = mode.Value;
+            }
 
             InputVar<int> timestep = new InputVar<int>("Timestep");
             ReadVar(timestep);
