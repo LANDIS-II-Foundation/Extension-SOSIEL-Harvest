@@ -1,7 +1,7 @@
 LandisData   Extension
 
 Name         "SOSIEL Harvest"
-Version      "1.1"
+Version      "1.2"
 Type         disturbance:harvest
 Assembly     Landis.Extension.SOSIELHarvest-v1
 Class        Landis.Extension.SOSIELHarvest.PlugIn

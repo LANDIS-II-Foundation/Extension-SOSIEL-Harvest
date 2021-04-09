@@ -11,7 +11,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 {
     public class SheParameters
     {
-        private int _mode;
+        private int _mode = 2;
         private int _timestep;
 
         public int Mode
@@ -21,7 +21,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
             {
                 if (value != 1 && value != 2)
                     throw new InputValueException(value.ToString(), "Mode must be 1 or 2");
-
                 _mode = value;
             }
         }

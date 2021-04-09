@@ -86,7 +86,7 @@ namespace Landis.Extension.SOSIELHarvest
             _configuration = ConfigurationParser.MakeConfiguration(_sosielParameters);
 
             // Later we can decide if there should be multiple SHE sub-iterations per LANDIS-II iteration.
-            int iterations = 1;
+            int numberOfIterations = 1;
 
             Core.UI.WriteLine($"  Creating operation mode #{_sheParameters.Mode} instane");
             if (_sheParameters.Mode == 1)
@@ -100,7 +100,7 @@ namespace Landis.Extension.SOSIELHarvest
             Core.UI.WriteLine("  Creating SOSIEL algorithm instance");
             _sosielData = new SosielData(_sheParameters.Mode);
             _sosielHarvestAlgorithm = new SosielHarvestAlgorithm(
-                _logService, iterations, _configuration, _mode.Areas.Values);
+                _logService, numberOfIterations, _configuration, _mode.Areas.Values);
 
             Core.UI.WriteLine("  Initializing SOSIEL algorithm instance");
             _sosielHarvestAlgorithm.Initialize(_sosielData);
