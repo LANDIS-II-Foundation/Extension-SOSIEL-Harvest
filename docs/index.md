@@ -44,12 +44,8 @@ If you come across any issue or suspected bug when using SHE, please post about 
 
 # Design
 
-[Garry Sotnik](https://www.sosiel.org/)
-Brooke A. Cassell
-Robert M. Scheller
+[Garry Sotnik](https://www.sosiel.org/), Brooke A. Cassell, & Robert M. Scheller
 
 # Development
 
-Vadim Moskvin (Primary)
-[Garry Sotnik](https://www.sosiel.org/)
-Eugene Lobach
+Vadim Moskvin, [Garry Sotnik](https://www.sosiel.org/), & Eugene Lobach
