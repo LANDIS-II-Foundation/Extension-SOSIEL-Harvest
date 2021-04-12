@@ -42,8 +42,14 @@ You can also ask for help in the [LANDIS-II users group](http://www.landis-ii.or
 
 If you come across any issue or suspected bug when using SHE, please post about it in the [issue section of the GitHub repository](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/issues).
 
-# Authors
+# Design
 
-[Garry Sotnik](https://www.sosiel.org/), Brooke A. Cassell, and Robert M. Scheller
+[Garry Sotnik](https://www.sosiel.org/)
+Brooke A. Cassell
+Robert M. Scheller
 
-Mail: contact@sosiel.org
+# Development
+
+Vadim Moskvin (Primary)
+[Garry Sotnik](https://www.sosiel.org/)
+Eugene Lobach
