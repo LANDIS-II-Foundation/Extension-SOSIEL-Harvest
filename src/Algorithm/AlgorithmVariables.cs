@@ -22,5 +22,13 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         public const string Group = "Group";
 
         public const string TargetHarvestSize = "TargetHarvestSize";
+
+        public const string AgentIncome = "Income";
+        public const string AgentExpenses = "Expenses";
+        public const string AgentSavings = "Savings";
+
+        public const string HouseholdIncome = "HouseholdIncome";
+        public const string HouseholdExpenses = "HouseholdExpenses";
+        public const string HouseholdSavings = "HouseholdSavings";
     }
 }

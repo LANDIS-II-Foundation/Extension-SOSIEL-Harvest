@@ -4,7 +4,6 @@
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System.Collections.Generic;
-using System.Security.Cryptography.X509Certificates;
 using Newtonsoft.Json;
 
 namespace Landis.Extension.SOSIELHarvest.Configuration

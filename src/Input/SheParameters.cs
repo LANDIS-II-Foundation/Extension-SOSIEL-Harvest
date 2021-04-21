@@ -19,8 +19,8 @@ namespace Landis.Extension.SOSIELHarvest.Input
             get => _mode;
             set
             {
-                if (value != 1 && value != 2)
-                    throw new InputValueException(value.ToString(), "Mode must be 1 or 2");
+                if (value < 1 || value > 3)
+                    throw new InputValueException(value.ToString(), "Mode must be 1, 2 or 3");
                 _mode = value;
             }
         }
