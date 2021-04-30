@@ -176,21 +176,36 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             RunSosiel(_activeAreas);
             return data;
         }
-
+        
         /// <summary>
-        /// Executes last preparations before running the algorithm.
-        /// Executes after InitializeAgents and InitializeFirstIterationState.
+        /// Defines custom maintenance process.
         /// </summary>
-        protected override void AfterInitialization()
+        protected override void Maintenance()
         {
-            // Call default implementation.
-            base.AfterInitialization();
+            base.Maintenance();
 
-            //----
-            // Set default values, which were not defined in configuration file.
-            //var fmAgents = agentList.GetAgentsWithPrefix("FM");
+            // Reset personal monetary properties of the inactive agents
+            foreach (var agent in agentList.Agents)
+            {
+                if (agent[SosielVariables.IsActive] != true)
+                {
+                    agent[AlgorithmVariables.AgentIncome] = 0.0;
+                    agent[AlgorithmVariables.AgentExpenses] = 0.0;
+                    agent[AlgorithmVariables.AgentSavings] = 0.0;
+                }
+            }
         }
 
+        protected override void AfterInitialization()
+        {
+            var hmAgents = agentList.GetAgentsWithPrefix("HM");
+            hmAgents.ForEach(agent =>
+            {
+                agent[AlgorithmVariables.AgentIncome] = 0.0;
+                agent[AlgorithmVariables.AgentExpenses] = 0.0;
+                agent[AlgorithmVariables.AgentSavings] = 0.0;
+            });
+        }
 
         /// <summary>
         /// Executes at iteration start before any cognitive process is started.
@@ -211,9 +226,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(
                     area => _algorithmModel.HarvestResults
                     .ManageAreaHarvested[HarvestResults.GetKey(_algorithmModel.Mode, fm, area)]).Average();
+
                 fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(
                     area => _algorithmModel.HarvestResults
                     .ManageAreaMaturityPercent[HarvestResults.GetKey(_algorithmModel.Mode, fm, area)]).Average();
+
                 fm[AlgorithmVariables.ManageAreaBiomass] = manageAreas.Select(
                     area => _algorithmModel.HarvestResults
                     .ManageAreaBiomass[HarvestResults.GetKey(_algorithmModel.Mode, fm, area)]).Sum();
@@ -235,7 +252,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             };
         }
 
-
         /// <summary>
         /// Executes before action selection process.
         /// </summary>
@@ -252,27 +268,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 // Set value of current area manage biomass to agent variable.
                 agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults
                         .ManageAreaBiomass[HarvestResults.GetKey(_algorithmModel.Mode, agent, dataSet)];
-            }
-        }
-
-        /// <summary>
-        /// Executes after action taking process.
-        /// </summary>
-        /// <param name="agent"></param>
-        /// <param name="dataSet"></param>
-        protected override void AfterActionTaking(IAgent agent, Area dataSet)
-        {
-            // Call default implementation.
-            base.AfterActionTaking(agent, dataSet);
-
-            if (agent.Archetype.NamePrefix == "FM")
-            {
-                // Compute profit
-                // Add computed profit to total profit
-                // Agent[AlgorithmVariables.Profit] += profit;
-
-                // Reduce biomass
-                // Biomass[site] -= profit;
             }
         }
 
@@ -300,15 +295,36 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             }
 
             _algorithmModel.SelectedDecisions = iterationSelection;
+
             base.PostIterationCalculations(iteration);
+
+            // Update income and expense
+            var hmAgents = agentList.GetAgentsWithPrefix("HM");
+            hmAgents.GroupBy(agent => agent[SosielVariables.Household])
+                .ForEach(householdAgents =>
+                {
+                    var householdIncome = householdAgents.Sum(agent => (double)agent[AlgorithmVariables.AgentIncome]);
+                    var householdExpenses = householdAgents.Sum(
+                        agent => (double)agent[AlgorithmVariables.AgentExpenses]);
+                    var iterationHouseholdSavings = householdIncome - householdExpenses;
+                    var householdSavings = householdAgents
+                        .Where(agent => agent.ContainsVariable(AlgorithmVariables.HouseholdSavings))
+                        .Select(agent => (double)agent[AlgorithmVariables.HouseholdSavings])
+                        .FirstOrDefault() + iterationHouseholdSavings;
+
+                    householdAgents.ForEach(agent =>
+                    {
+                        agent[AlgorithmVariables.HouseholdIncome] = householdIncome;
+                        agent[AlgorithmVariables.HouseholdExpenses] = householdExpenses;
+                        agent[AlgorithmVariables.HouseholdSavings] = householdSavings;
+                    });
+                });
         }
 
         protected override void AfterInnovation(IAgent agent, Area dataSet, DecisionOption newDecisionOption)
         {
             base.AfterInnovation(agent, dataSet, newDecisionOption);
-
             if (newDecisionOption == null) return;
-
             var newDecisionOptionModel = new NewDecisionOptionModel()
             {
                 ManagementArea = dataSet.Name,
@@ -319,7 +335,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     : agent[newDecisionOption.Consequent.VariableValue],
                 BasedOn = newDecisionOption.Origin
             };
-
             _algorithmModel.NewDecisionOptions.Add(newDecisionOptionModel);
         }
 

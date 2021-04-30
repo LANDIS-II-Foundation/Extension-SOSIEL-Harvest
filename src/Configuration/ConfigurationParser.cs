@@ -5,6 +5,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -30,7 +32,6 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         internal static bool IsPropertyWithSetter(this MemberInfo member)
         {
             var property = member as PropertyInfo;
-
             return property?.GetSetMethod(true) != null;
         }
     }
@@ -49,9 +50,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 var jProperty = base.CreateProperty(member, memberSerialization);
                 if (jProperty.Writable)
                     return jProperty;
-
                 jProperty.Writable = member.IsPropertyWithSetter();
-
                 return jProperty;
             }
         }
@@ -73,7 +72,6 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 {
                     return Convert.ToInt32((object)reader.Value);
                 }
-
                 return reader.Value;
             }
 
@@ -89,7 +87,6 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         static ConfigurationParser()
         {
             serializer = new JsonSerializer();
-
             serializer.Converters.Add(new IntConverter());
             serializer.ContractResolver = new PrivateSetterContractResolver();
         }
@@ -103,11 +100,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         {
             if (File.Exists(jsonPath) == false)
                 throw new FileNotFoundException(string.Format("Configuration file doesn't found at {0}", jsonPath));
-
             string jsonContent = File.ReadAllText(jsonPath);
-
             JToken json = JToken.Parse(jsonContent);
-
             return json.ToObject<ConfigurationModel>(serializer);
         }
 
@@ -158,20 +152,17 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         private static Dictionary<string, AgentArchetype> MakeAgentConfiguration(SosielParameters parameters)
         {
             var agentArchetypes = new Dictionary<string, AgentArchetype>();
-
             var goals = ParseGoals(parameters.GoalAttributes);
             var mentalModels = ParseMentalModels(parameters.MentalModels);
-            var decisionOptions = ParseDecisionOptions(parameters.DecisionOptionAttributes, parameters.DecisionOptionAntecedentAttributes);
-
+            var decisionOptions = ParseDecisionOptions(
+                parameters.DecisionOptionAttributes, parameters.DecisionOptionAntecedentAttributes);
 
             foreach (var archetype in parameters.AgentArchetypes)
             {
-                var agentArchetype = new AgentArchetype();
-
+                var agentArchetype = new AgentArchetype(archetype.ArchetypeName);
                 agentArchetype.NamePrefix = archetype.ArchetypePrefix;
                 agentArchetype.IsDataSetOriented = archetype.DataSetOriented;
                 agentArchetype.UseImportanceAdjusting = archetype.GoalImportanceAdjusting;
-
                 agentArchetype.Goals = goals[archetype.ArchetypeName];
                 agentArchetype.MentalModel = mentalModels[archetype.ArchetypeName];
 
@@ -182,41 +173,41 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                     .Select(k => decisionOptions[k])
                     .ToList();
 
-
                 var variablesCollection = parameters.AgentArchetypeVariables.Cast<IVariable>().ToList();
-                foreach (var agentVariable in ParseAgentVariables(variablesCollection, agentArchetype.NamePrefix))
+                foreach (var agentVariable in ParseAgentVariables(variablesCollection, agentArchetype.Name))
                     agentArchetype.CommonVariables.Add(agentVariable.Key, agentVariable.Value);
 
-                agentArchetypes[archetype.ArchetypeName] = agentArchetype;
+                // Debugger.Launch();
+                agentArchetypes[agentArchetype.Name] = agentArchetype;
             }
 
             return agentArchetypes;
         }
 
-        private static Dictionary<string, DecisionOption> ParseDecisionOptions(List<DecisionOptionAttribute> decisionOptionAttributes, List<DecisionOptionAntecedentAttribute> decisionOptionAntecedentAttributes)
+        private static Dictionary<string, DecisionOption> ParseDecisionOptions(
+            List<DecisionOptionAttribute> decisionOptionAttributes,
+            List<DecisionOptionAntecedentAttribute> decisionOptionAntecedentAttributes)
         {
             var decisionOptions = new Dictionary<string, DecisionOption>();
-
-            foreach (var decisionOption in decisionOptionAttributes)
+            foreach (var decisionOptionAttribute in decisionOptionAttributes)
             {
-                var antecedents = decisionOptionAntecedentAttributes.Where(a => a.DecisionOption == decisionOption.DecisionOption).ToList();
-
-                var parsedName = ParseDecisionOptionName(decisionOption.DecisionOption);
-
-                var decision = new DecisionOption();
-
-                decision.MentalModel = parsedName.MentalModel;
-                decision.DecisionOptionsLayer = parsedName.MentalSubModel;
-                decision.PositionNumber = parsedName.DecisionOptionNumber;
-
-                decision.RequiredParticipants = decisionOption.RequiredParticipants;
-                decision.Antecedent = antecedents.Select(a => new DecisionOptionAntecedentPart(a.AntecedentVariable, a.AntecedentOperator, ParseToDynamicValue(a.AntecedentValueType, a.AntecedentValue), a.AntecedentReference)).ToArray();
-                var consequentValue = ParseToDynamicValue(decisionOption.ConsequentValueType, decisionOption.ConsequentValue);
-                decision.Consequent = new DecisionOptionConsequent(decisionOption.ConsequentVariable, consequentValue, decisionOption.ConsequentValueReference);
-
-                decisionOptions.Add(decisionOption.DecisionOption, decision);
+                var parsedName = ParseDecisionOptionName(decisionOptionAttribute.DecisionOption);
+                var decisionOption = new DecisionOption();
+                decisionOption.MentalModel = parsedName.MentalModel;
+                decisionOption.DecisionOptionsLayer = parsedName.MentalSubModel;
+                decisionOption.PositionNumber = parsedName.DecisionOptionNumber;
+                decisionOption.RequiredParticipants = decisionOptionAttribute.RequiredParticipants;
+                decisionOption.Antecedent = decisionOptionAntecedentAttributes
+                    .Where(a => a.DecisionOption == decisionOptionAttribute.DecisionOption)
+                    .Select(a => new DecisionOptionAntecedentPart(a.AntecedentVariable, a.AntecedentOperator,
+                        ParseDynamicValue(a.AntecedentValueType, a.AntecedentValue), a.AntecedentReference))
+                    .ToArray();
+                var consequentValue = ParseDynamicValue(decisionOptionAttribute.ConsequentValueType, decisionOptionAttribute.ConsequentValue);
+                decisionOption.Consequent = new DecisionOptionConsequent(
+                    decisionOptionAttribute.ConsequentVariable, consequentValue,
+                    decisionOptionAttribute.ConsequentValueReference);
+                decisionOptions.Add(decisionOptionAttribute.DecisionOption, decisionOption);
             }
-
             return decisionOptions;
         }
 
@@ -236,10 +227,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             foreach (var state in initialState)
             {
                 var agentState = ParseAgentState(state.GoalAttribute, state.DecisionAttribute);
-
                 var variablesCollection = parameters.AgentVariables.Cast<IVariable>().ToList();
                 agentState.PrivateVariables = ParseAgentVariables(variablesCollection, state.GoalAttribute.Agent);
-
                 parsedStates.Add(agentState);
             }
 
@@ -301,7 +290,6 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             {
                 var goal = importance.Groups[1].Value;
                 var value = ParseValue<double>(importance.Groups[2].Value);
-
                 result[goal].Importance = value;
             }
 
@@ -346,28 +334,21 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         {
             var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)<((?:G\d+<\d+\.?\d*>&?)+)>");
             var goalPattern = new Regex(@"(G\d+)<(\d+\.?\d*)>");
-
             var results = new Dictionary<string, Dictionary<string, double>>();
-
             var matches = decisionPattern.Matches(decisionOptions);
 
             foreach (Match match in matches)
             {
                 var doName = match.Groups[1].Value;
                 var goalImportances = match.Groups[2].Value;
-
                 var goalDictionary = new Dictionary<string, double>();
-
                 var goalMatches = goalPattern.Matches(goalImportances);
-
                 foreach (Match goalMatch in goalMatches)
                 {
                     var goalName = goalMatch.Groups[1].Value;
                     var goalImprortance = ParseValue<double>(goalMatch.Groups[2].Value);
-
                     goalDictionary.Add(goalName, goalImprortance);
                 }
-
                 results.Add(doName, goalDictionary);
             }
 
@@ -376,36 +357,26 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static Dictionary<string, dynamic> ParseAgentVariables(ICollection<IVariable> configVariables, string key)
         {
+            //Debugger.Launch();
             var variables = new Dictionary<string, dynamic>();
-
             foreach (var variable in configVariables.Where(p => p.Key == key))
             {
-                var parsedValue = ParseToDynamicValue(variable.VariableType.Trim(), variable.VariableValue);
-
+                var parsedValue = ParseDynamicValue(variable.VariableType.Trim(), variable.VariableValue);
                 variables.Add(variable.VariableName, parsedValue);
             }
-
             return variables;
         }
 
-        private static dynamic ParseToDynamicValue(string type, string value)
+        private static dynamic ParseDynamicValue(string type, string value)
         {
-            var parsedValue = (dynamic)value;
-
-            switch (type)
+            switch (type.ToLowerInvariant())
             {
-                case "Integer":
-                    parsedValue = ParseValue<int>(value);
-                    break;
-                case "Double":
-                    parsedValue = ParseValue<double>(value);
-                    break;
-                case "Boolean":
-                    parsedValue = ParseValue<bool>(value);
-                    break;
+                case "integer": return ParseValue<int>(value);
+                case "double": return ParseValue<double>(value);
+                case "boolean": return ParseValue<bool>(value);
+                case "string": return value;
+                default: throw new ArgumentException(nameof(type), $"Unsupported variable type: '{type}'");
             }
-
-            return parsedValue;
         }
 
         private static Dictionary<string, List<Goal>> ParseGoals(List<GoalAttribute> goalAttributes)
@@ -498,7 +469,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             return (mentalModel, mentalSubModel);
         }
 
-        private static (int MentalModel, int MentalSubModel, int DecisionOptionNumber) ParseDecisionOptionName(string decisionOptionName)
+        private static (int MentalModel, int MentalSubModel, int DecisionOptionNumber)
+            ParseDecisionOptionName(string decisionOptionName)
         {
             var regex = new Regex(@"^MM(\d{1,})-(\d{1,})_DO(\d{1,})$");
 
@@ -517,10 +489,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         private static string GetDecisionOptionMentalModelName(string decisionOptionName)
         {
             var parts = decisionOptionName.Split('_');
-
             if (parts.Length < 2)
-                throw new ArgumentException("Decision option name is not valid");
-
+                throw new ArgumentException("Invalid decision option name");
             return parts[0];
         }
 
@@ -542,7 +512,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static T ParseValue<T>(string stringValue)
         {
-            return (T)Convert.ChangeType(stringValue, typeof(T));
+            return (T)Convert.ChangeType(stringValue, typeof(T), CultureInfo.InvariantCulture.NumberFormat);
         }
 
         private static T[] ParseRange<T>(string value)
@@ -557,11 +527,13 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             try
             {
                 var values = new[] { match.Groups["begin"].Value, match.Groups["end"].Value };
-                return values.Select(v => (T)Convert.ChangeType(v, typeof(T))).ToArray();
+                return values
+                    .Select(v => (T)Convert.ChangeType(v, typeof(T), CultureInfo.InvariantCulture.NumberFormat))
+                    .ToArray();
             }
             catch (Exception)
             {
-                throw new ArgumentException("Not valid range string");
+                throw new ArgumentException("Invalid range string");
             }
         }
 

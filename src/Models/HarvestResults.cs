@@ -24,10 +24,9 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
         public static string GetKey(int mode, IAgent agent, Area area)
         {
-            if (mode == 1)
-                return $"{agent.Id}_{area.Name}";
-
-            return area.Name;
+            return (mode == 1 || mode == 3)
+                ? $"{agent.Id}_{area.Name}"
+                : area.Name;
         }
     }
 }
