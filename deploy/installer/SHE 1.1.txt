@@ -1,0 +1,9 @@
+LandisData   Extension
+
+Name         "SOSIEL Harvest"
+Version      "1.1"
+Type         disturbance:harvest
+Assembly     Landis.Extension.SOSIELHarvest-v1
+Class        Landis.Extension.SOSIELHarvest.PlugIn
+Description  "SOSIEL Harvesting for biomass cohorts"
+CoreVersion  7.0
