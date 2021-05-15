@@ -1,7 +1,7 @@
 ; LANDIS-II Extension infomation
 #define CoreRelease "LANDIS-II-V7"
 #define ExtensionName "SOSIEL Harvest"
-#define AppVersion "1.2.0"
+#define AppVersion "1.1.14"
 #define AppPublisher "LANDIS-II Foundation"
 #define AppURL "http://www.landis-ii.org/"
 
@@ -31,7 +31,7 @@ DefaultDirName={pf}\{#ExtensionName}
 DisableDirPage=yes
 DefaultGroupName={#ExtensionName}
 DisableProgramGroupPage=yes
-LicenseFile=SHE's Apache license.txt
+LicenseFile=SHE Apache License.txt
 OutputDir={#SourcePath}
 OutputBaseFilename={#CoreRelease} {#ExtensionName} {#AppVersion}-setup
 Compression=lzma
@@ -46,7 +46,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 ; NB: Do not put an additional version number in the file name of this .dll
 ; (The name of this .dll is defined in the extension's \src\*.csproj file)
 Source: {#BuildDir}\Landis.Extension.SOSIELHarvest-v1.dll; DestDir: {#ExtDir}; Flags: ignoreversion
-Source: {#BuildDir}\SOSIEL-v3.dll; DestDir: {#ExtDir}; Flags: ignoreversion
+Source: {#BuildDir}\SOSIEL-v2.4.5.dll; DestDir: {#ExtDir}; Flags: ignoreversion
 
 ; Requisite auxiliary libraries
 ; NB. These libraries are used by other extensions and thus are never uninstalled.
@@ -60,8 +60,6 @@ Source: {#BuildDir}\Landis.Library.SiteHarvest-v2.dll; DestDir: {#ExtDir}; Flags
 Source: {#BuildDir}\Landis.Library.Succession-v8.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
 Source: {#BuildDir}\CsvHelper.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 Source: {#BuildDir}\Newtonsoft.Json.dll; DestDir: {#ExtDir}; Flags: replacesameversion
-Source: {#BuildDir}\NLog.dll; DestDir: {#ExtDir}; Flags: replacesameversion
-Source: {#BuildDir}\Microsoft.CSharp.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 
 ; Complete example for testing the extension
 ; Source: ..\examples\*.txt; DestDir: {#AppDir}\examples\{#ExtensionName}; Flags: replacesameversion
@@ -72,7 +70,7 @@ Source: {#BuildDir}\Microsoft.CSharp.dll; DestDir: {#ExtDir}; Flags: replacesame
 
 ; LANDIS-II identifies the extension with the info in this .txt file
 ; NB. New releases must modify the name of this file and the info in it
-#define InfoTxt "SHE 1.0.txt"
+#define InfoTxt "SHE 1.1.txt"
 Source: {#InfoTxt}; DestDir: {#LandisPlugInDir}
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
