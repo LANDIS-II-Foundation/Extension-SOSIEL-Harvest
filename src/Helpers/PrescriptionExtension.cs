@@ -1,18 +1,18 @@
-/// Name: PrescriptionExtension.cs
-/// Description:
-/// Authors: Multiple.
-/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+// Copyright (C) 2018-2021 The SOSIEL Foundation. All rights reserved.
+// Use of this source code is governed by a license that can be found
+// in the LICENSE file located in the repository root directory.
 
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+
 using Landis.Core;
 using Landis.Library.BiomassHarvest;
 using Landis.Library.HarvestManagement;
 using Landis.Library.SiteHarvest;
 using Landis.Utilities;
-using SOSIEL.Helpers;
+
 using SpecificAgesCohortSelector = Landis.Library.SiteHarvest.SpecificAgesCohortSelector;
 
 namespace Landis.Extension.SOSIELHarvest.Helpers
