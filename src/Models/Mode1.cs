@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 
 using Landis.Extension.SOSIELHarvest.Algorithm;
@@ -22,12 +23,13 @@ namespace Landis.Extension.SOSIELHarvest.Models
         private ISiteVar<ISiteCohorts> _siteCohorts;
         private readonly Dictionary<string, double> _harvested;
 
-        public Mode1(SheParameters sheParameters) : base(sheParameters)
+        public Mode1(PlugIn plugin)
+            : base(1, plugin)
         {
             _harvested = new Dictionary<string, double>();
         }
 
-        public override void Initialize()
+        protected override void InitializeMode()
         {
             _prescriptions = sheParameters.Prescriptions;
             _harvestPrescriptionName = PlugIn.ModelCore.GetSiteVar<string>("Harvest.PrescriptionName");
@@ -66,7 +68,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             }
         }
 
-        public override void Harvest(SosielData sosielData)
+        protected override void Harvest()
         {
             ClearHarvested();
             GenerateNewPrescriptions(sosielData);
@@ -78,28 +80,30 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     .Select(ma => Areas.First(area => area.Key.Equals(ma)).Value);
                 foreach (var area in areas)
                 {
-                    var key = HarvestResults.GetKey(1, agent, area);
-                    var selectedPrescriptionNames = sosielData.SelectedDecisions[key];
-                    var selectedPrescriptions = _prescriptions.Where(p => selectedPrescriptionNames.Contains(p.Name));
-                    var harvestManager =
-                        new HarvestManager(area, selectedPrescriptions, _harvestPrescriptionName, _siteCohorts);
-                    _harvested[key] = harvestManager.Harvest();
-                    PlugIn.ModelCore.UI.WriteLine($"\t\t{key}: harvested {harvestManager.HarvestedSitesNumber} sites");
+                    var key = HarvestResults.GetKey(ModeId, agent, area);
+                    //Debugger.Launch();
+                    if (sosielData.SelectedDecisions.ContainsKey(key))
+                    {
+                        var selectedPrescriptionNames = sosielData.SelectedDecisions[key];
+                        PlugIn.ModelCore.UI.WriteLine(
+                            $"\t\t{key}: decisions: {string.Join(",", selectedPrescriptionNames)}");
+                        var selectedPrescriptions = _prescriptions.Where(
+                            p => selectedPrescriptionNames.Contains(p.Name));
+                        var harvestManager =
+                            new HarvestManager(area, selectedPrescriptions, _harvestPrescriptionName, _siteCohorts);
+                        _harvested[key] = harvestManager.Harvest();
+                        PlugIn.ModelCore.UI.WriteLine(
+                            $"\t\t{key}: harvested {harvestManager.HarvestedSitesNumber} sites");
+                    }
+                    else
+                    {
+                        PlugIn.ModelCore.UI.WriteLine($"\t\t{key}: harvested 0 sites (no decision found)");
+                    }
                 }
             }
         }
 
-        private void GenerateNewPrescriptions(SosielData sosielData)
-        {
-            foreach (var newDecisionOption in sosielData.NewDecisionOptions)
-            {
-                var prescription = _prescriptions.First(p => p.Name.Equals(newDecisionOption.BasedOn));
-                _prescriptions.Add(prescription.Copy(newDecisionOption.Name,
-                    (float) newDecisionOption.ConsequentValue));
-            }
-        }
-
-        public override HarvestResults AnalyzeHarvestingResult()
+        protected override HarvestResults AnalyzeHarvestingResult()
         {
             var results = new HarvestResults();
             foreach (var agent in Agents)
@@ -157,6 +161,20 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             base.OnAgentsSet();
             ClearHarvested();
+        }
+
+        private void GenerateNewPrescriptions(SosielData sosielData)
+        {
+            foreach (var newDecisionOption in sosielData.NewDecisionOptions)
+            {
+                var prescription = _prescriptions.FirstOrDefault(
+                    p => p.Name.Equals(newDecisionOption.BasedOn));
+                if (prescription != null)
+                {
+                    _prescriptions.Add(prescription.Copy(newDecisionOption.Name,
+                        (float)newDecisionOption.ConsequentValue));
+                }
+            }
         }
 
         private void ClearHarvested()

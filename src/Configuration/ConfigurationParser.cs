@@ -11,19 +11,22 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+
 using CsvHelper.Configuration;
+
 using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Extension.SOSIELHarvest.Models;
+
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+
 using SOSIEL.Configuration;
 using SOSIEL.Entities;
 using SOSIEL.Enums;
+
 using AgentArchetype = SOSIEL.Entities.AgentArchetype;
-using Goal = SOSIEL.Entities.Goal;
 using MentalModel = Landis.Extension.SOSIELHarvest.Models.MentalModel;
-using Type = System.Type;
 
 namespace Landis.Extension.SOSIELHarvest.Configuration
 {
@@ -45,7 +48,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         /// </summary>
         private class PrivateSetterContractResolver : DefaultContractResolver
         {
-            protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
+            protected override JsonProperty CreateProperty(
+                MemberInfo member, MemberSerialization memberSerialization)
             {
                 var jProperty = base.CreateProperty(member, memberSerialization);
                 if (jProperty.Writable)
@@ -66,7 +70,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 return (objectType == typeof(int) || objectType == typeof(object));
             }
 
-            public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+            public override object ReadJson(
+                JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
             {
                 if (reader.TokenType == JsonToken.Integer)
                 {
@@ -105,21 +110,19 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             return json.ToObject<ConfigurationModel>(serializer);
         }
 
-
-        public static ConfigurationModel MakeConfiguration(SosielParameters parameters)
+        public static ConfigurationModel MakeConfiguration(SheParameters sheParameters, SosielParameters sosielParameters)
         {
-            var configuration = new ConfigurationModel
+            return new ConfigurationModel
             {
-                AlgorithmConfiguration =
-                    MakeAlgorithmConfiguration(parameters.CognitiveLevel, parameters.Demographic, parameters.Probabilities),
-                AgentConfiguration = MakeAgentConfiguration(parameters),
-                InitialState = MakeInitialStateConfiguration(parameters)
+                AlgorithmConfiguration = MakeAlgorithmConfiguration(
+                    sosielParameters.CognitiveLevel, sosielParameters.Demographic, sosielParameters.Probabilities),
+                AgentConfiguration = MakeAgentConfiguration(sosielParameters),
+                InitialState = MakeInitialStateConfiguration(sheParameters, sosielParameters)
             };
-
-            return configuration;
         }
 
-        private static AlgorithmConfiguration MakeAlgorithmConfiguration(CognitiveLevel cognitiveLevel, Demographic demographic, IEnumerable<Probability> probabilities)
+        private static AlgorithmConfiguration MakeAlgorithmConfiguration(
+            CognitiveLevel cognitiveLevel, Demographic demographic, IEnumerable<Probability> probabilities)
         {
             return new AlgorithmConfiguration
             {
@@ -211,23 +214,27 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             return decisionOptions;
         }
 
-        private static InitialStateConfiguration MakeInitialStateConfiguration(SosielParameters parameters)
+        private static InitialStateConfiguration MakeInitialStateConfiguration(
+            SheParameters sheParameters, SosielParameters sosielParameters)
         {
-            var sameKeys = parameters.AgentGoalAttributes.Select(ga => ga.Agent).Intersect(parameters.AgentDecisionOptions.Select(d => d.Agent)).ToList();
+            var sameKeys = sosielParameters.AgentGoalAttributes.Select(ga => ga.Agent).Intersect(
+                sosielParameters.AgentDecisionOptions.Select(d => d.Agent)).ToList();
 
-            if (parameters.AgentGoalAttributes.Count != parameters.AgentDecisionOptions.Count || parameters.AgentGoalAttributes.Count != sameKeys.Count)
+            if (sosielParameters.AgentGoalAttributes.Count != sosielParameters.AgentDecisionOptions.Count
+                || sosielParameters.AgentGoalAttributes.Count != sameKeys.Count)
                 throw new ConfigurationException("AgentGoalAttributes is not suitable for AgentDecisionOptions");
 
-            var initialState = parameters.AgentGoalAttributes
-                .Join(parameters.AgentDecisionOptions, ga => ga.Agent, d => d.Agent, (goal, decision) => new { GoalAttribute = goal, DecisionAttribute = decision })
+            var initialState = sosielParameters.AgentGoalAttributes
+                .Join(sosielParameters.AgentDecisionOptions, ga => ga.Agent, d => d.Agent, (goal, decision)
+                    => new { GoalAttribute = goal, DecisionAttribute = decision })
                 .ToList();
 
             var parsedStates = new List<AgentStateConfiguration>();
 
             foreach (var state in initialState)
             {
-                var agentState = ParseAgentState(state.GoalAttribute, state.DecisionAttribute);
-                var variablesCollection = parameters.AgentVariables.Cast<IVariable>().ToList();
+                var agentState = ParseAgentState(sheParameters, state.GoalAttribute, state.DecisionAttribute);
+                var variablesCollection = sosielParameters.AgentVariables.Cast<IVariable>().ToList();
                 agentState.PrivateVariables = ParseAgentVariables(variablesCollection, state.GoalAttribute.Agent);
                 parsedStates.Add(agentState);
             }
@@ -238,7 +245,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             };
         }
 
-        private static AgentStateConfiguration ParseAgentState(AgentGoalAttribute goalAttribute, AgentDecisionOption decisionAttribute)
+        private static AgentStateConfiguration ParseAgentState(
+            SheParameters sheParameters, AgentGoalAttribute goalAttribute, AgentDecisionOption decisionAttribute)
         {
             var agentState = new AgentStateConfiguration();
 
@@ -254,10 +262,24 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             var parsedGoalState = ParseAgentGoalAttributes(goalAttribute);
             agentState.GoalsState = parsedGoalState;
 
+            int mode;
+            if (sheParameters.AgentToMode.TryGetValue(agentState.Name, out mode))
+            {
+                if (!SheParameters.ValidateModeNumber(mode))
+                    throw new Exception($"Invalid simulation mode {mode} for the agent '{agentState.Name}'");
+            }
+            else if (sheParameters.Modes.Count == 1)
+                mode = sheParameters.Modes[0];
+            else
+                throw new Exception($"Cannot determine simulation mode for the agent '{agentState.Name}'");
+
+            agentState.Mode = mode;
+
             return agentState;
         }
 
-        private static Dictionary<string, GoalStateConfiguration> ParseAgentGoalAttributes(AgentGoalAttribute goalAttribute)
+        private static Dictionary<string, GoalStateConfiguration> ParseAgentGoalAttributes(
+            AgentGoalAttribute goalAttribute)
         {
             var matchPattern = new Regex(@"(G\d+)<(?:(\d+\.?\d*)|(\w+)|(--))>");
             var matchReferencePattern = new Regex(@"(G\d+)<(\w+|--)>");
@@ -332,6 +354,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static Dictionary<string, Dictionary<string, double>> ParseAgentDecisionOptions(string decisionOptions)
         {
+            //Debugger.Launch();
             var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)<((?:G\d+<\d+\.?\d*>&?)+)>");
             var goalPattern = new Regex(@"(G\d+)<(\d+\.?\d*)>");
             var results = new Dictionary<string, Dictionary<string, double>>();
@@ -355,7 +378,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             return results;
         }
 
-        private static Dictionary<string, dynamic> ParseAgentVariables(ICollection<IVariable> configVariables, string key)
+        private static Dictionary<string, dynamic> ParseAgentVariables(
+            ICollection<IVariable> configVariables, string key)
         {
             //Debugger.Launch();
             var variables = new Dictionary<string, dynamic>();
@@ -408,7 +432,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             return dictionary;
         }
 
-        private static Dictionary<string, Dictionary<string, MentalModelConfiguration>> ParseMentalModels(List<MentalModel> mentalModels)
+        private static Dictionary<string, Dictionary<string, MentalModelConfiguration>> ParseMentalModels(
+            List<MentalModel> mentalModels)
         {
             var dictionary = new Dictionary<string, Dictionary<string, MentalModelConfiguration>>();
 
@@ -421,7 +446,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                     var parsedName = ParseMentalModelName(mentalModel.Name);
 
                     MentalModelConfiguration configuration;
-                    if (!archetypeMentalModelsDictionary.TryGetValue(parsedName.MentalModel.ToString(), out configuration))
+                    if (!archetypeMentalModelsDictionary.TryGetValue(
+                        parsedName.MentalModel.ToString(), out configuration))
                     {
                         configuration = new MentalModelConfiguration
                         {
@@ -442,7 +468,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                         ConsequentValueInterval = ParseRange<double>(mentalModel.ConsequentValueRange),
                         Modifiable = mentalModel.Modifiable,
                         MaxNumberOfDecisionOptions = mentalModel.MaxNumberOfDesignOptions,
-                        ConsequentRelationshipSign = ParseComplexValue(mentalModel.DesignOptionGoalRelationship).ToDictionary(v => v.Key, v => v.Value)
+                        ConsequentRelationshipSign = ParseComplexValue(
+                            mentalModel.DesignOptionGoalRelationship).ToDictionary(v => v.Key, v => v.Value)
                     };
 
                     configuration.Layer[parsedName.MentalSubModel.ToString()] = layer;

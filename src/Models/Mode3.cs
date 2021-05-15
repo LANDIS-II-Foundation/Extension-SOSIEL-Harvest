@@ -1,24 +1,23 @@
 ﻿/// Name: Mode3.cs
-/// Description: 
+/// Description: Mode #3 simulates agents without impact on the biomass.
 /// Authors: Multiple.
 /// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
 
 using System.Linq;
 
 using Landis.Extension.SOSIELHarvest.Algorithm;
-using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Library.HarvestManagement;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
     public class Mode3 : Mode
     {
-        public Mode3(SheParameters sheParameters)
-            : base(sheParameters)
+        public Mode3(PlugIn plugin)
+            : base(3, plugin)
         {
         }
 
-        public override void Initialize()
+        protected override void InitializeMode()
         {
             var maDataSet = new ManagementAreaDataset();
             foreach (var agentToManagementArea in sheParameters.AgentToManagementAreaList)
@@ -53,13 +52,13 @@ namespace Landis.Extension.SOSIELHarvest.Models
             }
         }
 
-        public override void Harvest(SosielData sosielData)
+        protected override void Harvest()
         {
             // Do not do anything here
             PlugIn.ModelCore.UI.WriteLine("Run Mode3 harvesting (no action)");
         }
 
-        public override HarvestResults AnalyzeHarvestingResult()
+        protected override HarvestResults AnalyzeHarvestingResult()
         {
             // Report all zeros
             var results = new HarvestResults();
@@ -70,7 +69,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     .Select(ma => Areas.First(area => area.Key == ma).Value);
                 foreach (var area in areas)
                 {
-                    var key = HarvestResults.GetKey(1, agent, area);
+                    var key = HarvestResults.GetKey(ModeId, agent, area);
                     results.ManageAreaBiomass[key] = 0;
                     results.ManageAreaMaturityPercent[key] = 0;
                     results.ManageAreaBiomass[key] = 0;

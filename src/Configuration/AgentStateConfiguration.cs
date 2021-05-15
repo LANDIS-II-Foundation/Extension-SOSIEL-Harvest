@@ -37,5 +37,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         [JsonRequired]
         public Dictionary<string, GoalStateConfiguration> GoalsState { get; set; }
+
+        [JsonRequired]
+        public int Mode { get; set; }
     }
 }
