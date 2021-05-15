@@ -5,6 +5,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
+
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Utilities;
 
@@ -24,15 +27,20 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             var sheParameters = new SheParameters();
 
-            // Default mode 2 is set in the SheParameters
+            // Note: Default mode 2 is already set in the SheParameters constructor
+            // Debugger.Launch();
             if (CurrentName.Equals("Mode"))
+                sheParameters.Modes = ParseModes();
+
+            if (CurrentName.Equals("AgentToMode"))
+                sheParameters.AgentToMode = ParseAgentToMode();
+            else
             {
-                var mode = new InputVar<int>("Mode");
-                ReadVar(mode);
-                sheParameters.Mode = mode.Value;
+                if (sheParameters.Modes.Count > 1)
+                    throw new Exception("Missing mapping of agents to modes");
             }
 
-            InputVar<int> timestep = new InputVar<int>("Timestep");
+            var timestep = new InputVar<int>("Timestep");
             ReadVar(timestep);
             sheParameters.Timestep = timestep.Value;
 
@@ -69,9 +77,16 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 sheParameters.Prescriptions = ParsePrescriptions();
 
             if (CurrentName.Equals("AgentToManagementArea"))
-                sheParameters.AgentToManagementAreaList = ParseAgentToManagementAreaList(sheParameters.Mode);
+                sheParameters.AgentToManagementAreaList = ParseAgentToManagementAreaList(sheParameters.Modes);
 
             return sheParameters;
+        }
+
+        private List<int> ParseModes()
+        {
+            var mode = new InputVar<string>("Mode");
+            ReadVar(mode);
+            return mode.Value.Actual.Split(',').Select(s => int.Parse(s)).ToList();
         }
 
         private List<Prescription> ParsePrescriptions()
@@ -141,18 +156,40 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return prescriptions;
         }
 
-        private List<AgentToManagementArea> ParseAgentToManagementAreaList(int mode)
+        private Dictionary<string, int> ParseAgentToMode()
         {
-            var agentToManagementList = new List<AgentToManagementArea>();
+            while (CurrentName != "AgentToMode")
+                GetNextLine();
 
+            GetNextLine();
+
+            var agentToMode = new Dictionary<string, int>();
+            var agent = new InputVar<string>("Agent");
+            var mode = new InputVar<int>("Mode");
+            while (!AtEndOfInput && CurrentName != "Timestep")
+            {
+                var currentLine = new StringReader(CurrentLine);
+                ReadValue(agent, currentLine);
+                ReadValue(mode, currentLine);
+                agentToMode[agent.Value] = mode.Value;
+                GetNextLine();
+            }
+
+            return agentToMode;
+        }
+
+        private List<AgentToManagementArea> ParseAgentToManagementAreaList(IReadOnlyList<int> modes)
+        {
             while (CurrentName != "AgentToManagementArea")
                 GetNextLine();
 
             GetNextLine();
 
+            var agentToManagementList = new List<AgentToManagementArea>();
             var agent = new InputVar<string>("Agent");
             var managementArea = new InputVar<string>("ManagementArea");
             var siteSelectionMethod = new InputVar<string>("SiteSelectionMethod");
+            var hasMode1 = modes.Contains(1);
 
             while (!AtEndOfInput && CurrentName != "OUTPUTS")
             {
@@ -166,7 +203,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 ReadValue(managementArea, currentLine);
                 agentToManagementArea.ManagementAreas.AddRange(managementArea.Value.String.Split(','));
 
-                if (mode == 1)
+                if (hasMode1)
                 {
                     ReadValue(siteSelectionMethod, currentLine);
                     agentToManagementArea.SiteSelectionMethod =

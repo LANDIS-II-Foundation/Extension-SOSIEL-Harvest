@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Helpers;
-using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Library.HarvestManagement;
 using Landis.Utilities;
 
@@ -23,15 +22,16 @@ namespace Landis.Extension.SOSIELHarvest.Models
     {
         private readonly BiomassHarvest.PlugIn _biomassHarvest;
         private readonly List<ExtendedPrescription> _extendedPrescriptions;
+        private static readonly Regex _decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
 
-        public Mode2(SheParameters sheParameters, BiomassHarvest.PlugIn biomassHarvest)
-            : base(sheParameters)
+        public Mode2(PlugIn plugin)
+            : base(2, plugin)
         {
-            _biomassHarvest = biomassHarvest;
+            _biomassHarvest = plugin.BiomassHarvest;
             _extendedPrescriptions = new List<ExtendedPrescription>();
         }
 
-        public override void Initialize()
+        protected override void InitializeMode()
         {
             _biomassHarvest.Initialize();
 
@@ -69,7 +69,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             }
         }
 
-        public override void Harvest(SosielData sosielData)
+        protected override void Harvest()
         {
             PlugIn.ModelCore.UI.WriteLine("Run Mode2 harvesting ...");
 
@@ -83,11 +83,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
             foreach (var selectedDecisionPair in sosielData.SelectedDecisions)
             {
                 var managementArea = Areas[selectedDecisionPair.Key].ManagementArea;
-                managementArea.Prescriptions.RemoveAll(prescription =>
-                {
-                    var decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
-                    return decisionPattern.IsMatch(prescription.Prescription.Name);
-                });
+                managementArea.Prescriptions.RemoveAll(
+                    prescription => _decisionPattern.IsMatch(prescription.Prescription.Name));
 
                 foreach (var selectedDesignName in selectedDecisionPair.Value)
                 {
@@ -103,7 +100,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             _biomassHarvest.Run();
         }
 
-        public override HarvestResults AnalyzeHarvestingResult()
+        protected override HarvestResults AnalyzeHarvestingResult()
         {
             var results = new HarvestResults();
             foreach (var biomassHarvestArea in Areas.Values.Select(a => a.ManagementArea))
@@ -158,14 +155,30 @@ namespace Landis.Extension.SOSIELHarvest.Models
         private void GenerateNewPrescription(string newName, string parameter, dynamic value, string basedOn,
             string managementAreaName)
         {
-            HarvestManagement.Prescription newPrescription;
+            // Filter out parameters that we do not want to handle
+            switch (parameter)
+            {
+                // Add more known parameters here
+                case "PercentOfHarvestArea":
+                    break;
+
+                default:
+                {
+                    log.WriteLine($"Mode 2: GenerateNewPrescription: Skipping parameter {parameter}");
+                    return;
+                }
+            }
+
             var managementArea = Areas[managementAreaName].ManagementArea;
-            var appliedPrescription = managementArea.Prescriptions.First(p => p.Prescription.Name.Equals(basedOn));
+            var appliedPrescription = managementArea.Prescriptions.FirstOrDefault(
+                p => p.Prescription.Name.Equals(basedOn));
+            if (appliedPrescription == null) return;
             var areaToHarvest = appliedPrescription.PercentageToHarvest;
             var standsToHarvest = appliedPrescription.PercentStandsToHarvest;
             var beginTime = appliedPrescription.BeginTime;
             var endTime = appliedPrescription.EndTime;
 
+            HarvestManagement.Prescription newPrescription;
             switch (parameter)
             {
                 case "PercentOfHarvestArea":
