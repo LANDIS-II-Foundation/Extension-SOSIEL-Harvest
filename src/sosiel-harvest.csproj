@@ -4,9 +4,9 @@
     <RootNamespace>Landis.Extension.SOSIELHarvest</RootNamespace>
     <AssemblyName>Landis.Extension.SOSIELHarvest-v1</AssemblyName>
     <AssemblyTitle>Landis.Extension.SOSIELHarvest-v1</AssemblyTitle>
-    <AssemblyCompany>Landis-II-Foundation</AssemblyCompany>
+    <AssemblyCompany>SOSIEL Inc.</AssemblyCompany>
     <AssemblyProduct>Landis.Extension.SOSIELHarvest-v1</AssemblyProduct>
-    <AssemblyCopyright>Landis-II-Foundation</AssemblyCopyright>
+    <AssemblyCopyright>SOSIEL Inc.</AssemblyCopyright>
     <AssemblyVersion>1.2.0</AssemblyVersion>
     <TargetFramework>netstandard2.0</TargetFramework>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
@@ -15,9 +15,9 @@
     <PackageLicenseUrl>https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>http://www.landis-ii.org</PackageProjectUrl>
     <NeutralLanguage>English</NeutralLanguage>
-    <Authors>Garry Sotnik</Authors>
+    <Authors>SOSIEL Inc.</Authors>
     <Product>Landis.Extension.SOSIELHarvest-v1</Product>
-    <Copyright>Landis-II-Foundation</Copyright>
+    <Copyright>SOSIEL Inc.</Copyright>
     <Version>1.2.0</Version>
     <PackageTags>LANDIS-II;Landis;Extension;Output Biomass</PackageTags>
     <Description>SOSIEL Harvest Extension</Description>
@@ -41,9 +41,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Landis.Extension.BiomassHarvest-v4">
-      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Extension.BiomassHarvest-v4.dll</HintPath>
-    </Reference>
     <Reference Include="Landis.Library.AgeOnlyCohorts-v3">
       <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.AgeOnlyCohorts-v3.dll</HintPath>
     </Reference>
@@ -64,6 +61,9 @@
     </Reference>
     <Reference Include="Landis.Library.Succession-v8">
       <HintPath>..\..\Support-Library-Dlls-v7\Landis.Library.Succession-v8.dll</HintPath>
+    </Reference>
+    <Reference Include="Landis.Extension.BiomassHarvest-v4">
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\Landis.Extension.BiomassHarvest-v4.dll</HintPath>
     </Reference>
     <Reference Include="SOSIEL-v3">
       <HintPath>C:\Program Files\LANDIS-II-v7\extensions\SOSIEL-v3.dll</HintPath>
