@@ -1,8 +1,5 @@
-/// Name: SiteVars.cs
-/// Description: 
-/// Authors: Multiple.
-/// Last updated: July 10th, 2020.
-/// Copyright: Garry Sotnik, Brooke A. Cassell, Robert M. Scheller.
+// SPDX-License-Identifier: LGPL-3.0-or-later
+// Copyright (C) 2021 SOSIEL Inc. All rights reserved.
 
 using Landis.Library.BiomassCohorts;
 using Landis.SpatialModeling;
