@@ -30,14 +30,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
             if (CurrentName.Equals("Mode"))
                 sheParameters.Modes = ParseModes();
 
-            if (CurrentName.Equals("AgentToMode"))
-                sheParameters.AgentToMode = ParseAgentToMode();
-            else
-            {
-                if (sheParameters.Modes.Count > 1)
-                    throw new Exception("Missing mapping of agents to modes");
-            }
-
             var timestep = new InputVar<int>("Timestep");
             ReadVar(timestep);
             sheParameters.Timestep = timestep.Value;
@@ -154,28 +146,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return prescriptions;
         }
 
-        private Dictionary<string, int> ParseAgentToMode()
-        {
-            while (CurrentName != "AgentToMode")
-                GetNextLine();
-
-            GetNextLine();
-
-            var agentToMode = new Dictionary<string, int>();
-            var agent = new InputVar<string>("Agent");
-            var mode = new InputVar<int>("Mode");
-            while (!AtEndOfInput && CurrentName != "Timestep")
-            {
-                var currentLine = new StringReader(CurrentLine);
-                ReadValue(agent, currentLine);
-                ReadValue(mode, currentLine);
-                agentToMode[agent.Value] = mode.Value;
-                GetNextLine();
-            }
-
-            return agentToMode;
-        }
-
         private List<AgentToManagementArea> ParseAgentToManagementAreaList(IReadOnlyList<int> modes)
         {
             while (CurrentName != "AgentToManagementArea")
@@ -187,29 +157,25 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var agent = new InputVar<string>("Agent");
             var managementArea = new InputVar<string>("ManagementArea");
             var siteSelectionMethod = new InputVar<string>("SiteSelectionMethod");
-            var hasMode1 = modes.Contains(1);
+            var agentMode = new InputVar<int>("AgentMode");
+            // var hasMode1 = modes.Contains(1);
 
             while (!AtEndOfInput && CurrentName != "OUTPUTS")
             {
-                var agentToManagementArea = new AgentToManagementArea();
-
                 var currentLine = new StringReader(CurrentLine);
-
                 ReadValue(agent, currentLine);
-                agentToManagementArea.Agent = agent.Value;
-
                 ReadValue(managementArea, currentLine);
-                agentToManagementArea.ManagementAreas.AddRange(managementArea.Value.String.Split(','));
-
-                if (hasMode1)
+                ReadValue(siteSelectionMethod, currentLine);
+                ReadValue(agentMode, currentLine);
+                var agentToManagementArea = new AgentToManagementArea()
                 {
-                    ReadValue(siteSelectionMethod, currentLine);
-                    agentToManagementArea.SiteSelectionMethod =
-                        (SiteSelectionMethod) Enum.Parse(typeof(SiteSelectionMethod), siteSelectionMethod.Value.String);
-                }
-
+                    Agent = agent.Value,
+                    SiteSelectionMethod =
+                        (SiteSelectionMethod)Enum.Parse(typeof(SiteSelectionMethod), siteSelectionMethod.Value.String),
+                    AgentMode = agentMode.Value
+                };
+                agentToManagementArea.ManagementAreas.AddRange(managementArea.Value.String.Split(','));
                 agentToManagementList.Add(agentToManagementArea);
-
                 GetNextLine();
             }
 

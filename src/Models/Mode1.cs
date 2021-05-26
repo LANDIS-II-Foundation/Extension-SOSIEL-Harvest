@@ -45,7 +45,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
             ManagementAreas.ReadMap(sheParameters.ManagementAreaFileName, maDataSet);
             Stands.ReadMap(sheParameters.StandsFileName);
-            SiteVars.GetExternalVars();
+            Landis.Library.HarvestManagement.SiteVars.GetExternalVars();
 
             foreach (ManagementArea mgmtArea in maDataSet)
                 mgmtArea.FinishInitialization();

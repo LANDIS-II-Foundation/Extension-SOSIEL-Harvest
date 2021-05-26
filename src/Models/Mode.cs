@@ -17,7 +17,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         private readonly int _modeId;
         protected LogService log;
         protected SosielData sosielData;
-        protected SosielHarvestAlgorithm sosielHarvestAlgorithm;
+        protected SosielHarvestAlgorithm sosiel;
         protected readonly SheParameters sheParameters;
         protected IEnumerable<IAgent> Agents { get; private set; }
         public Dictionary<string, Area> Areas { get; set; }
@@ -40,18 +40,23 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
             ui.WriteLine("  Creating SOSIEL algorithm instance");
             sosielData = new SosielData();
-            sosielHarvestAlgorithm = new SosielHarvestAlgorithm(
+            sosiel = new SosielHarvestAlgorithm(
                 plugin.Log, _modeId, plugin.NumberOfIterations, plugin.Configuration, Areas.Values);
 
             ui.WriteLine("  Initializing SOSIEL algorithm instance");
-            sosielHarvestAlgorithm.Initialize(sosielData);
-            SetAgents(sosielHarvestAlgorithm.ActiveAgents);
+            sosiel.Initialize(sosielData);
+            SetAgents(sosiel.ActiveAgents);
         }
 
         public void SetAgents(IEnumerable<IAgent> agents)
         {
             Agents = agents.ToList();
             OnAgentsSet();
+        }
+
+        public void SetSpeciesBiomass(IReadOnlyList<SpeciesBiomassRecord> speciesBiomassRecords)
+        {
+            sosiel.SetSpeciesBiomass(speciesBiomassRecords);
         }
 
         public void Run()
@@ -86,7 +91,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     $"\t\t{"MaturityPercent:",-20}{sosielData.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
             }
 
-            sosielHarvestAlgorithm.Run(sosielData);
+            sosiel.Run(sosielData);
 
             if (sosielData.NewDecisionOptions.Any())
             {
