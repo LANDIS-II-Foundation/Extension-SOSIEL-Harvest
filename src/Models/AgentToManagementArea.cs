@@ -16,5 +16,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public List<string> ManagementAreas { get; }
 
         public SiteSelectionMethod SiteSelectionMethod { get; set; }
+        public int AgentMode { get; set; }
     }
 }

@@ -37,6 +37,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         private readonly ConfigurationModel _configuration;
         private SosielData _algorithmModel;
         private readonly Area[] _activeAreas;
+        private IReadOnlyList<SpeciesBiomassRecord> _speciesBiomassRecords;
 
         /// <summary>
         /// Initializes Luhy lite implementation
@@ -54,6 +55,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             _sheMode = sheMode;
             _configuration = configuration;
             _activeAreas = areas.ToArray();
+        }
+
+        public void SetSpeciesBiomass(IReadOnlyList<SpeciesBiomassRecord> speciesBiomassRecords)
+        {
+            _speciesBiomassRecords = speciesBiomassRecords;
         }
 
         /// <summary>
@@ -111,7 +117,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             foreach (var probabilityElementConfiguration in 
                 _configuration.AlgorithmConfiguration.ProbabilitiesConfiguration)
             {
-                var variableType = VariableTypeHelper.ConvertStringToType(probabilityElementConfiguration.VariableType);
+                var variableType = VariableTypeHelper.ConvertStringToType(
+                    probabilityElementConfiguration.VariableType);
                 var parseTableMethod = ReflectionHelper.GetGenerecMethod(
                     variableType, typeof(ProbabilityTableParser), "Parse");
                 // Debugger.Launch();
@@ -247,6 +254,26 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 fm[AlgorithmVariables.ManageAreaBiomass]  = manageAreas.Select(
                     area => _algorithmModel.HarvestResults
                     .ManageAreaBiomass[HarvestResults.GetKey(_sheMode, fm, area)]).Sum();
+
+                if (_speciesBiomassRecords != null)
+                {
+                    if (iteration == 1)
+                    {
+                        foreach (var r in _speciesBiomassRecords)
+                        {
+                            var varName = "InitialAverageAboveGroundSpeciesBiomass_" +
+                                $"{r.Species.Name}_{r.EcoRegion.Name}";
+                            fm[varName] = r.AverageAboveGroundBiomass;
+                            // _log.WriteLine($"Set '{fm.Id}'.'{varName}'={r.AverageAboveGroundBiomass}");
+                        }
+                    }
+                    foreach (var r in _speciesBiomassRecords)
+                    {
+                        var varName = $"CurrentAverageAboveGroundSpeciesBiomass_{r.Species.Name}_{r.EcoRegion.Name}";
+                        fm[varName] = r.AverageAboveGroundBiomass;
+                        // _log.WriteLine($"Set '{fm.Id}'.'{varName}'={r.AverageAboveGroundBiomass}");
+                    }
+                }
             });
         }
 
