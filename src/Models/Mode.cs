@@ -35,7 +35,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             var ui = PlugIn.ModelCore.UI;
 
-            ui.WriteLine($"  Initializing work mode #{_modeId}");
+            ui.WriteLine($"  Initializing operation mode #{_modeId}");
             InitializeMode();
 
             ui.WriteLine("  Creating SOSIEL algorithm instance");

@@ -15,7 +15,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         public string Name { get; set; }
 
         [JsonRequired]
-        public string PrototypeOfAgent { get; set; }
+        [JsonProperty("PrototypeOfAgent")]
+        public string Archetype { get; set; }
 
         [JsonRequired]
         public int NumberOfAgents { get; set; }
@@ -35,7 +36,8 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         public string[] AssignedGoals { get; set; }
 
         [JsonRequired]
-        public Dictionary<string, GoalStateConfiguration> GoalsState { get; set; }
+        [JsonProperty("GoalsState")]
+        public Dictionary<string, GoalStateConfiguration> GoalStates { get; set; }
 
         [JsonRequired]
         public int Mode { get; set; }

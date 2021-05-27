@@ -11,6 +11,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
     public class InitialStateConfiguration
     {
         [JsonRequired]
-        public AgentStateConfiguration[] AgentsState { get; set; }
+        [JsonProperty("AgentsState")]
+        public AgentStateConfiguration[] AgentStates { get; set; }
     }
 }
