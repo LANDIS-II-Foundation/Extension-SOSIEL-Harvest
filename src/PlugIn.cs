@@ -12,7 +12,6 @@ using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Extension.SOSIELHarvest.Services;
 
-
 namespace Landis.Extension.SOSIELHarvest
 {
     public class PlugIn : ExtensionMain
@@ -144,10 +143,9 @@ namespace Landis.Extension.SOSIELHarvest
 
         public override void Run()
         {
-            UpdateSpeciesBiomass();
-
             try
             {
+                UpdateSpeciesBiomass(true);
                 foreach (var mode in _modes)
                 {
                     _log.WriteLine($"SHE: ***** Executing mode #{mode.ModeId} *****");
@@ -157,7 +155,13 @@ namespace Landis.Extension.SOSIELHarvest
             }
             catch (Exception e)
             {
-                _log.WriteLine("Exception: " + e.Message);
+                _log.WriteLine($"Exception: {e.GetType().FullName}: {e.Message}");
+                var inner = e;
+                while (inner.InnerException != null)
+                {
+                    inner = inner.InnerException;
+                    _log.WriteLine($"Caused by: {inner.GetType().FullName}: {inner.Message}");
+                }
                 _log.StopService();
                 throw;
             }
@@ -166,7 +170,7 @@ namespace Landis.Extension.SOSIELHarvest
                 _log.StopService();
         }
 
-        private void UpdateSpeciesBiomass()
+        private void UpdateSpeciesBiomass(bool print = false)
         {
             var speciesByEcoRegions = new double[ModelCore.Ecoregions.Count, ModelCore.Species.Count];
             var activeSiteCounts = new int[ModelCore.Ecoregions.Count];
@@ -195,17 +199,27 @@ namespace Landis.Extension.SOSIELHarvest
             {
                 foreach (var species in ModelCore.Species)
                 {
+                    var activeSiteCount = activeSiteCounts[ecoregion.Index];
                     speciesBiomassRecords.Add(
                         new SpeciesBiomassRecord
                         {
                             EcoRegion = ecoregion,
                             Species = species,
                             SiteCount = activeSiteCounts[ecoregion.Index],
-                            AverageAboveGroundBiomass = speciesByEcoRegions[ecoregion.Index, species.Index]
-                                / activeSiteCounts[ecoregion.Index]
+                            AverageAboveGroundBiomass = activeSiteCount > 0
+                                ? speciesByEcoRegions[ecoregion.Index, species.Index] / activeSiteCount
+                                : 0.0
                         }
                     );
                 }
+            }
+
+            if (print)
+            {
+                _log.WriteLine("SHE: Species biomass:");
+                _log.WriteLine("EcoReg\tSpecies\tAvgBiomass");
+                foreach (var r in speciesBiomassRecords)
+                    _log.WriteLine($"{r.EcoRegion.Name}\t{r.Species.Name}\t{r.AverageAboveGroundBiomass}");
             }
 
             foreach (var mode in _modes)

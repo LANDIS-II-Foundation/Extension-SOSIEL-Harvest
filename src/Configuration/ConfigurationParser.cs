@@ -112,7 +112,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             {
                 AlgorithmConfiguration = MakeAlgorithmConfiguration(
                     sosielParameters.CognitiveLevel, sosielParameters.Demographic, sosielParameters.Probabilities),
-                AgentConfiguration = MakeAgentConfiguration(sosielParameters),
+                AgentArchetypeConfiguration = MakeAgentArchetypeConfiguration(sosielParameters),
                 InitialState = MakeInitialStateConfiguration(sheParameters, sosielParameters)
             };
         }
@@ -148,7 +148,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             };
         }
 
-        private static Dictionary<string, AgentArchetype> MakeAgentConfiguration(SosielParameters parameters)
+        private static Dictionary<string, AgentArchetype> MakeAgentArchetypeConfiguration(SosielParameters parameters)
         {
             var agentArchetypes = new Dictionary<string, AgentArchetype>();
             var goals = ParseGoals(parameters.GoalAttributes);
@@ -237,7 +237,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
             return new InitialStateConfiguration
             {
-                AgentsState = parsedStates.ToArray()
+                AgentStates = parsedStates.ToArray()
             };
         }
 
@@ -248,15 +248,14 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
             agentState.Name = goalAttribute.Agent;
             agentState.NumberOfAgents = 1;
-            agentState.PrototypeOfAgent = goalAttribute.Archetype;
+            agentState.Archetype = goalAttribute.Archetype;
             agentState.AssignedGoals = goalAttribute.Goals.Split('|').ToArray();
 
             var parsedDecisionOptions = ParseAgentDecisionOptions(decisionAttribute.DecisionOptions);
             agentState.AnticipatedInfluenceState = parsedDecisionOptions;
             agentState.AssignedDecisionOptions = parsedDecisionOptions.Keys.ToArray();
 
-            var parsedGoalState = ParseAgentGoalAttributes(goalAttribute);
-            agentState.GoalsState = parsedGoalState;
+            agentState.GoalStates = ParseAgentGoalAttributes(goalAttribute);
 
             var agentToManagementArea =
                 sheParameters.AgentToManagementAreaList.Where(a => a.Agent == agentState.Name).FirstOrDefault();
