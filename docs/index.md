@@ -45,12 +45,12 @@ If you come across any issue or suspected bug when using SHE, please contact Gar
 
 # Design team
 
-Mode 1: Garry Sotnik
-Mode 2: Garry Sotnik, Brooke A. Cassell, & Robert M. Scheller
-Mode 3: Garry Sotnik
+- Mode 1: Garry Sotnik
+- Mode 2: Garry Sotnik, Brooke A. Cassell, & Robert M. Scheller
+- Mode 3: Garry Sotnik
 
 # Development team
 
-Mode 1: Ivan Pizhenko, Vadim Moskvin, Garry Sotnik, & Eugene Lobach
-Mode 2: Vadim Moskvin, Garry Sotnik, & Eugene Lobach
-Mode 3: Ivan Pizhenko & Garry Sotnik
+- Mode 1: Ivan Pizhenko, Vadim Moskvin, Garry Sotnik, & Eugene Lobach
+- Mode 2: Vadim Moskvin, Garry Sotnik, & Eugene Lobach
+- Mode 3: Ivan Pizhenko & Garry Sotnik
