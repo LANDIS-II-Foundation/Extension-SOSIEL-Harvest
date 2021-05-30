@@ -39,10 +39,10 @@ When using SHE in Mode 2:
 
 # Support
 
-If you have a question, please contact Garry Sotnik at contact@sosiel.org. 
+If you have a question, contact Garry Sotnik at contact@sosiel.org. 
 You can also ask for help in the [LANDIS-II users group](http://www.landis-ii.org/users).
 
-If you come across any issue or suspected bug when using SHE, please contact Garry Sotnik at contact@sosiel.org or post about it in the [issue section of the GitHub repository](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/issues).
+If you come across any issue or suspected bug when using SHE, contact Garry Sotnik at contact@sosiel.org or post about it in the [issue section of the GitHub repository](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/issues).
 
 # Design team
 
