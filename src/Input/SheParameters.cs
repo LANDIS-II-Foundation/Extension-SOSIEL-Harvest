@@ -81,8 +81,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
         public List<AgentToManagementArea> AgentToManagementAreaList { get; set; }
 
-        public Dictionary<string, int> AgentToMode { get; set; }
-
         public List<Prescription> Prescriptions { get; set; }
         
         public string PrescriptionMapsOutput { get; set; }
@@ -96,7 +94,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
             _modes = new List<int>();
             _modes.Add(2);
             _roModes = _modes.AsReadOnly();
-            AgentToMode = new Dictionary<string, int>();
         }
 
         public static bool ValidateModeNumber(int mode)

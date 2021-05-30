@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -23,8 +22,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
     public class SosielParameterParser : TextParser<SosielParameters>
     {
         private readonly LogService _log;
-        private CsvHelper.Configuration.Configuration _csvReaderConfig =
-            new CsvHelper.Configuration.Configuration(CultureInfo.InvariantCulture);
 
         public override string LandisDataValue => PlugIn.ExtensionName;
 
@@ -66,7 +63,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var fileName = demographicAttributes.Value;
             using (var reader = new StreamReader(fileName))
             {
-                using (var csv = new CsvReader(reader, _csvReaderConfig))
+                using (var csv = new CsvReader(reader, CSVReaderConfig.config))
                 {
                     var records = csv.GetRecords<Demographic>().ToList();
                     var demographic = new Demographic();
@@ -118,6 +115,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var referenceVariable = new InputVar<string>("ReferenceVariable");
             var changeValueOnPrior = new InputVar<bool>("ChangeValueOnPrior");
             var isCumulative = new InputVar<bool>("IsCumulative");
+            var focalValueReferenceVariable = new InputVar<string>("FocalValueReferenceVariable");
 
             var goals = new List<GoalAttribute>();
             while (CurrentName != "MentalModelAttributes")
@@ -132,7 +130,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 goal.Name = goalName.Value;
 
                 ReadValue(goalTendency, currentLine);
-                goal.GoalTendency = goalTendency.Value;
+                goal.Tendency = (GoalTendency) Enum.Parse(typeof(GoalTendency), goalTendency.Value);
 
                 ReadValue(referenceVariable, currentLine);
                 goal.ReferenceVariable = referenceVariable.Value;
@@ -142,6 +140,10 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
                 ReadValue(isCumulative, currentLine);
                 goal.IsCumulative = isCumulative.Value;
+
+                ReadValue(focalValueReferenceVariable, currentLine);
+                goal.FocalValueReferenceVariable =
+                    focalValueReferenceVariable.Value == "-" ? "" : focalValueReferenceVariable.Value;
 
                 goals.Add(goal);
                 GetNextLine();
@@ -209,7 +211,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
             using (var reader = new StreamReader(fileName))
             {
-                using (var csv = new CsvReader(reader, _csvReaderConfig))
+                using (var csv = new CsvReader(reader, CSVReaderConfig.config))
                 {
                     var records = csv.GetRecords<DecisionOptionAttribute>();
                     var decisionOptionAttributes = new List<DecisionOptionAttribute>();
@@ -227,7 +229,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             _log.WriteLine($"  Loading DecisionOptionAntecedentAttributes from {fileName}");
             using (var reader = new StreamReader(fileName))
             {
-                using (var csv = new CsvReader(reader, _csvReaderConfig))
+                using (var csv = new CsvReader(reader, CSVReaderConfig.config))
                 {
                     var records = csv.GetRecords<DecisionOptionAntecedentAttribute>();
                     var decisionOptionAntecedentAttributes = new List<DecisionOptionAntecedentAttribute>();
@@ -310,7 +312,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             _log.WriteLine($"  Loading AgentGoalAttributes from {fileName}");
             using (var reader = new StreamReader(fileName))
             {
-                using (var csv = new CsvReader(reader, _csvReaderConfig))
+                using (var csv = new CsvReader(reader, CSVReaderConfig.config))
                 {
                     var records = csv.GetRecords<AgentGoalAttribute>();
                     var agentGoalAttributes = new List<AgentGoalAttribute>();
@@ -328,7 +330,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             _log.WriteLine($"  Loading AgentVariables from {fileName}");
             using (var reader = new StreamReader(fileName))
             {
-                using (var csv = new CsvReader(reader, _csvReaderConfig))
+                using (var csv = new CsvReader(reader, CSVReaderConfig.config))
                 {
                     var records = csv.GetRecords<AgentVariable>();
                     var agentVariables = new List<AgentVariable>();
@@ -346,7 +348,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             _log.WriteLine($"  Loading AgentDecisionOptionAttributes from {fileName}");
             using (var reader = new StreamReader(fileName))
             {
-                using (var csv = new CsvReader(reader, _csvReaderConfig))
+                using (var csv = new CsvReader(reader, CSVReaderConfig.config))
                 {
                     var records = csv.GetRecords<AgentDecisionOption>();
                     var agentDecisionOptions = new List<AgentDecisionOption>();

@@ -18,7 +18,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         public AlgorithmConfiguration AlgorithmConfiguration { get; set; }
 
         [JsonRequired]
-        public Dictionary<string, AgentArchetype> AgentConfiguration { get; set; }
+        public Dictionary<string, AgentArchetype> AgentArchetypeConfiguration { get; set; }
 
         [JsonRequired]
         public InitialStateConfiguration InitialState { get; set; }

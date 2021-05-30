@@ -28,11 +28,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="PartialDisturbance.cs" />
-    <Compile Remove="SiteVars.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.2.3" />
     <PackageReference Include="Landis.Core" Version="2.0.0" />
     <PackageReference Include="Landis.Utilities" Version="2.0.0" />

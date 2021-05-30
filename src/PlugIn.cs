@@ -12,7 +12,6 @@ using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Extension.SOSIELHarvest.Services;
 
-
 namespace Landis.Extension.SOSIELHarvest
 {
     public class PlugIn : ExtensionMain
@@ -20,16 +19,13 @@ namespace Landis.Extension.SOSIELHarvest
         public static readonly ExtensionType ExtType = new ExtensionType("disturbance:harvest");
         public static readonly string ExtensionName = "SOSIEL Harvest";
 
+        private readonly int _numberOfIterations;
+        private readonly LogService _log;
         private SheParameters _sheParameters;
         private SosielParameters _sosielParameters;
         private ConfigurationModel _configuration;
-        private int _numberOfIterations;
-
-        // private SosielData _sosielData;
-        // private SosielHarvestAlgorithm _sosielHarvestAlgorithm;
         private BiomassHarvest.PlugIn _biomassHarvest;
         private List<Mode> _modes;
-        private readonly LogService _log;
 
         internal static ICore ModelCore;
 
@@ -135,6 +131,8 @@ namespace Landis.Extension.SOSIELHarvest
                 _modes.Add(mode);
             }
 
+            SiteVars.Initialize();
+
             ModelCore.UI.WriteLine("  Removing old output files...");
             var di = new System.IO.DirectoryInfo(System.IO.Directory.GetCurrentDirectory());
             foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
@@ -147,6 +145,7 @@ namespace Landis.Extension.SOSIELHarvest
         {
             try
             {
+                UpdateSpeciesBiomass(true);
                 foreach (var mode in _modes)
                 {
                     _log.WriteLine($"SHE: ***** Executing mode #{mode.ModeId} *****");
@@ -156,13 +155,86 @@ namespace Landis.Extension.SOSIELHarvest
             }
             catch (Exception e)
             {
-                _log.WriteLine("Exception: " + e.Message);
+                _log.WriteLine($"Exception: {e.GetType().FullName}: {e.Message}");
+                var inner = e;
+                while (inner.InnerException != null)
+                {
+                    inner = inner.InnerException;
+                    _log.WriteLine($"Caused by: {inner.GetType().FullName}: {inner.Message}");
+                }
                 _log.StopService();
                 throw;
             }
 
             if (ModelCore.CurrentTime == ModelCore.EndTime)
                 _log.StopService();
+        }
+
+        private void UpdateSpeciesBiomass(bool print = false)
+        {
+            var speciesByEcoRegions = new double[ModelCore.Ecoregions.Count, ModelCore.Species.Count];
+            var activeSiteCounts = new int[ModelCore.Ecoregions.Count];
+
+            foreach (var ecoregion in ModelCore.Ecoregions)
+            {
+                foreach (var species in ModelCore.Species)
+                    speciesByEcoRegions[ecoregion.Index, species.Index] = 0.0;
+                activeSiteCounts[ecoregion.Index] = 0;
+            }
+
+
+            foreach (var site in ModelCore.Landscape)
+            {
+                var ecoregion = ModelCore.Ecoregion[site];
+                foreach (var species in ModelCore.Species)
+                {
+                    speciesByEcoRegions[ecoregion.Index, species.Index] 
+                        += ComputeSpeciesBiomass(SiteVars.BiomassCohorts[site][species]);
+                }
+                activeSiteCounts[ecoregion.Index]++;
+            }
+
+            var speciesBiomassRecords = new List<SpeciesBiomassRecord>();
+            foreach (var ecoregion in ModelCore.Ecoregions)
+            {
+                foreach (var species in ModelCore.Species)
+                {
+                    var activeSiteCount = activeSiteCounts[ecoregion.Index];
+                    speciesBiomassRecords.Add(
+                        new SpeciesBiomassRecord
+                        {
+                            EcoRegion = ecoregion,
+                            Species = species,
+                            SiteCount = activeSiteCounts[ecoregion.Index],
+                            AverageAboveGroundBiomass = activeSiteCount > 0
+                                ? speciesByEcoRegions[ecoregion.Index, species.Index] / activeSiteCount
+                                : 0.0
+                        }
+                    );
+                }
+            }
+
+            if (print)
+            {
+                _log.WriteLine("SHE: Species biomass:");
+                _log.WriteLine("EcoReg\tSpecies\tAvgBiomass");
+                foreach (var r in speciesBiomassRecords)
+                    _log.WriteLine($"{r.EcoRegion.Name}\t{r.Species.Name}\t{r.AverageAboveGroundBiomass}");
+            }
+
+            foreach (var mode in _modes)
+                mode.SetSpeciesBiomass(speciesBiomassRecords);
+        }
+
+        private static int ComputeSpeciesBiomass(Landis.Library.BiomassCohorts.ISpeciesCohorts cohorts)
+        {
+            int total = 0;
+            if (cohorts != null)
+            {
+                foreach (var cohort in cohorts)
+                    total += cohort.Biomass;
+            }
+            return total;
         }
     }
 }

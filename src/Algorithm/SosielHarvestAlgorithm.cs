@@ -37,6 +37,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         private readonly ConfigurationModel _configuration;
         private SosielData _algorithmModel;
         private readonly Area[] _activeAreas;
+        private IReadOnlyList<SpeciesBiomassRecord> _speciesBiomassRecords;
 
         /// <summary>
         /// Initializes Luhy lite implementation
@@ -56,6 +57,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             _activeAreas = areas.ToArray();
         }
 
+        public void SetSpeciesBiomass(IReadOnlyList<SpeciesBiomassRecord> speciesBiomassRecords)
+        {
+            _speciesBiomassRecords = speciesBiomassRecords;
+        }
+
         /// <summary>
         /// Executes agent initializing. It's the first initializing step.
         /// </summary>
@@ -64,17 +70,17 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             // Debugger.Launch();
             _log.WriteLine("  SosielHarvestAlgorithm: Initializing agents...");
             var agents = new List<IAgent>();
-            var agentPrototypes = _configuration.AgentConfiguration;
-            if (agentPrototypes.Count == 0)
-                throw new SosielAlgorithmException("Agent prototypes were not defined. See configuration file");
+            var agentArchetypes = _configuration.AgentArchetypeConfiguration;
+            if (agentArchetypes.Count == 0)
+                throw new SosielAlgorithmException("Agent archetypes are not defined. Please check configuration files");
 
             // Create agents, groupby is used for saving agents numeration, e.g. FE1, HM1, HM2, etc.
-            _configuration.InitialState.AgentsState.Where(s => s.Mode == _sheMode)
-                .GroupBy(state => state.PrototypeOfAgent)
+            _configuration.InitialState.AgentStates.Where(s => s.Mode == _sheMode)
+                .GroupBy(state => state.Archetype)
                 .ForEach((agentStateGroup) =>
             {
                 int index = 1;
-                var archetype = agentPrototypes[agentStateGroup.Key];
+                var archetype = agentArchetypes[agentStateGroup.Key];
                 var mentalProto = archetype.MentalProto; //do not remove
                 agentStateGroup.ForEach((agentState) =>
                 {
@@ -82,8 +88,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     {
                         var name = agentState.Name;
                         if (string.IsNullOrEmpty(name) || agentState.NumberOfAgents > 1)
-                            name = $"{agentState.PrototypeOfAgent}{index}";
-                        var agent = SosielHarvestAgent.CreateAgent(agentState, archetype, name);
+                            name = $"{agentState.Archetype}{index}";
+                        var agent = SosielHarvestAgent.Create(agentState, archetype, name);
                         agents.Add(agent);
                         index++;
                     }
@@ -100,7 +106,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 });
             });
 
-            agentList = new AgentList(agents, agentPrototypes.Select(kvp => kvp.Value).ToList());
+            agentList = new AgentList(agents, agentArchetypes.Select(kvp => kvp.Value).ToList());
             numberOfAgentsAfterInitialize = agentList.Agents.Count;
         }
 
@@ -111,7 +117,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             foreach (var probabilityElementConfiguration in 
                 _configuration.AlgorithmConfiguration.ProbabilitiesConfiguration)
             {
-                var variableType = VariableTypeHelper.ConvertStringToType(probabilityElementConfiguration.VariableType);
+                var variableType = VariableTypeHelper.ConvertStringToType(
+                    probabilityElementConfiguration.VariableType);
                 var parseTableMethod = ReflectionHelper.GetGenerecMethod(
                     variableType, typeof(ProbabilityTableParser), "Parse");
                 // Debugger.Launch();
@@ -151,6 +158,13 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             {
                 // Creates empty agent state
                 var agentState = AgentState<Area>.Create(agent.Archetype.IsDataSetOriented);
+
+                if (agent.Id.StartsWith("FM"))
+                {
+                    SetSpeciesBiomassVariables(agent, "InitialAverageAboveGroundSpeciesBiomass");
+                    SetSpeciesBiomassVariables(agent, "CurrentAverageAboveGroundSpeciesBiomass");
+                }
+
                 // Copy generated goal importance
                 agent.InitialGoalStates.ForEach(kvp =>
                 {
@@ -158,8 +172,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     goalState.Value = agent[kvp.Key.ReferenceVariable];
                     agentState.GoalsState[kvp.Key] = goalState;
                 });
+
                 states.Add(agent, agentState);
             });
+
             return states;
         }
 
@@ -247,7 +263,22 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 fm[AlgorithmVariables.ManageAreaBiomass]  = manageAreas.Select(
                     area => _algorithmModel.HarvestResults
                     .ManageAreaBiomass[HarvestResults.GetKey(_sheMode, fm, area)]).Sum();
+
+                SetSpeciesBiomassVariables(fm, "CurrentAverageAboveGroundSpeciesBiomass");
             });
+        }
+
+        private void SetSpeciesBiomassVariables(IAgent agent, string varPrefix)
+        {
+            if (_speciesBiomassRecords != null)
+            {
+                foreach (var r in _speciesBiomassRecords)
+                {
+                    var varName = $"{varPrefix}_{r.Species.Name}_{r.EcoRegion.Name}";
+                    agent[varName] = r.AverageAboveGroundBiomass;
+                    // _log.WriteLine($"Set '{fm.Id}'.'{varName}'={r.AverageAboveGroundBiomass}");
+                }
+            }
         }
 
         protected override void BeforeCounterfactualThinking(IAgent agent, Area dataSet)
