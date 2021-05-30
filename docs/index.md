@@ -27,14 +27,15 @@ Version 1.1.14 can be downloaded [here](https://github.com/LANDIS-II-Foundation/
 
 # Citation
 
-In any mode:
+When using SHE in Mode 1 and/or 3:
 
-- Cite SHE: Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (in review) [A new agent-based model provides insight into assumptions in modeling forest management under deep uncertainty](https://assets.researchsquare.com/files/rs-192142/v1/e85672a6-95c6-463c-af1e-67df8b7e280c.pdf).
+- Cite SHE's Mode 1 and/or 3: Sotnik, G., Kovalchuk, K., Pizhenko, I., Thom, D., Kruhlov, I., Chaskovskyy, O., Nielsen-Pincus, M., & Scheller, R. M. (in preparation) A new agent-based model simulates human-forest-wildlife coevolution in the Ukrainian Carpathians.
 - Cite SHE's use of the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent. Biologically Inspired Cognitive Architectures](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038), 26, 103-117.
 
-Additionally, in Mode 2:
-
+When using SHE in Mode 2:
+- Cite SHE's Mode 2: Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (in review) [A new agent-based model provides insight into assumptions in modeling forest management under deep uncertainty](https://assets.researchsquare.com/files/rs-192142/v1/e85672a6-95c6-463c-af1e-67df8b7e280c.pdf).
 - Cite SHE's use of Biomass Harvest: Gustafson, E. J., Shifley, S. R., Mladenoff, D. J., Nimerfro, K. K., & He, H. S. (2000). [Spatial simulation of forest succession and timber harvesting using LANDIS](https://www.fs.usda.gov/treesearch/pubs/12076). Canadian Journal of Forest Research, 30(1), 32–43.
+- Cite SHE's use of the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent. Biologically Inspired Cognitive Architectures](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038), 26, 103-117.
 
 # Support
 
