@@ -36,13 +36,13 @@ You can also ask for help in the [LANDIS-II users group](http://www.landis-ii.or
 
 If you come across any issue or suspected bug when using SHE, please contact Garry Sotnik at contact@sosiel.org or post about it in the [issue section of the GitHub repository](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/issues).
 
-# Collaborators on the extension's design
+# Design team
 
 Mode 1: Garry Sotnik
 Mode 2: Garry Sotnik, Brooke A. Cassell, & Robert M. Scheller
 Mode 3: Garry Sotnik
 
-# Collaborators on the extension's development
+# Development team
 
 Mode 1: Ivan Pizhenko, Vadim Moskvin, Garry Sotnik, & Eugene Lobach
 Mode 2: Vadim Moskvin, Garry Sotnik, & Eugene Lobach
