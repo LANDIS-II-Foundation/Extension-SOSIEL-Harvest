@@ -29,7 +29,7 @@ Version 1.1.14 can be downloaded [here](https://github.com/LANDIS-II-Foundation/
 
 When using SHE in Mode 1 or 3:
 
-- Cite the manuscript describing SHE's Mode 1 and 3: Sotnik, G., Kovalchuk, K., Pizhenko, I., Thom, D., Kruhlov, I., Chaskovskyy, O., Nielsen-Pincus, M., & Scheller, R. M. (in preparation) A new agent-based model simulates human-forest-wildlife coevolution in the Ukrainian Carpathians.
+- Cite the manuscript describing SHE's Mode 1 and 3: Sotnik, G., Kovalchuk, K., Pizhenko, I., Thom, D., Kruhlov, I., Chaskovskyy, O., Nielsen-Pincus, M., & Scheller, R. M. (in preparation) A new agent-based model simulates human-forest-wildlife co-evolution in the Ukrainian Carpathians.
 - Cite the manuscript describing the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038). Biologically Inspired Cognitive Architectures, 26, 103-117.
 
 When using SHE in Mode 2:
