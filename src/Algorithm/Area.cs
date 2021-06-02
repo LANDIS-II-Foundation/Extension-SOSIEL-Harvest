@@ -51,5 +51,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         {
             return _sites.ToDictionary(site => site.Location, site => site);
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

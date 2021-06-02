@@ -33,7 +33,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
             _prescriptions = prescriptions;
             _harvestPrescriptionName = harvestPrescriptionName;
             _siteCohorts = siteCohorts;
-
             _random = new Random();
             _availableSites = area.GetActiveSites();
             _maxColumn = _availableSites.Keys.Max(location => location.Column);
@@ -77,17 +76,14 @@ namespace Landis.Extension.SOSIELHarvest.Models
             }
 
             _isHarvestingFinished = true;
-
             return harvested.Sum(pair => pair.Value);
         }
 
         private int HarvestSite(Prescription prescription, ActiveSite activeSite, ISiteCohorts siteCohorts)
         {
             int harvested = 0;
-
             foreach (var siteHarvestingRule in prescription.SiteHarvestingRules)
                 harvested += siteCohorts.ReduceOrKillBiomassCohorts(new Disturbance(activeSite, siteHarvestingRule));
-
             return harvested;
         }
 
@@ -106,8 +102,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         private IEnumerable<ActiveSite> GetSitesByRandomWalk()
         {
             bool isSiteExist = false;
-            ActiveSite firstSite = new ActiveSite();
-
+            var firstSite = new ActiveSite();
             do
             {
                 var row = _random.Next(_maxRow);
@@ -122,7 +117,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
             } while (isSiteExist == false);
 
             List<Location> neighboursCoordinates;
-
             do
             {
                 neighboursCoordinates = GetAvailableNeighborCoordinates(firstSite);
@@ -192,8 +186,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     nextLocation = new Location(nextLocation.Row - 1, nextLocation.Column);
                 } while (nextLocation != leftTopCorner);
 
-                List<Location> toDelete = new List<Location>();
-
+                var toDelete = new List<Location>();
                 foreach (var availableSitesCoordinate in availableSitesCoordinates)
                 {
                     if (_harvestedSites.Contains(availableSitesCoordinate) || !_availableSites.ContainsKey(availableSitesCoordinate))
@@ -218,7 +211,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 return 0;
             if (column > _maxColumn)
                 return _maxColumn;
-
             return column;
         }
 
@@ -228,7 +220,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 return 0;
             if (row > _maxRow)
                 return _maxRow;
-
             return row;
         }
     }

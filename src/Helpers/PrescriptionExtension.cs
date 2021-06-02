@@ -40,7 +40,6 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
                 var additionalCohortCutter =
                     GetTypePrivateField<ICohortCutter>(singleRepeatHarvest, "additionalCohortCutter");
                 var additionalCohortCutterCopy = CopyCohortCutter(additionalCohortCutter, cuttingMultiplier);
-
                 prescriptionCopy = new SingleRepeatHarvest(name, standRankingMethod, siteSelector, cohortCutterCopy, null,
                     additionalCohortCutterCopy, null, minTimeSinceDamage, preventEstablishment, singleRepeatHarvest.Interval);
             }
@@ -60,7 +59,6 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         private static IStandRankingMethod CopyStandRankingMethod(IStandRankingMethod standRankingMethod)
         {
             IStandRankingMethod rankingMethodCopy;
-
             if (standRankingMethod is EconomicRank economicRank)
             {
                 var rankTable = GetTypePrivateField<EconomicRankTable>(economicRank, "rankTable");
@@ -91,7 +89,7 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             }
             else
             {
-                throw new System.Exception();
+                throw new Exception();
             }
 
             foreach (var requirement in standRankingMethod.Requirements)

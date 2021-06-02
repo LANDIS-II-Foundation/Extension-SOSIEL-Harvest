@@ -101,15 +101,15 @@ namespace Landis.Extension.SOSIELHarvest.Models
         protected override HarvestResults AnalyzeHarvestingResult()
         {
             var results = new HarvestResults();
-            foreach (var biomassHarvestArea in Areas.Values.Select(a => a.ManagementArea))
+            foreach (var managementArea in Areas.Values.Select(a => a.ManagementArea))
             {
-                var key = biomassHarvestArea.MapCode.ToString();
+                var key = managementArea.MapCode.ToString();
                 results.ManageAreaBiomass[key] = 0;
                 results.ManageAreaHarvested[key] = 0;
                 results.ManageAreaMaturityPercent[key] = 0;
 
                 double manageAreaMaturityProportion = 0;
-                foreach (var stand in biomassHarvestArea)
+                foreach (var stand in managementArea)
                 {
                     double standMaturityProportion = 0;
                     foreach (var site in stand)
@@ -125,7 +125,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                             foreach (var cohort in cohorts)
                             {
                                 siteBiomass += cohort.Biomass;
-
                                 if (cohort.Age >= PlugIn.ModelCore.Species[species.Name].Maturity)
                                     siteSpeciesMaturity += cohort.Biomass;
                             }
@@ -142,7 +141,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     manageAreaMaturityProportion += standMaturityProportion;
                 }
 
-                manageAreaMaturityProportion /= biomassHarvestArea.StandCount;
+                manageAreaMaturityProportion /= managementArea.StandCount;
                 results.ManageAreaBiomass[key] = results.ManageAreaBiomass[key] / 100 * PlugIn.ModelCore.CellArea;
                 results.ManageAreaHarvested[key] = results.ManageAreaHarvested[key] / 100 * PlugIn.ModelCore.CellArea;
                 results.ManageAreaMaturityPercent[key] = 100 * manageAreaMaturityProportion;

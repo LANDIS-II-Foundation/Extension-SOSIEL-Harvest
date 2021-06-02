@@ -30,8 +30,10 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 int val = (int)value;
 
                 if (val < 1 && val > 4)
+                {
                     throw new InputParameterException(value.ToString(),
                         "CognitiveLevel must be in interval from 1 to 4");
+                }
                 cognitiveLevel = value;
             }
         }

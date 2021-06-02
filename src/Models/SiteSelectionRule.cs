@@ -31,7 +31,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                         return true;
                 }
             }
-
             return false;
         }
     }

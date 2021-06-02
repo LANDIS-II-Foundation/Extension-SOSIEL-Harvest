@@ -24,7 +24,7 @@ using SOSIEL.Processes;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
-    public class SosielHarvestAlgorithm : SosielAlgorithm<Area>, IAlgorithm<SosielData>
+    public class SosielHarvestAlgorithm : SosielAlgorithm, IAlgorithm<SosielData>
     {
         public string Name { get { return "SosielHarvestImplementation"; } }
 
@@ -49,12 +49,35 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             LogService logService, int sheMode, int numberOfIterations, ConfigurationModel configuration,
             IEnumerable<Area> areas)
             : base(numberOfIterations,
-                  ProcessesConfiguration.GetProcessesConfiguration(configuration.AlgorithmConfiguration.CognitiveLevel))
+                  ProcessesConfiguration.GetProcessesConfiguration(configuration.AlgorithmConfiguration.CognitiveLevel),
+                  new Area())
         {
             _log = logService;
             _sheMode = sheMode;
             _configuration = configuration;
             _activeAreas = areas.ToArray();
+        }
+
+        /// <summary>
+        /// Executes algorithm initialization.
+        /// </summary>
+        public void Initialize(SosielData data)
+        {
+            _algorithmModel = data;
+            InitializeAgents();
+            InitializeProbabilities();
+            if (_configuration.AlgorithmConfiguration.UseDimographicProcesses)
+                UseDemographic();
+            AfterInitialization();
+        }
+
+        /// <summary>
+        /// Runs as many internal iterations as passed to the constructor.
+        /// </summary>
+        public SosielData Run(SosielData data)
+        {
+            RunSosiel(_activeAreas);
+            return data;
         }
 
         public void SetSpeciesBiomass(IReadOnlyList<SpeciesBiomassRecord> speciesBiomassRecords)
@@ -140,7 +163,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         {
             _log.WriteLine("  SosielHarvestAlgorithm: Enabling demographics...");
             base.UseDemographic();
-            demographic = new Demographic<Area>(_configuration.AlgorithmConfiguration.DemographicConfiguration,
+            demographic = new SOSIEL.Processes.Demographic(_configuration.AlgorithmConfiguration.DemographicConfiguration,
                 probabilities.GetProbabilityTable<int>(AlgorithmProbabilityTables.BirthProbabilityTable),
                 probabilities.GetProbabilityTable<int>(AlgorithmProbabilityTables.DeathProbabilityTable));
         }
@@ -150,16 +173,15 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// </summary>
         /// <returns></returns>
         ///
-        protected override Dictionary<IAgent, AgentState<Area>> InitializeFirstIterationState()
+        protected override Dictionary<IAgent, AgentState> InitializeFirstIterationState()
         {
             _log.WriteLine("  SosielHarvestAlgorithm: Initializing first iteration...");
-            var states = new Dictionary<IAgent, AgentState<Area>>();
+            var states = new Dictionary<IAgent, AgentState>();
             agentList.Agents.ForEach(agent =>
             {
                 // Creates empty agent state
-                var agentState = AgentState<Area>.Create(agent.Archetype.IsDataSetOriented);
-
-                if (agent.Id.StartsWith("FM"))
+                var agentState = AgentState.Create(agent.Archetype.IsDataSetOriented);
+                if (agent.Archetype.NamePrefix == "FM")
                 {
                     SetSpeciesBiomassVariables(agent, "InitialAverageAboveGroundSpeciesBiomass");
                     SetSpeciesBiomassVariables(agent, "CurrentAverageAboveGroundSpeciesBiomass");
@@ -170,7 +192,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 {
                     var goalState = kvp.Value;
                     goalState.Value = agent[kvp.Key.ReferenceVariable];
-                    agentState.GoalsState[kvp.Key] = goalState;
+                    agentState.GoalStates[kvp.Key] = goalState;
                 });
 
                 states.Add(agent, agentState);
@@ -179,28 +201,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             return states;
         }
 
-        /// <summary>
-        /// Executes algorithm initialization.
-        /// </summary>
-        public void Initialize(SosielData data)
-        {
-            _algorithmModel = data;
-            InitializeAgents();
-            InitializeProbabilities();
-            if (_configuration.AlgorithmConfiguration.UseDimographicProcesses)
-                UseDemographic();
-            AfterInitialization();
-        }
-
-        /// <summary>
-        /// Runs as many internal iterations as passed to the constructor.
-        /// </summary>
-        public SosielData Run(SosielData data)
-        {
-            RunSosiel(_activeAreas);
-            return data;
-        }
-        
         /// <summary>
         /// Defines custom maintenance process.
         /// </summary>
@@ -281,7 +281,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             }
         }
 
-        protected override void BeforeCounterfactualThinking(IAgent agent, Area dataSet)
+        protected override void BeforeCounterfactualThinking(IAgent agent, IDataSet dataSet)
         {
             base.BeforeCounterfactualThinking(agent, dataSet);
             if (agent.Archetype.NamePrefix == "FM")
@@ -296,7 +296,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// </summary>
         /// <param name="agent"></param>
         /// <param name="dataSet"></param>
-        protected override void BeforeActionSelection(IAgent agent, Area dataSet)
+        protected override void BeforeActionSelection(IAgent agent, IDataSet dataSet)
         {
             // Call default implementation.
             base.BeforeActionSelection(agent, dataSet);
@@ -318,7 +318,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
 
             foreach (var fmAgent in fmAgents)
             {
-                var decisionOptionHistories = iterationState[fmAgent].DecisionOptionsHistories;
+                var decisionOptionHistories = iterationState[fmAgent].DecisionOptionHistories;
                 foreach (var area in decisionOptionHistories.Keys)
                 {
                     if (!iterationSelection.TryGetValue(
@@ -350,7 +350,6 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                         .Where(agent => agent.ContainsVariable(AlgorithmVariables.HouseholdSavings))
                         .Select(agent => (double)agent[AlgorithmVariables.HouseholdSavings])
                         .FirstOrDefault() + iterationHouseholdSavings;
-
                     householdAgents.ForEach(agent =>
                     {
                         agent[AlgorithmVariables.HouseholdIncome] = householdIncome;
@@ -360,7 +359,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 });
         }
 
-        protected override void AfterInnovation(IAgent agent, Area dataSet, DecisionOption newDecisionOption)
+        protected override void AfterInnovation(IAgent agent, IDataSet dataSet, DecisionOption newDecisionOption)
         {
             base.AfterInnovation(agent, dataSet, newDecisionOption);
             if (newDecisionOption == null) return;
@@ -405,13 +404,13 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 var agentState = iterations.Last.Value[agent];
                 if (agent.Archetype.NamePrefix == "FM")
                 {
-                    foreach (var area in agentState.DecisionOptionsHistories.Keys)
+                    foreach (var area in agentState.DecisionOptionHistories.Keys)
                     {
                         // Save activation rule stat
                         var key = HarvestResults.GetKey(_sheMode, agent, area);
-                        var activatedDOs = agentState.DecisionOptionsHistories[area]
+                        var activatedDOs = agentState.DecisionOptionHistories[area]
                             .Activated.Distinct().OrderBy(r => r.Id).ToArray();
-                        var matchedDOs = agentState.DecisionOptionsHistories[area]
+                        var matchedDOs = agentState.DecisionOptionHistories[area]
                             .Matched.Distinct().OrderBy(r => r.Id).ToArray();
                         var activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
                         var matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
@@ -437,10 +436,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             });
         }
 
-        protected override Area[] FilterManagementDataSets(IAgent agent, Area[] orderedDataSets)
+        protected override IDataSet[] FilterManagementDataSets(IAgent agent, IDataSet[] orderedDataSets)
         {
             var agentName = agent.Id;
-            return orderedDataSets.Where(s => s.AssignedAgents.Contains(agentName)).ToArray();
+            return orderedDataSets.Where(s => (s as Area).AssignedAgents.Contains(agentName)).ToArray();
         }
     }
 }
