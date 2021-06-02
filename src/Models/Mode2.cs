@@ -130,7 +130,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                             }
                         }
                         var siteMaturityProportion = Math.Abs(siteBiomass) < kEpsilon
-                            ? 0.0 : (siteMaturity / siteBiomass) * 2;
+                            ? 0.0 : (siteMaturity / siteBiomass);
                         standMaturityProportion += siteMaturityProportion;
                         results.ManageAreaBiomass[key] += siteBiomass;
                         results.ManageAreaHarvested[key] += BiomassHarvest.SiteVars.BiomassRemoved[site];
