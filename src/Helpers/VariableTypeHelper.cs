@@ -15,14 +15,12 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         /// <exception cref="System.ArgumentOutOfRangeException">Unknown variable type:" + type</exception>
         public static Type ConvertStringToType(string type)
         {
-            var lowerCase = type.ToLowerInvariant();
-            switch (lowerCase)
+            switch (type.ToLowerInvariant())
             {
                 case "integer": return typeof(int);
                 case "number": return typeof(double);
                 case "string": return typeof(string);
-                default:
-                    throw new ArgumentOutOfRangeException("Unknown variable type:" + type);
+                default: throw new ArgumentOutOfRangeException("Unknown variable type:" + type);
             }
         }
     }

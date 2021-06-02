@@ -51,7 +51,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         protected override void Harvest()
         {
             // Do not do anything here
-            PlugIn.ModelCore.UI.WriteLine("Run Mode3 harvesting (no action)");
+            log.WriteLine("Run Mode3 harvesting (no action)");
         }
 
         protected override HarvestResults AnalyzeHarvestingResult()

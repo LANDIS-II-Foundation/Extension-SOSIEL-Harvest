@@ -14,7 +14,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
     /// <summary>
     /// SOSIEL Harvest agent model.
     /// </summary>
-    /// <seealso cref="SOSIEL.Entities.Agent" />
+    /// <seealso cref="Agent" />
     public sealed class SosielHarvestAgent : Agent
     {
         public AgentStateConfiguration AgentStateConfiguration { get; private set; }

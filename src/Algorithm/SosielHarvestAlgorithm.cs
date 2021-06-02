@@ -164,8 +164,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             _log.WriteLine("  SosielHarvestAlgorithm: Enabling demographics...");
             base.UseDemographic();
             demographic = new SOSIEL.Processes.Demographic(_configuration.AlgorithmConfiguration.DemographicConfiguration,
-                probabilities.GetProbabilityTable<int>(AlgorithmProbabilityTables.BirthProbabilityTable),
-                probabilities.GetProbabilityTable<int>(AlgorithmProbabilityTables.DeathProbabilityTable));
+                probabilities.GetProbabilityTable<int>(SosielProbabilityTables.BirthProbabilityTable),
+                probabilities.GetProbabilityTable<int>(SosielProbabilityTables.DeathProbabilityTable));
         }
 
         /// <summary>

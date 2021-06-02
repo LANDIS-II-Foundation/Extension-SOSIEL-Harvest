@@ -11,14 +11,9 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         {
             List<T> collection;
             if (dictionary.TryGetValue(key, out collection))
-            {
                 collection.Add(value);
-            }
             else
-            {
-                collection = new List<T> { value };
-                dictionary.Add(key, collection);
-            }
+                dictionary.Add(key, new List<T> { value });
         }
     }
 }

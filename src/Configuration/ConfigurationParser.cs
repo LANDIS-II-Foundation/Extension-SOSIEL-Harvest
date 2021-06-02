@@ -242,7 +242,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         }
 
         private static AgentStateConfiguration ParseAgentState(
-            SheParameters sheParameters, AgentGoalAttribute goalAttribute, AgentDecisionOption decisionAttribute)
+            SheParameters sheParameters, AgentGoalAttribute goalAttribute, AgentDecisionOptions decisionAttribute)
         {
             var agentState = new AgentStateConfiguration();
 

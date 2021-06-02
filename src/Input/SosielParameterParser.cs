@@ -340,7 +340,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             }
         }
 
-        private List<AgentDecisionOption> ParseAgentDecisionOptions()
+        private List<AgentDecisionOptions> ParseAgentDecisionOptions()
         {
             var agentDOAttributes = new InputVar<string>("AgentDecisionOptionAttributes");
             ReadVar(agentDOAttributes);
@@ -350,8 +350,8 @@ namespace Landis.Extension.SOSIELHarvest.Input
             {
                 using (var csv = new CsvReader(reader, CSVReaderConfig.config))
                 {
-                    var records = csv.GetRecords<AgentDecisionOption>();
-                    var agentDecisionOptions = new List<AgentDecisionOption>();
+                    var records = csv.GetRecords<AgentDecisionOptions>();
+                    var agentDecisionOptions = new List<AgentDecisionOptions>();
                     agentDecisionOptions.AddRange(records);
                     return agentDecisionOptions;
                 }
