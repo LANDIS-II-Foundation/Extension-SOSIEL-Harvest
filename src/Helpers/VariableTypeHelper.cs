@@ -16,7 +16,6 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         public static Type ConvertStringToType(string type)
         {
             var lowerCase = type.ToLowerInvariant();
-
             switch (lowerCase)
             {
                 case "integer": return typeof(int);

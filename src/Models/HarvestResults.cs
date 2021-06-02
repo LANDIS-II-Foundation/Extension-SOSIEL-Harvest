@@ -22,7 +22,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public Dictionary<string, double> ManageAreaHarvested { get; }
         public Dictionary<string, double> ManageAreaMaturityPercent { get; }
 
-        public static string GetKey(int mode, IAgent agent, Area area)
+        public static string GetKey(int mode, IAgent agent, IDataSet area)
         {
             return (mode == 1 || mode == 3)
                 ? $"{agent.Id}_{area.Name}"
