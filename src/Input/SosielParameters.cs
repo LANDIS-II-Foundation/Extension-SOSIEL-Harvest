@@ -33,6 +33,6 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
         public List<AgentVariable> AgentVariables { get; set; }
 
-        public List<AgentDecisionOption> AgentDecisionOptions { get; set; }
+        public List<AgentDecisionOptions> AgentDecisionOptions { get; set; }
     }
 }

@@ -8,12 +8,12 @@ namespace Landis.Extension.SOSIELHarvest.Services
 {
     public class LogService : IDisposable
     {
-        private const string LogFileName = "sosiel-harvest-log.txt";
+        private const string kLogFileName = "sosiel-harvest-log.txt";
         private StreamWriter _streamWriter;
 
         public void StartService()
         {
-            _streamWriter = File.CreateText(LogFileName);
+            _streamWriter = File.CreateText(kLogFileName);
         }
 
         public void StopService()

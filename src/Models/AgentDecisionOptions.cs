@@ -3,7 +3,7 @@
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
-    public class AgentDecisionOption
+    public class AgentDecisionOptions
     {
         public string Agent { get; set; }
 

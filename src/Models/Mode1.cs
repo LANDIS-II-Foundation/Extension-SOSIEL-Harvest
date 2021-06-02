@@ -7,7 +7,6 @@ using System.Diagnostics;
 using System.Linq;
 
 using Landis.Extension.SOSIELHarvest.Algorithm;
-using Landis.Extension.SOSIELHarvest.Input;
 using Landis.Library.BiomassCohorts;
 using Landis.Library.HarvestManagement;
 using Landis.SpatialModeling;
@@ -70,7 +69,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             ClearHarvested();
             GenerateNewPrescriptions(sosielData);
-            PlugIn.ModelCore.UI.WriteLine("Run Mode1 harvesting ...");
+            log.WriteLine("Run Mode1 harvesting ...");
             foreach (var agent in Agents)
             {
                 var areas = sheParameters.AgentToManagementAreaList
@@ -83,19 +82,17 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     if (sosielData.SelectedDecisions.ContainsKey(key))
                     {
                         var selectedPrescriptionNames = sosielData.SelectedDecisions[key];
-                        PlugIn.ModelCore.UI.WriteLine(
-                            $"\t\t{key}: decisions: {string.Join(",", selectedPrescriptionNames)}");
+                        log.WriteLine($"\t\t{key}: decisions: {string.Join(",", selectedPrescriptionNames)}");
                         var selectedPrescriptions = _prescriptions.Where(
                             p => selectedPrescriptionNames.Contains(p.Name));
                         var harvestManager =
                             new HarvestManager(area, selectedPrescriptions, _harvestPrescriptionName, _siteCohorts);
                         _harvested[key] = harvestManager.Harvest();
-                        PlugIn.ModelCore.UI.WriteLine(
-                            $"\t\t{key}: harvested {harvestManager.HarvestedSitesNumber} sites");
+                        log.WriteLine($"\t\t{key}: harvested {harvestManager.HarvestedSitesNumber} sites");
                     }
                     else
                     {
-                        PlugIn.ModelCore.UI.WriteLine($"\t\t{key}: harvested 0 sites (no decision found)");
+                        log.WriteLine($"\t\t{key}: harvested 0 sites (no decision found)");
                     }
                 }
             }

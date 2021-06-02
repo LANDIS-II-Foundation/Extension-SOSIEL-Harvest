@@ -21,20 +21,14 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         public static Prescription Copy(this Prescription prescription, string newName, double cuttingMultiplier)
         {
             var name = newName;
-
             var standRankingMethod = CopyStandRankingMethod(prescription.StandRankingMethod);
-
             var siteSelector = CopySiteSelector(prescription.SiteSelectionMethod);
-
             var minTimeSinceDamage = prescription.MinTimeSinceDamage;
-
             var preventEstablishment = prescription.PreventEstablishment;
-
             var cohortCutter = GetTypePrivateField<ICohortCutter>(prescription, "cohortCutter");
             var cohortCutterCopy = CopyCohortCutter(cohortCutter, cuttingMultiplier);
 
             Prescription prescriptionCopy;
-
             if (prescription is SingleRepeatHarvest singleRepeatHarvest)
             {
                 var additionalCohortCutter =
@@ -52,7 +46,6 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
             {
                 prescriptionCopy = new Prescription(name, standRankingMethod, siteSelector, cohortCutterCopy, null, minTimeSinceDamage, preventEstablishment);
             }
-
             return prescriptionCopy;
         }
 
@@ -149,40 +142,31 @@ namespace Landis.Extension.SOSIELHarvest.Helpers
         private static EconomicRankTable CopyEconomicRankTable(EconomicRankTable rankTable)
         {
             var tableCopy = new EconomicRankTable();
-
             foreach (var species in PlugIn.ModelCore.Species)
                 tableCopy[species] = new EconomicRankParameters(rankTable[species].Rank, rankTable[species].MinimumAge);
-
             return tableCopy;
         }
 
         private static FireRiskTable CopyFireRiskTable(FireRiskTable fireRiskTable)
         {
             var tableCopy = new FireRiskTable();
-
             var parameters = GetTypePrivateField<FireRiskParameters[]>(fireRiskTable, "parameters");
-
             for (int i = 0; i < parameters.Length; i++)
                 tableCopy[i] = new FireRiskParameters(parameters[i].Rank);
-
             return tableCopy;
         }
 
         private static List<InclusionRule> CopyInclusionRuleList(List<InclusionRule> ruleList)
         {
             var ruleListCopy = new List<InclusionRule>();
-
             foreach (var inclusionRule in ruleList)
             {
                 var speciesList = new List<string>();
-
                 foreach (var species in inclusionRule.SpeciesList)
                     speciesList.Add(species);
-
                 ruleListCopy.Add(new InclusionRule(inclusionRule.InclusionType, inclusionRule.RuleAgeRange,
                     (inclusionRule.PercentOfCells * 100).ToString(CultureInfo.InvariantCulture) + "%", speciesList));
             }
-
             return ruleListCopy;
         }
 

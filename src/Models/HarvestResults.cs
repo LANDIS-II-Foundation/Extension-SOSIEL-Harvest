@@ -3,8 +3,6 @@
 
 using System.Collections.Generic;
 
-using Landis.Extension.SOSIELHarvest.Algorithm;
-
 using SOSIEL.Entities;
 
 namespace Landis.Extension.SOSIELHarvest.Models
@@ -24,9 +22,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
         public static string GetKey(int mode, IAgent agent, IDataSet area)
         {
-            return (mode == 1 || mode == 3)
-                ? $"{agent.Id}_{area.Name}"
-                : area.Name;
+            return (mode == 1 || mode == 3) ? $"{agent.Id}_{area.Name}" : area.Name;
         }
     }
 }
