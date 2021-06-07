@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 
 using Landis.Core;
@@ -138,14 +139,19 @@ namespace Landis.Extension.SOSIELHarvest
             foreach (System.IO.FileInfo fi in di.GetFiles("output_SOSIEL_Harvest*.csv"))
                 fi.Delete();
 
+            foreach (var mode in _modes)
+            {
+                mode.UpdateSpeciesBiomass();
+            }
+
             ModelCore.UI.WriteLine("  Initialization complete.");
         }
 
         public override void Run()
         {
+            _log.WriteLine($"SHE: Running for time={ModelCore.CurrentTime}");
             try
             {
-                UpdateSpeciesBiomass();
                 foreach (var mode in _modes)
                 {
                     _log.WriteLine($"SHE: ***** Executing mode #{mode.ModeId} *****");
@@ -170,63 +176,14 @@ namespace Landis.Extension.SOSIELHarvest
                 _log.StopService();
         }
 
-        private void UpdateSpeciesBiomass(bool debugPrint = false)
+        public static void CreateDirectory(string path)
         {
-            var speciesByEcoRegion = new double[ModelCore.Ecoregions.Count, ModelCore.Species.Count];
-            var activeSiteCounts = new int[ModelCore.Ecoregions.Count];
-
-            foreach (var site in ModelCore.Landscape)
-            {
-                var ecoregionIndex = ModelCore.Ecoregion[site].Index;
-                foreach (var species in ModelCore.Species)
-                {
-                    speciesByEcoRegion[ecoregionIndex, species.Index]
-                        += ComputeSpeciesBiomass(SiteVars.BiomassCohorts[site][species]);
-                }
-                ++activeSiteCounts[ecoregionIndex];
-            }
-
-            var speciesBiomassRecords = new List<SpeciesBiomassRecord>();
-            foreach (var ecoregion in ModelCore.Ecoregions)
-            {
-                foreach (var species in ModelCore.Species)
-                {
-                    var activeSiteCount = activeSiteCounts[ecoregion.Index];
-                    speciesBiomassRecords.Add(
-                        new SpeciesBiomassRecord
-                        {
-                            EcoRegion = ecoregion,
-                            Species = species,
-                            SiteCount = activeSiteCounts[ecoregion.Index],
-                            AverageAboveGroundBiomass = activeSiteCount > 0
-                                ? speciesByEcoRegion[ecoregion.Index, species.Index] / activeSiteCount
-                                : 0.0
-                        }
-                    );
-                }
-            }
-
-            if (debugPrint)
-            {
-                _log.WriteLine("SHE: Species biomass:");
-                _log.WriteLine("EcoReg\tSpecies\tAvgBiomass");
-                foreach (var r in speciesBiomassRecords)
-                    _log.WriteLine($"{r.EcoRegion.Name}\t{r.Species.Name}\t{r.AverageAboveGroundBiomass}");
-            }
-
-            foreach (var mode in _modes)
-                mode.SetSpeciesBiomass(speciesBiomassRecords);
-        }
-
-        private static int ComputeSpeciesBiomass(Landis.Library.BiomassCohorts.ISpeciesCohorts cohorts)
-        {
-            int total = 0;
-            if (cohorts != null)
-            {
-                foreach (var cohort in cohorts)
-                    total += cohort.Biomass;
-            }
-            return total;
+            path = path.Trim(null);
+            if (path.Length == 0)
+                throw new ArgumentException("path is empty or just whitespace");
+            var dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrEmpty(dir))
+                Landis.Utilities.Directory.EnsureExists(dir);
         }
     }
 }

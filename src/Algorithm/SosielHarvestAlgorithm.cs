@@ -20,7 +20,6 @@ using SOSIEL.Configuration;
 using SOSIEL.Entities;
 using SOSIEL.Exceptions;
 using SOSIEL.Helpers;
-using SOSIEL.Processes;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
@@ -37,7 +36,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         private readonly ConfigurationModel _configuration;
         private SosielData _algorithmModel;
         private readonly Area[] _activeAreas;
-        private IReadOnlyList<SpeciesBiomassRecord> _speciesBiomassRecords;
+        private IReadOnlyDictionary<uint, SpeciesBiomassRecord> _initialSpeciesBiomass;
+        private IReadOnlyDictionary<uint, SpeciesBiomassRecord> _currentSpeciesBiomass;
 
         /// <summary>
         /// Initializes Luhy lite implementation
@@ -74,15 +74,16 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <summary>
         /// Runs as many internal iterations as passed to the constructor.
         /// </summary>
-        public SosielData Run(SosielData data)
+        public void Run(SosielData data)
         {
             RunSosiel(_activeAreas);
-            return data;
         }
 
-        public void SetSpeciesBiomass(IReadOnlyList<SpeciesBiomassRecord> speciesBiomassRecords)
+        public void SetSpeciesBiomass(IReadOnlyDictionary<uint, SpeciesBiomassRecord> speciesBiomass)
         {
-            _speciesBiomassRecords = speciesBiomassRecords;
+            _currentSpeciesBiomass = speciesBiomass;
+            if (PlugIn.ModelCore.CurrentTime == 0)
+                _initialSpeciesBiomass = speciesBiomass;
         }
 
         /// <summary>
@@ -183,8 +184,8 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 var agentState = AgentState.Create(agent.Archetype.IsDataSetOriented);
                 if (agent.Archetype.NamePrefix == "FM")
                 {
-                    SetSpeciesBiomassVariables(agent, "InitialAverageAboveGroundSpeciesBiomass");
-                    SetSpeciesBiomassVariables(agent, "CurrentAverageAboveGroundSpeciesBiomass");
+                    UpdateSpeciesBiomassAgentVariables(agent, "Initial", _initialSpeciesBiomass);
+                    UpdateSpeciesBiomassAgentVariables(agent, "Current", _currentSpeciesBiomass);
                 }
 
                 // Copy generated goal importance
@@ -264,19 +265,28 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     area => _algorithmModel.HarvestResults
                     .ManageAreaBiomass[HarvestResults.GetKey(_sheMode, fm, area)]).Sum();
 
-                SetSpeciesBiomassVariables(fm, "CurrentAverageAboveGroundSpeciesBiomass");
+                UpdateSpeciesBiomassAgentVariables(fm, "Current", _currentSpeciesBiomass);
             });
         }
 
-        private void SetSpeciesBiomassVariables(IAgent agent, string varPrefix)
+        private void UpdateSpeciesBiomassAgentVariables(
+            IAgent agent,
+            string varPrefix,
+            IReadOnlyDictionary<uint, SpeciesBiomassRecord> speciesBiomass
+        )
         {
-            if (_speciesBiomassRecords != null)
+            if (speciesBiomass == null) return;
+            foreach (var r in speciesBiomass)
             {
-                foreach (var r in _speciesBiomassRecords)
+                foreach (var species in PlugIn.ModelCore.Species)
                 {
-                    var varName = $"{varPrefix}_{r.Species.Name}_{r.EcoRegion.Name}";
-                    agent[varName] = r.AverageAboveGroundBiomass;
-                    // _log.WriteLine($"Set '{fm.Id}'.'{varName}'={r.AverageAboveGroundBiomass}");
+                    var varName = $"{varPrefix}TotalAboveGroundSpeciesBiomass_{species.Name}_{r.Key}";
+                    agent[varName] = r.Value.TotalAboveGroundBiomass[species.Index];
+                    // _log.WriteLine($"SOSIELHarvestAlgorithm: Set '{agent.Id}'.'{varName}'={agent[varName]}");
+
+                    varName = $"{varPrefix}AverageAboveGroundSpeciesBiomass_{species.Name}_{r.Key}";
+                    agent[varName] = r.Value.AverageAboveGroundBiomass[species.Index];
+                    // _log.WriteLine($"SOSIELHarvestAlgorithm: Set '{agent.Id}'.'{varName}'={agent[varName]}");
                 }
             }
         }

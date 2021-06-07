@@ -82,18 +82,15 @@ namespace Landis.Extension.SOSIELHarvest.Input
         public List<AgentToManagementArea> AgentToManagementAreaList { get; set; }
 
         public List<Prescription> Prescriptions { get; set; }
-        
-        public string PrescriptionMapsOutput { get; set; }
-        
-        public string EventLogOutput { get; set; }
-        
-        public string SummaryOutput { get; set; }
+
+        public Dictionary<int, string> ModeSpecificBiomassLogFiles { get; private set; }
 
         public SheParameters()
         {
             _modes = new List<int>();
             _modes.Add(2);
             _roModes = _modes.AsReadOnly();
+            ModeSpecificBiomassLogFiles = new Dictionary<int, string>();
         }
 
         public static bool ValidateModeNumber(int mode)

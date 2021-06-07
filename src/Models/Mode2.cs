@@ -71,10 +71,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             log.WriteLine("Run Mode2 harvesting ...");
 
+            log.WriteLine("Mode 2: Generating and applying prescriptions ...");
+
             foreach (var doModel in sosielData.NewDecisionOptions)
-            {
                 GenerateNewPrescription(doModel);
-            }
 
             foreach (var selectedDecision in sosielData.SelectedDecisions)
             {
@@ -91,7 +91,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 }
             }
 
+            log.WriteLine("Mode 2: Running BiomassHarvest ...");
             _biomassHarvest.Run();
+
+            log.WriteLine("Mode 2: Harvesting finished.");
         }
 
         private const double kEpsilon = 0.0001;

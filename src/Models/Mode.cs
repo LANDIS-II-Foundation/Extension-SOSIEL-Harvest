@@ -1,8 +1,11 @@
 // SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (C) 2021 SOSIEL Inc. All rights reserved.
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
 
 using Landis.Extension.SOSIELHarvest.Algorithm;
 using Landis.Extension.SOSIELHarvest.Input;
@@ -15,6 +18,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
     public abstract class Mode
     {
         private readonly int _modeId;
+        private readonly string _speciesBiomassLogFile;
         protected LogService log;
         protected SosielData sosielData;
         protected SosielHarvestAlgorithm sosiel;
@@ -27,6 +31,9 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             _modeId = modeId;
             sheParameters = plugin.SheParameters;
+            sheParameters.ModeSpecificBiomassLogFiles.TryGetValue(_modeId, out _speciesBiomassLogFile);
+            if (_speciesBiomassLogFile != null)
+                PlugIn.ModelCore.UI.WriteLine($"  SHE: Mode {_modeId} species biomass log file: {_speciesBiomassLogFile}");
             log = plugin.Log;
             Areas = new Dictionary<string, Area>();
         }
@@ -54,9 +61,83 @@ namespace Landis.Extension.SOSIELHarvest.Models
             OnAgentsSet();
         }
 
-        public void SetSpeciesBiomass(IReadOnlyList<SpeciesBiomassRecord> speciesBiomassRecords)
+        public void UpdateSpeciesBiomass()
         {
-            sosiel.SetSpeciesBiomass(speciesBiomassRecords);
+            var speciesByManagementArea = new Dictionary<uint, SpeciesBiomassRecord>();
+            foreach (var managementArea in Areas.Values.Select(a => a.ManagementArea))
+            {
+                var r = new SpeciesBiomassRecord(managementArea.MapCode);
+                foreach (var species in PlugIn.ModelCore.Species)
+                {
+                    double biomass = 0.0;
+                    foreach (var stand in managementArea)
+                    {
+                        r.SiteCount += stand.SiteCount;
+                        foreach (var site in stand)
+                        {
+                            var cohorts = BiomassHarvest.SiteVars.Cohorts[site][species];
+                            if (cohorts != null)
+                            {
+                                foreach (var cohort in cohorts)
+                                    biomass += cohort.Biomass;
+                            }
+                        }
+                    }
+                    r.TotalAboveGroundBiomass[species.Index] = biomass;
+                }
+                r.UpdateAverageAboveGroundBiomass();
+                speciesByManagementArea.Add(managementArea.MapCode, r);
+            }
+            sosiel.SetSpeciesBiomass(speciesByManagementArea);
+
+            if (_speciesBiomassLogFile != null)
+                WriteSpeciesBiomass(speciesByManagementArea);
+        }
+
+        private void WriteSpeciesBiomass(IReadOnlyDictionary<uint, SpeciesBiomassRecord>  speciesByManagementArea)
+        {
+            // Create new log file in the simulation beginning
+            if (PlugIn.ModelCore.CurrentTime == 0)
+            {
+                log.WriteLine($"SHE: Creating species biomass log file '{_speciesBiomassLogFile}'");
+                PlugIn.CreateDirectory(_speciesBiomassLogFile);
+                using (var w = new StreamWriter(_speciesBiomassLogFile))
+                {
+                    var h = new StringBuilder();
+                    h.Append("Time,ManagementArea,SiteCount");
+                    foreach (var species in PlugIn.ModelCore.Species)
+                    {
+                        h.Append($",TotalAboveGroundBiomass_{species.Name}");
+                        h.Append($",AverageAboveGroundBiomass_{species.Name}");
+                    }
+                    w.WriteLine(h);
+                }
+            }
+
+            // Append current data to log
+            log.WriteLine($"SHE: Writing species biomass to log file '{_speciesBiomassLogFile}'");
+            var records = speciesByManagementArea.Values.ToArray();
+            Array.Sort(
+                records,
+                (r1, r2) => r1.ManagementAreaMapCode == r2.ManagementAreaMapCode
+                    ? 0 : (r1.ManagementAreaMapCode < r2.ManagementAreaMapCode ? -1 : 1)
+            );
+            using (var w = new StreamWriter(_speciesBiomassLogFile, true))
+            {
+                var line = new StringBuilder();
+                foreach (var r in records)
+                {
+                    line.Clear();
+                    line.Append($"{PlugIn.ModelCore.CurrentTime},{r.ManagementAreaMapCode},{r.SiteCount}");
+                    foreach (var species in PlugIn.ModelCore.Species)
+                    {
+                        var index = species.Index;
+                        line.Append(',').Append(r.TotalAboveGroundBiomass[index]);
+                        line.Append(',').Append(r.AverageAboveGroundBiomass[index]);
+                    }
+                    w.WriteLine(line);
+                }
+            }
         }
 
         public void Run()
@@ -82,15 +163,16 @@ namespace Landis.Extension.SOSIELHarvest.Models
             foreach (var pair in sosielData.HarvestResults.ManageAreaBiomass)
             {
                 log.WriteLine(
-                    $"\tArea:{pair.Key}");
+                    $"\tArea: {pair.Key}");
                 log.WriteLine(
-                    $"\t\t{"Biomass:",-20}{sosielData.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
+                    $"\t\t{"Biomass: ",-20}{sosielData.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
                 log.WriteLine(
-                    $"\t\t{"Harvested:",-20}{sosielData.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
+                    $"\t\t{"Harvested: ",-20}{sosielData.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
                 log.WriteLine(
-                    $"\t\t{"MaturityPercent:",-20}{sosielData.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
+                    $"\t\t{"MaturityPercent: ",-20}{sosielData.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
             }
 
+            UpdateSpeciesBiomass();
             sosiel.Run(sosielData);
 
             if (sosielData.NewDecisionOptions.Any())
@@ -117,6 +199,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     var prescriptionsLog = selectedDecisionPair.Value.Aggregate((s1, s2) => $"{s1} {s2}");
                     log.WriteLine($"\t\t{selectedDecisionPair.Key,-10}{prescriptionsLog}");
                 }
+            }
+            else
+            {
+                log.WriteLine("\tSosiel: There are no new prescriptions.");
             }
         }
     }
