@@ -83,7 +83,11 @@ namespace Landis.Extension.SOSIELHarvest.Input
 
         public List<Prescription> Prescriptions { get; set; }
 
-        public Dictionary<int, string> ModeSpecificBiomassLogFiles { get; private set; }
+        public IDictionary<int, string> ModeSpecificBiomassLogFiles { get; private set; }
+
+        public ISet<uint> ManagementAreasToGenerateSpeciesBiomassFor { get; private set; }
+
+        public bool GenerateSpeciesBiomassForAllManagementAreas { get; set; }
 
         public SheParameters()
         {
@@ -91,6 +95,8 @@ namespace Landis.Extension.SOSIELHarvest.Input
             _modes.Add(2);
             _roModes = _modes.AsReadOnly();
             ModeSpecificBiomassLogFiles = new Dictionary<int, string>();
+            ManagementAreasToGenerateSpeciesBiomassFor = new HashSet<uint>();
+            GenerateSpeciesBiomassForAllManagementAreas = false;
         }
 
         public static bool ValidateModeNumber(int mode)

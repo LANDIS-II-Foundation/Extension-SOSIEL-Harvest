@@ -31,22 +31,51 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 sheParameters.Modes = ParseModes();
 
             const string kTimeStep = "Timestep";
-            while (!string.IsNullOrEmpty(CurrentName))
+            var continueLoop = true;
+            while (continueLoop && !string.IsNullOrEmpty(CurrentName))
             {
                 // Debugger.Launch();
-                if (
-                    CurrentName == "Mode1SpeciesBiomassLogFile"
-                    || CurrentName == "Mode2SpeciesBiomassLogFile"
-                    || CurrentName == "Mode3SpeciesBiomassLogFile"
-                )
+
+                switch (CurrentName)
                 {
-                    var savedCurrentName = CurrentName;
-                    var modeSpeciesBiomassLogFile = new InputVar<string>(CurrentName);
-                    ReadVar(modeSpeciesBiomassLogFile);
-                    var mode = int.Parse(savedCurrentName.Substring(4, 1));
-                    sheParameters.ModeSpecificBiomassLogFiles[mode] = modeSpeciesBiomassLogFile.Value;
+                    case "Mode1SpeciesBiomassLogFile":
+                    case "Mode2SpeciesBiomassLogFile":
+                    case "Mode3SpeciesBiomassLogFile":
+                    {
+                        var savedCurrentName = CurrentName;
+                        var modeSpeciesBiomassLogFile = new InputVar<string>(CurrentName);
+                        ReadVar(modeSpeciesBiomassLogFile);
+                        var mode = int.Parse(savedCurrentName.Substring(4, 1));
+                        sheParameters.ModeSpecificBiomassLogFiles[mode] = modeSpeciesBiomassLogFile.Value;
+                        break;
+                    }
+
+                    case "GenerateSpeciesBiomassForManagementAreas":
+                    {
+                        var generateSpeciesBiomassForManagementAreas = new InputVar<string>(CurrentName);
+                        ReadVar(generateSpeciesBiomassForManagementAreas);
+                        if (generateSpeciesBiomassForManagementAreas.Value == "all")
+                            sheParameters.GenerateSpeciesBiomassForAllManagementAreas = true;
+                        else
+                        {
+                            foreach (
+                                var managementAreaMapCode in
+                                generateSpeciesBiomassForManagementAreas.Value.String.Split(',')
+                                    .Select(s => uint.Parse(s))
+                            )
+                            {
+                                sheParameters.ManagementAreasToGenerateSpeciesBiomassFor.Add(managementAreaMapCode);
+                            }
+                        }
+                        break;
+                    }
+
+                    default:
+                    {
+                        continueLoop = false;
+                        break;
+                    }
                 }
-                else break;
             }
 
             if (!CurrentName.Equals(kTimeStep))

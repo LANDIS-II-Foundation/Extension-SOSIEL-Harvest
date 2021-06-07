@@ -66,6 +66,15 @@ namespace Landis.Extension.SOSIELHarvest.Models
             var speciesByManagementArea = new Dictionary<uint, SpeciesBiomassRecord>();
             foreach (var managementArea in Areas.Values.Select(a => a.ManagementArea))
             {
+                // Filter out management areas
+                if (
+                    !sheParameters.GenerateSpeciesBiomassForAllManagementAreas
+                    && !sheParameters.ManagementAreasToGenerateSpeciesBiomassFor.Contains(managementArea.MapCode)
+                )
+                {
+                    continue;
+                }
+
                 var r = new SpeciesBiomassRecord(managementArea.MapCode);
                 foreach (var species in PlugIn.ModelCore.Species)
                 {
