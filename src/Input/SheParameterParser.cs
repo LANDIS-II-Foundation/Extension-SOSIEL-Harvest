@@ -56,6 +56,10 @@ namespace Landis.Extension.SOSIELHarvest.Input
                         ReadVar(generateSpeciesBiomassForManagementAreas);
                         if (generateSpeciesBiomassForManagementAreas.Value == "all")
                             sheParameters.GenerateSpeciesBiomassForAllManagementAreas = true;
+                        else if (generateSpeciesBiomassForManagementAreas.Value == "none")
+                        {
+                            // do not do anything here
+                        }
                         else
                         {
                             foreach (
