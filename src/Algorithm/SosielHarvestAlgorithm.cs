@@ -254,16 +254,16 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                 {
                     fm[AlgorithmVariables.ManageAreaHarvested] = manageAreas.Select(
                         area => _algorithmModel.HarvestResults
-                        .ManageAreaHarvested[HarvestResults.GetKey(_sheMode, fm, area)]).Average();
+                        .ManagementAreaHarvested[HarvestResults.GetKey(_sheMode, fm, area)]).Average();
                 }
 
                 fm[AlgorithmVariables.ManageAreaMaturityPercent] = manageAreas.Select(
                     area => _algorithmModel.HarvestResults
-                    .ManageAreaMaturityPercent[HarvestResults.GetKey(_sheMode, fm, area)]).Average();
+                    .ManagementAreaMaturityPercent[HarvestResults.GetKey(_sheMode, fm, area)]).Average();
 
                 fm[AlgorithmVariables.ManageAreaBiomass]  = manageAreas.Select(
                     area => _algorithmModel.HarvestResults
-                    .ManageAreaBiomass[HarvestResults.GetKey(_sheMode, fm, area)]).Sum();
+                    .ManagementAreaBiomass[HarvestResults.GetKey(_sheMode, fm, area)]).Sum();
 
                 UpdateSpeciesBiomassAgentVariables(fm, "Current", _currentSpeciesBiomass);
             });
@@ -297,7 +297,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             if (agent.Archetype.NamePrefix == "FM")
             {
                 agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults
-                    .ManageAreaBiomass[HarvestResults.GetKey(_sheMode, agent, dataSet)];
+                    .ManagementAreaBiomass[HarvestResults.GetKey(_sheMode, agent, dataSet)];
             };
         }
 
@@ -316,7 +316,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             {
                 // Set value of current area manage biomass to agent variable.
                 agent[AlgorithmVariables.ManageAreaBiomass] = _algorithmModel.HarvestResults
-                        .ManageAreaBiomass[HarvestResults.GetKey(_sheMode, agent, dataSet)];
+                        .ManagementAreaBiomass[HarvestResults.GetKey(_sheMode, agent, dataSet)];
             }
         }
 
@@ -436,9 +436,9 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                             MatchedDO = matchedDOIds,
                             MostImportantGoal = agentState.RankedGoals.First().Name,
                             TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
-                            BiomassHarvested = _algorithmModel.HarvestResults.ManageAreaHarvested[key],
-                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManageAreaMaturityPercent[key],
-                            Biomass = _algorithmModel.HarvestResults.ManageAreaBiomass[key]
+                            BiomassHarvested = _algorithmModel.HarvestResults.ManagementAreaHarvested[key],
+                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManagementAreaMaturityPercent[key],
+                            Biomass = _algorithmModel.HarvestResults.ManagementAreaBiomass[key]
                         };
                         CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), usage);
                     }

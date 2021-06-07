@@ -110,8 +110,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 foreach (var area in areas)
                 {
                     var key = HarvestResults.GetKey(1, agent, area);
-                    results.ManageAreaBiomass[key] = 0;
-                    results.ManageAreaMaturityPercent[key] = 0;
+                    results.ManagementAreaBiomass[key] = 0;
+                    results.ManagementAreaMaturityPercent[key] = 0;
 
                     double manageAreaMaturityProportion = 0;
                     foreach (var stand in area.ManagementArea)
@@ -138,16 +138,16 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
                             var siteMaturityProportion = Math.Abs(siteBiomass) < 0.0001 
                                 ? 0 : (siteMaturity / siteBiomass) * 2;
-                            results.ManageAreaBiomass[key] += siteBiomass;
+                            results.ManagementAreaBiomass[key] += siteBiomass;
                         }
                         standMaturityProportion /= stand.Count();
                         manageAreaMaturityProportion += standMaturityProportion;
                     }
 
                     manageAreaMaturityProportion /= area.ManagementArea.StandCount;
-                    results.ManageAreaBiomass[key] = results.ManageAreaBiomass[key] / 100 * PlugIn.ModelCore.CellArea;
-                    results.ManageAreaHarvested[key] = _harvested[key] * PlugIn.ModelCore.CellArea;
-                    results.ManageAreaMaturityPercent[key] = 100 * manageAreaMaturityProportion;
+                    results.ManagementAreaBiomass[key] = results.ManagementAreaBiomass[key] / 100 * PlugIn.ModelCore.CellArea;
+                    results.ManagementAreaHarvested[key] = _harvested[key] * PlugIn.ModelCore.CellArea;
+                    results.ManagementAreaMaturityPercent[key] = 100 * manageAreaMaturityProportion;
                 }
             }
             return results;

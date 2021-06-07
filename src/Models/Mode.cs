@@ -160,16 +160,16 @@ namespace Landis.Extension.SOSIELHarvest.Models
         private void RunSosiel()
         {
             log.WriteLine("\tRun Sosiel with parameters:");
-            foreach (var pair in sosielData.HarvestResults.ManageAreaBiomass)
+            foreach (var pair in sosielData.HarvestResults.ManagementAreaBiomass)
             {
                 log.WriteLine(
                     $"\tArea: {pair.Key}");
                 log.WriteLine(
-                    $"\t\t{"Biomass: ",-20}{sosielData.HarvestResults.ManageAreaBiomass[pair.Key],10:N0}");
+                    $"\t\t{"Biomass: ",-20}{sosielData.HarvestResults.ManagementAreaBiomass[pair.Key],10:N0}");
                 log.WriteLine(
-                    $"\t\t{"Harvested: ",-20}{sosielData.HarvestResults.ManageAreaHarvested[pair.Key],10:N0}");
+                    $"\t\t{"Harvested: ",-20}{sosielData.HarvestResults.ManagementAreaHarvested[pair.Key],10:N0}");
                 log.WriteLine(
-                    $"\t\t{"MaturityPercent: ",-20}{sosielData.HarvestResults.ManageAreaMaturityPercent[pair.Key],10:F2}");
+                    $"\t\t{"MaturityPercent: ",-20}{sosielData.HarvestResults.ManagementAreaMaturityPercent[pair.Key],10:F2}");
             }
 
             UpdateSpeciesBiomass();

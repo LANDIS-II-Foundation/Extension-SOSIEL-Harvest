@@ -11,14 +11,14 @@ namespace Landis.Extension.SOSIELHarvest.Models
     {
         public HarvestResults()
         {
-            ManageAreaBiomass = new Dictionary<string, double>();
-            ManageAreaHarvested = new Dictionary<string, double>();
-            ManageAreaMaturityPercent = new Dictionary<string, double>();
+            ManagementAreaBiomass = new Dictionary<string, double>();
+            ManagementAreaHarvested = new Dictionary<string, double>();
+            ManagementAreaMaturityPercent = new Dictionary<string, double>();
         }
 
-        public Dictionary<string, double> ManageAreaBiomass { get; }
-        public Dictionary<string, double> ManageAreaHarvested { get; }
-        public Dictionary<string, double> ManageAreaMaturityPercent { get; }
+        public Dictionary<string, double> ManagementAreaBiomass { get; }
+        public Dictionary<string, double> ManagementAreaHarvested { get; }
+        public Dictionary<string, double> ManagementAreaMaturityPercent { get; }
 
         public static string GetKey(int mode, IAgent agent, IDataSet area)
         {
