@@ -30,7 +30,29 @@ namespace Landis.Extension.SOSIELHarvest.Input
             if (CurrentName.Equals("Mode"))
                 sheParameters.Modes = ParseModes();
 
-            var timestep = new InputVar<int>("Timestep");
+            const string kTimeStep = "Timestep";
+            while (!string.IsNullOrEmpty(CurrentName))
+            {
+                // Debugger.Launch();
+                if (
+                    CurrentName == "Mode1SpeciesBiomassLogFile"
+                    || CurrentName == "Mode2SpeciesBiomassLogFile"
+                    || CurrentName == "Mode3SpeciesBiomassLogFile"
+                )
+                {
+                    var savedCurrentName = CurrentName;
+                    var modeSpeciesBiomassLogFile = new InputVar<string>(CurrentName);
+                    ReadVar(modeSpeciesBiomassLogFile);
+                    var mode = int.Parse(savedCurrentName.Substring(4, 1));
+                    sheParameters.ModeSpecificBiomassLogFiles[mode] = modeSpeciesBiomassLogFile.Value;
+                }
+                else break;
+            }
+
+            if (!CurrentName.Equals(kTimeStep))
+                throw new Exception($"Invalid parameter: expecting ${kTimeStep}, but received {CurrentName}");
+
+            var timestep = new InputVar<int>(kTimeStep);
             ReadVar(timestep);
             sheParameters.Timestep = timestep.Value;
 

@@ -67,9 +67,9 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
         protected override void Harvest()
         {
+            log.WriteLine("Run Mode1 harvesting ...");
             ClearHarvested();
             GenerateNewPrescriptions(sosielData);
-            log.WriteLine("Run Mode1 harvesting ...");
             foreach (var agent in Agents)
             {
                 var areas = sheParameters.AgentToManagementAreaList
@@ -96,6 +96,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                     }
                 }
             }
+            log.WriteLine("Mode 1: Harvesting finished.");
         }
 
         protected override HarvestResults AnalyzeHarvestingResult()
