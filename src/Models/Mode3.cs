@@ -66,11 +66,11 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 foreach (var area in areas)
                 {
                     var key = HarvestResults.GetKey(ModeId, agent, area);
-                    results.ManageAreaBiomass[key] = 0;
-                    results.ManageAreaMaturityPercent[key] = 0;
-                    results.ManageAreaBiomass[key] = 0;
-                    results.ManageAreaHarvested[key] = 0;
-                    results.ManageAreaMaturityPercent[key] = 0;
+                    results.ManagementAreaBiomass[key] = 0;
+                    results.ManagementAreaMaturityPercent[key] = 0;
+                    results.ManagementAreaBiomass[key] = 0;
+                    results.ManagementAreaHarvested[key] = 0;
+                    results.ManagementAreaMaturityPercent[key] = 0;
                 }
             }
             return results;

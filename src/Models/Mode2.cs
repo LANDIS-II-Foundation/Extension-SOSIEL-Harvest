@@ -18,9 +18,10 @@ namespace Landis.Extension.SOSIELHarvest.Models
 {
     public class Mode2 : Mode
     {
+        private static readonly Regex _decisionOptionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
+
         private readonly BiomassHarvest.PlugIn _biomassHarvest;
         private readonly List<ExtendedPrescription> _extendedPrescriptions;
-        private static readonly Regex _decisionPattern = new Regex(@"(MM\d+-\d+_DO\d+)");
 
         public Mode2(PlugIn plugin)
             : base(2, plugin)
@@ -79,7 +80,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             foreach (var selectedDecision in sosielData.SelectedDecisions)
             {
                 var managementArea = Areas[selectedDecision.Key].ManagementArea;
-                managementArea.Prescriptions.RemoveAll(p => _decisionPattern.IsMatch(p.Prescription.Name));
+                managementArea.Prescriptions.RemoveAll(p => _decisionOptionPattern.IsMatch(p.Prescription.Name));
                 foreach (var selectedDesignName in selectedDecision.Value)
                 {
                     var extendedPrescription =
@@ -105,11 +106,11 @@ namespace Landis.Extension.SOSIELHarvest.Models
             foreach (var managementArea in Areas.Values.Select(a => a.ManagementArea))
             {
                 var key = managementArea.MapCode.ToString();
-                results.ManageAreaBiomass[key] = 0.0;
-                results.ManageAreaHarvested[key] = 0.0;
-                results.ManageAreaMaturityPercent[key] = 0.0;
+                results.ManagementAreaBiomass[key] = 0.0;
+                results.ManagementAreaHarvested[key] = 0.0;
+                results.ManagementAreaMaturityPercent[key] = 0.0;
 
-                double manageAreaMaturityProportion = 0.0;
+                double managementAreaMaturityProportion = 0.0;
                 foreach (var stand in managementArea)
                 {
                     double standMaturityProportion = 0.0;
@@ -135,16 +136,18 @@ namespace Landis.Extension.SOSIELHarvest.Models
                         var siteMaturityProportion = Math.Abs(siteBiomass) < kEpsilon
                             ? 0.0 : (siteMaturity / siteBiomass);
                         standMaturityProportion += siteMaturityProportion;
-                        results.ManageAreaBiomass[key] += siteBiomass;
-                        results.ManageAreaHarvested[key] += BiomassHarvest.SiteVars.BiomassRemoved[site];
+                        results.ManagementAreaBiomass[key] += siteBiomass;
+                        results.ManagementAreaHarvested[key] += BiomassHarvest.SiteVars.BiomassRemoved[site];
                     }
-                    manageAreaMaturityProportion += standMaturityProportion / stand.Count();
+                    managementAreaMaturityProportion += standMaturityProportion / stand.Count();
                 }
 
-                manageAreaMaturityProportion /= managementArea.StandCount;
-                results.ManageAreaBiomass[key] = (results.ManageAreaBiomass[key] / 100) * PlugIn.ModelCore.CellArea;
-                results.ManageAreaHarvested[key] = (results.ManageAreaHarvested[key] / 100) * PlugIn.ModelCore.CellArea;
-                results.ManageAreaMaturityPercent[key] = 100 * manageAreaMaturityProportion;
+                managementAreaMaturityProportion /= managementArea.StandCount;
+                results.ManagementAreaBiomass[key] =
+                    (results.ManagementAreaBiomass[key] / 100) * PlugIn.ModelCore.CellArea;
+                results.ManagementAreaHarvested[key] =
+                    (results.ManagementAreaHarvested[key] / 100) * PlugIn.ModelCore.CellArea;
+                results.ManagementAreaMaturityPercent[key] = 100 * managementAreaMaturityProportion;
             }
             return results;
         }
@@ -170,9 +173,6 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 p => p.Prescription.Name.Equals(doModel.BasedOn));
             if (appliedPrescription == null) return;
             var areaToHarvest = appliedPrescription.PercentageToHarvest;
-            var standsToHarvest = appliedPrescription.PercentStandsToHarvest;
-            var beginTime = appliedPrescription.BeginTime;
-            var endTime = appliedPrescription.EndTime;
 
             HarvestManagement.Prescription newPrescription;
             switch (doModel.ConsequentVariable)
@@ -189,8 +189,12 @@ namespace Landis.Extension.SOSIELHarvest.Models
                 default: throw new Exception($"Invalid parameter {doModel.ConsequentVariable}");
             }
 
-            _extendedPrescriptions.Add(new ExtendedPrescription(
-                newPrescription, managementArea, areaToHarvest, standsToHarvest, beginTime, endTime));
+            _extendedPrescriptions.Add(
+                new ExtendedPrescription(
+                    newPrescription, managementArea, areaToHarvest, appliedPrescription.PercentStandsToHarvest,
+                    appliedPrescription.BeginTime, appliedPrescription.EndTime
+                )
+            );
         }
 
         private void ApplyPrescription(ManagementArea managementArea, ExtendedPrescription extendedPrescription)
