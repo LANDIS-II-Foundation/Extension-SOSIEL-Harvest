@@ -34,6 +34,7 @@ namespace Landis.Extension.SOSIELHarvest
         internal ConfigurationModel Configuration { get => _configuration; }
         internal int NumberOfIterations { get => _numberOfIterations; }
         internal SheParameters SheParameters { get => _sheParameters; }
+        internal SosielParameters SosielParameters { get => _sosielParameters; }
         internal BiomassHarvest.PlugIn BiomassHarvest { get => _biomassHarvest; }
 
         public PlugIn()

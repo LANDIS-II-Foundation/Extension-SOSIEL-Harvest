@@ -63,6 +63,9 @@
     <Reference Include="SOSIEL-v3">
       <HintPath>C:\Program Files\LANDIS-II-v7\extensions\SOSIEL-v3.dll</HintPath>
     </Reference>
+    <Reference Include="SOSIEL.VBGP-v0">
+      <HintPath>C:\Program Files\LANDIS-II-v7\extensions\SOSIEL.VBGP-v0.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>

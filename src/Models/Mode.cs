@@ -48,7 +48,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
             ui.WriteLine("  Creating SOSIEL algorithm instance");
             sosielData = new SosielData();
             sosiel = new SosielHarvestAlgorithm(
-                plugin.Log, _modeId, plugin.NumberOfIterations, plugin.Configuration, Areas.Values);
+                plugin.Log, _modeId, plugin.NumberOfIterations, plugin.Configuration, Areas.Values,
+                plugin.SosielParameters.GoalPrioritizingConfiguration);
 
             ui.WriteLine("  Initializing SOSIEL algorithm instance");
             sosiel.Initialize(sosielData);

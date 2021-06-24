@@ -9,6 +9,7 @@ using System.Linq;
 
 using CsvHelper;
 
+using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Models;
 using Landis.Extension.SOSIELHarvest.Services;
 using Landis.Utilities;
@@ -35,6 +36,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return new SosielParameters
             {
                 CognitiveLevel = ParseCognitiveLevel(),
+                GoalPrioritizingConfiguration = ParseGoalPrioritizingConfiguration(),
                 GoalAttributes = ParseGoalAttributes(),
                 MentalModels = ParseMentalModels(),
                 DecisionOptionAttributes = ParseDecisionOptionAttributes(),
@@ -54,6 +56,40 @@ namespace Landis.Extension.SOSIELHarvest.Input
             var cognitiveLevel = new InputVar<string>("CognitiveLevel");
             ReadVar(cognitiveLevel);
             return (CognitiveLevel) Enum.Parse(typeof(CognitiveLevel), cognitiveLevel.Value);
+        }
+
+        private GoalPrioritizingConfiguration ParseGoalPrioritizingConfiguration()
+        {
+            if (CurrentName == "GoalPrioritizing")
+            {
+                var currentLine = new StringReader(CurrentLine);
+                GetNextLine();
+                var gp = new InputVar<string>("GoalPrioritizing");
+                ReadValue(gp, currentLine);
+                var goalPrioritizingType = new InputVar<string>("GoalPrioritizingType");
+                ReadValue(goalPrioritizingType, currentLine);
+
+                var type = (GoalPrioritizingType)Enum.Parse(typeof(GoalPrioritizingType), goalPrioritizingType.Value);
+                switch (type)
+                {
+                    case GoalPrioritizingType.Default: break;
+                    case GoalPrioritizingType.VBGP:
+                    {
+                        var configFile = new InputVar<string>("GoalPrioritizingConfig");
+                        ReadValue(configFile, currentLine);
+                        return new GoalPrioritizingConfiguration
+                        {
+                            GoalPrioritizingType = GoalPrioritizingType.VBGP,
+                            ConfigFile = configFile.Value.String
+                        };
+                    }
+                }
+            }
+            return new GoalPrioritizingConfiguration
+            {
+                GoalPrioritizingType = GoalPrioritizingType.Default,
+                ConfigFile = ""
+            };
         }
 
         private Demographic ParseDemographic()
