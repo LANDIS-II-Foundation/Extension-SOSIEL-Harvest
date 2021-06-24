@@ -20,6 +20,9 @@ using SOSIEL.Configuration;
 using SOSIEL.Entities;
 using SOSIEL.Exceptions;
 using SOSIEL.Helpers;
+using SOSIEL.Processes;
+using SOSIEL.VBGP.Input;
+using SOSIEL.VBGP.Processes;
 
 namespace Landis.Extension.SOSIELHarvest.Algorithm
 {
@@ -47,10 +50,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// <param name="areas">Enumerable of active areas from Landis</param>
         public SosielHarvestAlgorithm(
             LogService logService, int sheMode, int numberOfIterations, ConfigurationModel configuration,
-            IEnumerable<Area> areas)
+            IEnumerable<Area> areas, GoalPrioritizingConfiguration goalPrioritizingConfiguration)
             : base(numberOfIterations,
                   ProcessesConfiguration.GetProcessesConfiguration(configuration.AlgorithmConfiguration.CognitiveLevel),
-                  new Area())
+                  new Area(),
+                  CreateGoalPrioritizingProcess(goalPrioritizingConfiguration))
         {
             _log = logService;
             _sheMode = sheMode;
@@ -134,16 +138,28 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             numberOfAgentsAfterInitialize = agentList.Agents.Count;
         }
 
+        private static IGoalPrioritizing CreateGoalPrioritizingProcess(GoalPrioritizingConfiguration goalPrioritizingConfiguration)
+        {
+            switch (goalPrioritizingConfiguration.GoalPrioritizingType)
+            {
+                case GoalPrioritizingType.VBGP:
+                {
+                    var config = VBGPConfigurationReader.ReadConfiguration(goalPrioritizingConfiguration.ConfigFile);
+                    return new ValueBasedGoalPrioritizing(config);
+                }
+                default: return null;
+            }
+        }
+
         private void InitializeProbabilities()
         {
             _log.WriteLine("  SosielHarvestAlgorithm: Initializing probabilities...");
-            var probabilitiesList = new Probabilities();
             foreach (var probabilityElementConfiguration in 
                 _configuration.AlgorithmConfiguration.ProbabilitiesConfiguration)
             {
                 var variableType = VariableTypeHelper.ConvertStringToType(
                     probabilityElementConfiguration.VariableType);
-                var parseTableMethod = ReflectionHelper.GetGenerecMethod(
+                var parseTableMethod = ReflectionHelper.GetGenericMethod(
                     variableType, typeof(ProbabilityTableParser), "Parse");
                 // Debugger.Launch();
                 dynamic table = parseTableMethod.Invoke(null, 
@@ -153,11 +169,10 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                         probabilityElementConfiguration.WithHeader
                     });
                 var addToListMethod =
-                    ReflectionHelper.GetGenerecMethod(variableType, typeof(Probabilities), "AddProbabilityTable");
+                    ReflectionHelper.GetGenericMethod(variableType, typeof(Probabilities), "AddProbabilityTable");
                 addToListMethod.Invoke(
-                    probabilitiesList, new object[] { probabilityElementConfiguration.Variable, table });
+                    probabilities, new object[] { probabilityElementConfiguration.Variable, table });
             }
-            probabilities = probabilitiesList;
         }
 
         protected override void UseDemographic()
