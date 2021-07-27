@@ -11,14 +11,14 @@ namespace Landis.Extension.SOSIELHarvest.Models
 
         public bool Modifiable { get; set; }
 
-        public int MaxNumberOfDesignOptions { get; set; }
+        public int MaxNumberOfDecisionOptions { get; set; }
 
-        public string DesignOptionGoalRelationship { get; set; }
+        public string DecisionOptionGoalRelationship { get; set; }
 
         public string AssociatedWithGoals { get; set; }
 
         public string ConsequentValueRange { get; set; }
 
-        public string ConsequentRound { get; set; }
+        public int ConsequentRound { get; set; }
     }
 }

@@ -35,30 +35,30 @@ namespace Landis.Extension.SOSIELHarvest.Input
         {
             return new SosielParameters
             {
-                CognitiveLevel = ParseCognitiveLevel(),
-                GoalPrioritizingConfiguration = ParseGoalPrioritizingConfiguration(),
-                GoalAttributes = ParseGoalAttributes(),
-                MentalModels = ParseMentalModels(),
-                DecisionOptionAttributes = ParseDecisionOptionAttributes(),
-                DecisionOptionAntecedentAttributes = ParseDecisionOptionAntecedentAttributes(),
-                AgentArchetypes = ParseAgentArchetypes(),
-                AgentArchetypeVariables = ParseAgentArchetypeVariables(),
-                AgentGoalAttributes = ParseAgentGoalAttributes(),
-                AgentVariables = ParseAgentVariables(),
-                AgentDecisionOptions = ParseAgentDecisionOptions(),
-                Demographic = ParseDemographic(),
-                Probabilities = ParseProbabilities(),
+                CognitiveLevel = ReadCognitiveLevel(),
+                GoalPrioritizingConfiguration = ReadGoalPrioritizingConfiguration(),
+                GoalAttributes = ReadGoalAttributes(),
+                MentalModels = ReadMentalModels(),
+                DecisionOptionAttributes = ReadDecisionOptionAttributes(),
+                DecisionOptionAntecedentAttributes = ReadDecisionOptionAntecedentAttributes(),
+                AgentArchetypes = ReadAgentArchetypes(),
+                AgentArchetypeVariables = ReadAgentArchetypeVariables(),
+                AgentGoalAttributes = ReadAgentGoalAttributes(),
+                AgentVariables = ReadAgentVariables(),
+                AgentDecisionOptions = ReadAgentDecisionOptions(),
+                Demographic = ReadDemographic(),
+                Probabilities = ReadProbabilities(),
             };
         }
 
-        private CognitiveLevel ParseCognitiveLevel()
+        private CognitiveLevel ReadCognitiveLevel()
         {
             var cognitiveLevel = new InputVar<string>("CognitiveLevel");
             ReadVar(cognitiveLevel);
             return (CognitiveLevel) Enum.Parse(typeof(CognitiveLevel), cognitiveLevel.Value);
         }
 
-        private GoalPrioritizingConfiguration ParseGoalPrioritizingConfiguration()
+        private GoalPrioritizingConfiguration ReadGoalPrioritizingConfiguration()
         {
             if (CurrentName == "GoalPrioritizing")
             {
@@ -92,7 +92,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             };
         }
 
-        private Demographic ParseDemographic()
+        private Demographic ReadDemographic()
         {
             var demographicAttributes = new InputVar<string>("DemographicAttributes");
             ReadVar(demographicAttributes);
@@ -109,7 +109,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             }
         }
 
-        private List<Probability> ParseProbabilities()
+        private List<Probability> ReadProbabilities()
         {
             SkipUntilConfiguration("ProbabilityAttributes");
             var variableParameter = new InputVar<string>("VariableParameter");
@@ -142,7 +142,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return probabilities;
         }
 
-        private List<GoalAttribute> ParseGoalAttributes()
+        private List<GoalAttribute> ReadGoalAttributes()
         {
             SkipUntilConfiguration("GoalAttributes");
             var agentArchetype = new InputVar<string>("AgentArchetype");
@@ -187,18 +187,19 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return goals;
         }
 
-        private List<MentalModel> ParseMentalModels()
+        private List<MentalModel> ReadMentalModels()
         {
             SkipUntilConfiguration("MentalModelAttributes");
             var agentArchetype = new InputVar<string>("AgentArchetype");
             var name = new InputVar<string>("Name");
             var modifiable = new InputVar<bool>("Modifiable");
-            var maxNumberOfDesignOptions = new InputVar<int>("MaxNumberOfDesignOptions");
-            var designOptionGoalRelationship = new InputVar<string>("DesignOptionGoalRelationship");
+            var maxNumberOfDecisionOptions = new InputVar<int>("MaxNumberOfDecisionOptions");
+            var decisionOptionGoalRelationship = new InputVar<string>("DecisionOptionGoalRelationship");
             var associatedWithGoals = new InputVar<string>("AssociatedWithGoals");
             var consequentValueRange = new InputVar<string>("ConsequentValueRange");
-            var consequentRound = new InputVar<string>("ConsequentRound");
+            var consequentRound = new InputVar<int>("ConsequentRound");
 
+            // Debugger.Launch();
             var mentalModels = new List<MentalModel>();
             while (CurrentName != "DecisionOptionAttributes")
             {
@@ -214,11 +215,11 @@ namespace Landis.Extension.SOSIELHarvest.Input
                 ReadValue(modifiable, stringReader);
                 mentalModel.Modifiable = modifiable.Value;
 
-                ReadValue(maxNumberOfDesignOptions, stringReader);
-                mentalModel.MaxNumberOfDesignOptions = maxNumberOfDesignOptions.Value;
+                ReadValue(maxNumberOfDecisionOptions, stringReader);
+                mentalModel.MaxNumberOfDecisionOptions = maxNumberOfDecisionOptions.Value;
 
-                ReadValue(designOptionGoalRelationship, stringReader);
-                mentalModel.DesignOptionGoalRelationship = designOptionGoalRelationship.Value;
+                ReadValue(decisionOptionGoalRelationship, stringReader);
+                mentalModel.DecisionOptionGoalRelationship = decisionOptionGoalRelationship.Value;
 
                 ReadValue(associatedWithGoals, stringReader);
                 mentalModel.AssociatedWithGoals = associatedWithGoals.Value;
@@ -238,7 +239,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return mentalModels;
         }
 
-        private List<DecisionOptionAttribute> ParseDecisionOptionAttributes()
+        private List<DecisionOptionAttribute> ReadDecisionOptionAttributes()
         {
             var doAttributesFileName = new InputVar<string>("DecisionOptionAttributes");
             ReadVar(doAttributesFileName);
@@ -257,7 +258,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             }
         }
 
-        private List<DecisionOptionAntecedentAttribute> ParseDecisionOptionAntecedentAttributes()
+        private List<DecisionOptionAntecedentAttribute> ReadDecisionOptionAntecedentAttributes()
         {
             var doAntecedentAttributesFileName = new InputVar<string>("DecisionOptionAntecedentAttributes");
             ReadVar(doAntecedentAttributesFileName);
@@ -275,7 +276,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             }
         }
 
-        private List<AgentArchetype> ParseAgentArchetypes()
+        private List<AgentArchetype> ReadAgentArchetypes()
         {
             SkipUntilConfiguration("AgentArchetypeAttributes");
             var archetypeName = new InputVar<string>("ArchetypeName");
@@ -307,7 +308,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return agentArchetypes;
         }
 
-        private List<AgentArchetypeVariable> ParseAgentArchetypeVariables()
+        private List<AgentArchetypeVariable> ReadAgentArchetypeVariables()
         {
             SkipUntilConfiguration("AgentArchetypeVariables");
             var variableName = new InputVar<string>("VariableName");
@@ -340,7 +341,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             return agentArchetypeVariables;
         }
 
-        private List<AgentGoalAttribute> ParseAgentGoalAttributes()
+        private List<AgentGoalAttribute> ReadAgentGoalAttributes()
         {
             var agentGoalAttributesFileName = new InputVar<string>("AgentGoalAttributes");
             ReadVar(agentGoalAttributesFileName);
@@ -358,7 +359,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             }
         }
 
-        private List<AgentVariable> ParseAgentVariables()
+        private List<AgentVariable> ReadAgentVariables()
         {
             var agentVariablesFileName = new InputVar<string>("AgentVariables");
             ReadVar(agentVariablesFileName);
@@ -376,7 +377,7 @@ namespace Landis.Extension.SOSIELHarvest.Input
             }
         }
 
-        private List<AgentDecisionOptions> ParseAgentDecisionOptions()
+        private List<AgentDecisionOptions> ReadAgentDecisionOptions()
         {
             var agentDOAttributes = new InputVar<string>("AgentDecisionOptionAttributes");
             ReadVar(agentDOAttributes);
