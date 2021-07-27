@@ -354,7 +354,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                     }
 
                     // Not sure what to do with 2 or more similar DO from different agents
-                    areaList.AddRange(decisionOptionHistories[area].Activated.Select(d => d.Id));
+                    areaList.AddRange(decisionOptionHistories[area].Activated.Select(d => d.Name));
                 }
             }
 
@@ -391,7 +391,7 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
             var newDecisionOptionModel = new NewDecisionOptionModel()
             {
                 ManagementArea = dataSet.Name,
-                Name = newDecisionOption.Id,
+                Name = newDecisionOption.Name,
                 ConsequentVariable = newDecisionOption.Consequent.Param,
                 ConsequentValue = string.IsNullOrEmpty(newDecisionOption.Consequent.VariableValue)
                     ? newDecisionOption.Consequent.Value
@@ -434,11 +434,11 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
                         // Save activation rule stat
                         var key = HarvestResults.GetKey(_sheMode, agent, area);
                         var activatedDOs = agentState.DecisionOptionHistories[area]
-                            .Activated.Distinct().OrderBy(r => r.Id).ToArray();
+                            .Activated.Distinct().OrderBy(r => r.Name).ToArray();
                         var matchedDOs = agentState.DecisionOptionHistories[area]
-                            .Matched.Distinct().OrderBy(r => r.Id).ToArray();
-                        var activatedDOIds = activatedDOs.Select(r => r.Id).ToArray();
-                        var matchedDOIds = matchedDOs.Select(r => r.Id).ToArray();
+                            .Matched.Distinct().OrderBy(r => r.Name).ToArray();
+                        var activatedDOIds = activatedDOs.Select(r => r.Name).ToArray();
+                        var matchedDOIds = matchedDOs.Select(r => r.Name).ToArray();
                         var usage = new FMDOUsageOutput()
                         {
                             Iteration = iteration,

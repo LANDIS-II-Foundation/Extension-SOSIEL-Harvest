@@ -150,6 +150,7 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
 
         private static Dictionary<string, AgentArchetype> MakeAgentArchetypeConfiguration(SosielParameters parameters)
         {
+            // Debugger.Launch();
             var agentArchetypes = new Dictionary<string, AgentArchetype>();
             var goals = ParseGoals(parameters.GoalAttributes);
             var mentalModels = ParseMentalModels(parameters.MentalModels);
@@ -163,9 +164,9 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
                 agentArchetype.IsDataSetOriented = archetype.DataSetOriented;
                 agentArchetype.UseImportanceAdjusting = archetype.GoalImportanceAdjusting;
                 agentArchetype.Goals = goals[archetype.ArchetypeName];
-                agentArchetype.MentalModel = mentalModels[archetype.ArchetypeName];
+                agentArchetype.MentalModels = mentalModels[archetype.ArchetypeName];
 
-                var supportedMentalModels = agentArchetype.MentalModel.Values.Select(mm => mm.Name).ToList();
+                var supportedMentalModels = agentArchetype.MentalModels.Values.Select(mm => mm.Name).ToList();
 
                 agentArchetype.DecisionOptions = decisionOptions.Keys
                     .Where(d => supportedMentalModels.Contains(GetDecisionOptionMentalModelName(d)))
@@ -192,9 +193,9 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             {
                 var parsedName = ParseDecisionOptionName(decisionOptionAttribute.DecisionOption);
                 var decisionOption = new DecisionOption();
-                decisionOption.MentalModel = parsedName.MentalModel;
-                decisionOption.DecisionOptionsLayer = parsedName.MentalSubModel;
-                decisionOption.PositionNumber = parsedName.DecisionOptionNumber;
+                decisionOption.ParentMentalModelId = parsedName.MentalModel;
+                decisionOption.ParentDecisionOptionLayerId = parsedName.MentalSubModel;
+                decisionOption.Id = parsedName.DecisionOptionNumber;
                 decisionOption.RequiredParticipants = decisionOptionAttribute.RequiredParticipants;
                 decisionOption.Antecedent = decisionOptionAntecedentAttributes
                     .Where(a => a.DecisionOption == decisionOptionAttribute.DecisionOption)
@@ -428,50 +429,40 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
         private static Dictionary<string, Dictionary<string, MentalModelConfiguration>> ParseMentalModels(
             List<MentalModel> mentalModels)
         {
-            var dictionary = new Dictionary<string, Dictionary<string, MentalModelConfiguration>>();
-
+            var result = new Dictionary<string, Dictionary<string, MentalModelConfiguration>>();
             foreach (var archetypeMentalModels in mentalModels.GroupBy(m => m.AgentArchetype))
             {
-                var archetypeMentalModelsDictionary = new Dictionary<string, MentalModelConfiguration>();
-
+                var archetypeMentalModelConfigs = new Dictionary<string, MentalModelConfiguration>();
                 foreach (var mentalModel in archetypeMentalModels)
                 {
                     var parsedName = ParseMentalModelName(mentalModel.Name);
 
-                    MentalModelConfiguration configuration;
-                    if (!archetypeMentalModelsDictionary.TryGetValue(
-                        parsedName.MentalModel.ToString(), out configuration))
+                    MentalModelConfiguration config;
+                    if (!archetypeMentalModelConfigs.TryGetValue(parsedName.MentalModel.ToString(), out config))
                     {
-                        configuration = new MentalModelConfiguration
+                        config = new MentalModelConfiguration
                         {
                             Name = mentalModel.Name,
                             AssociatedWith = mentalModel.AssociatedWithGoals.Split('|'),
                             Layer = new Dictionary<string, DecisionOptionLayerConfiguration>()
                         };
-
-                        archetypeMentalModelsDictionary[parsedName.MentalModel.ToString()] = configuration;
+                        archetypeMentalModelConfigs[parsedName.MentalModel.ToString()] = config;
                     }
-
-                    int round;
-                    int.TryParse(mentalModel.ConsequentRound, out round);
 
                     var layer = new DecisionOptionLayerConfiguration
                     {
-                        ConsequentPrecisionDigitsAfterDecimalPoint = round,
+                        ConsequentPrecisionDigitsAfterDecimalPoint = mentalModel.ConsequentRound,
                         ConsequentValueInterval = ParseRange<double>(mentalModel.ConsequentValueRange),
                         Modifiable = mentalModel.Modifiable,
-                        MaxNumberOfDecisionOptions = mentalModel.MaxNumberOfDesignOptions,
+                        MaxNumberOfDecisionOptions = mentalModel.MaxNumberOfDecisionOptions,
                         ConsequentRelationshipSign = ParseComplexValue(
-                            mentalModel.DesignOptionGoalRelationship).ToDictionary(v => v.Key, v => v.Value)
+                            mentalModel.DecisionOptionGoalRelationship).ToDictionary(v => v.Key, v => v.Value)
                     };
-
-                    configuration.Layer[parsedName.MentalSubModel.ToString()] = layer;
+                    config.Layer[parsedName.MentalSubModel.ToString()] = layer;
                 }
-
-                dictionary[archetypeMentalModels.Key] = archetypeMentalModelsDictionary;
+                result[archetypeMentalModels.Key] = archetypeMentalModelConfigs;
             }
-
-            return dictionary;
+            return result;
         }
 
         private static readonly Regex _mentalModelNamePattern = new Regex(@"^MM(\d{1,})-(\d{1,})$");
@@ -541,13 +532,12 @@ namespace Landis.Extension.SOSIELHarvest.Configuration
             {
                 var values = new[] { match.Groups["begin"].Value, match.Groups["end"].Value };
                 return values
-                    .Select(v => (T)Convert
-                    .ChangeType(v, typeof(T), CultureInfo.InvariantCulture.NumberFormat))
+                    .Select(v => (T)Convert.ChangeType(v, typeof(T), CultureInfo.InvariantCulture.NumberFormat))
                     .ToArray();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                throw new ArgumentException("Invalid range string");
+                throw new ArgumentException("Invalid range string", ex);
             }
         }
 
