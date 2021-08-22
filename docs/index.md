@@ -32,7 +32,7 @@ When using SHE in Mode 1 or 3:
 - Cite the manuscript describing the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038). Biologically Inspired Cognitive Architectures, 26, 103-117.
 
 When using SHE in Mode 2:
-- Cite the manuscript describing SHE's Mode 2: Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (in review) [A new agent-based model provides insight into assumptions in modeling forest management under deep uncertainty](https://doi.org/10.1007/s10980-021-01324-5).
+- Cite the manuscript describing SHE's Mode 2: Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (in review) [A new agent-based model provides insight into deep uncertainty faced in simulated forest management](https://doi.org/10.1007/s10980-021-01324-5).
 - Cite the manuscript describing the Biomass Harvest extension: Gustafson, E. J., Shifley, S. R., Mladenoff, D. J., Nimerfro, K. K., & He, H. S. (2000). [Spatial simulation of forest succession and timber harvesting using LANDIS](https://www.fs.usda.gov/treesearch/pubs/12076). Canadian Journal of Forest Research, 30(1), 32–43.
 - Cite the manuscript describing the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038?via%3Dihub). Biologically Inspired Cognitive Architectures, 26, 103-117.
 
