@@ -10,7 +10,7 @@ The SOSIEL (pronounced ˈsōSHəl and stands for Self-Organizing Social & Induct
 
 # Release Notes
 
-- Latest official release: Version 1.1.12 — February 2021
+- Latest official release: Version 1.1.14 — February 2021
 - [SHE User Guide](https://docs.google.com/document/d/1YBKuFaQ5Hsh3OjYsMJoXoHgtg7gv8Us0wZjcTaqSCOc).
 
 # Requirements
@@ -28,14 +28,13 @@ Version 1.1.14 can be downloaded [here](https://github.com/LANDIS-II-Foundation/
 # Citation
 
 When using SHE in Mode 1 or 3:
-
 - Cite the manuscript describing SHE's Mode 1 and 3: Sotnik, G., Kovalchuk, K., Pizhenko, I., Thom, D., Kruhlov, I., Chaskovskyy, O., Nielsen-Pincus, M., & Scheller, R. M. (in preparation) A new agent-based model simulates human-forest-wildlife co-evolution in the Ukrainian Carpathians.
 - Cite the manuscript describing the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038). Biologically Inspired Cognitive Architectures, 26, 103-117.
 
 When using SHE in Mode 2:
-- Cite the manuscript describing SHE's Mode 2: Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (in review) [A new agent-based model provides insight into assumptions in modeling forest management under deep uncertainty](https://assets.researchsquare.com/files/rs-192142/v1/e85672a6-95c6-463c-af1e-67df8b7e280c.pdf).
+- Cite the manuscript describing SHE's Mode 2: Sotnik, G., Cassell, B. A., Duveneck, M. J., Scheller, R. M. (in review) [A new agent-based model provides insight into assumptions in modeling forest management under deep uncertainty](https://doi.org/10.1007/s10980-021-01324-5).
 - Cite the manuscript describing the Biomass Harvest extension: Gustafson, E. J., Shifley, S. R., Mladenoff, D. J., Nimerfro, K. K., & He, H. S. (2000). [Spatial simulation of forest succession and timber harvesting using LANDIS](https://www.fs.usda.gov/treesearch/pubs/12076). Canadian Journal of Forest Research, 30(1), 32–43.
-- Cite the manuscript describing the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038). Biologically Inspired Cognitive Architectures, 26, 103-117.
+- Cite the manuscript describing the SOSIEL algorithm: Sotnik, G. (2018). [The SOSIEL Platform: Knowledge-based, cognitive, and multi-agent](https://www.sciencedirect.com/science/article/abs/pii/S2212683X18301038?via%3Dihub). Biologically Inspired Cognitive Architectures, 26, 103-117.
 
 # Support
 
