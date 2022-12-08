@@ -32,7 +32,7 @@
     <PackageReference Include="Landis.Core" Version="2.0.0" />
     <PackageReference Include="Landis.Utilities" Version="2.0.0" />
     <PackageReference Include="Landis.SpatialModeling" Version="2.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
   </ItemGroup>
 
   <ItemGroup>
