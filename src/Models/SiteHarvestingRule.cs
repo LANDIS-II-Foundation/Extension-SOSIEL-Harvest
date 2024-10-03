@@ -2,7 +2,7 @@
 // Copyright (C) 2021 SOSIEL Inc. All rights reserved.
 
 using Landis.Core;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 using Landis.Utilities;
 
@@ -43,7 +43,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             if (_siteHarvestingRule.SpeciesName.Equals(cohort.Species.Name) == false)
                 return 0;
 
-            return (int) (cohort.Biomass * (double) _siteHarvestingRule.Percentage);
+            return (int) (cohort.Data.Biomass * (double) _siteHarvestingRule.Percentage);
         }
     }
 }

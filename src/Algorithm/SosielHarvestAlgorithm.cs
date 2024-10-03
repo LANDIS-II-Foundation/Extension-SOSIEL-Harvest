@@ -1,19 +1,15 @@
 ﻿// SPDX-License-Identifier: LGPL-3.0-or-later
 // Copyright (C) 2021 SOSIEL Inc. All rights reserved.
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
 
 using Landis.Extension.SOSIELHarvest.Configuration;
 using Landis.Extension.SOSIELHarvest.Helpers;
 using Landis.Extension.SOSIELHarvest.Models;
-using Landis.Extension.SOSIELHarvest.Output;
 using Landis.Extension.SOSIELHarvest.Services;
 
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 
 using SOSIEL.Algorithm;
 using SOSIEL.Configuration;
@@ -406,65 +402,65 @@ namespace Landis.Extension.SOSIELHarvest.Algorithm
         /// Executes after PostIterationCalculations. Collects output data.
         /// </summary>
         /// <param name="iteration"></param>
-        protected override void PostIterationStatistic(int iteration)
-        {
-            base.PostIterationStatistic(iteration);
+        //protected override void PostIterationStatistic(int iteration)
+        //{
+        //    base.PostIterationStatistic(iteration);
 
-            try
-            {
-                var settings = new JsonSerializerSettings()
-                {
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                };
-                var data = JsonConvert.SerializeObject(iterations.Last.Value, settings);
-                File.WriteAllText($"output_SOSIEL_Harvest_DUMP_{iteration}.json", data);
-            }
-            catch(Exception)
-            {
-            }
+        //    try
+        //    {
+        //        var settings = new JsonSerializerSettings()
+        //        {
+        //            ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+        //        };
+        //        var data = JsonConvert.SerializeObject(iterations.Last.Value, settings);
+        //        File.WriteAllText($"output_SOSIEL_Harvest_DUMP_{iteration}.json", data);
+        //    }
+        //    catch(Exception)
+        //    {
+        //    }
 
-            // Save statistics for each agent
-            agentList.ActiveAgents.ForEach(agent =>
-            {
-                var agentState = iterations.Last.Value[agent];
-                if (agent.Archetype.NamePrefix == "FM")
-                {
-                    foreach (var area in agentState.DecisionOptionHistories.Keys)
-                    {
-                        // Save activation rule stat
-                        var key = HarvestResults.GetKey(_sheMode, agent, area);
-                        var activatedDOs = agentState.DecisionOptionHistories[area]
-                            .Activated.Distinct().OrderBy(r => r.Name).ToArray();
-                        var matchedDOs = agentState.DecisionOptionHistories[area]
-                            .Matched.Distinct().OrderBy(r => r.Name).ToArray();
-                        var activatedDOIds = activatedDOs.Select(r => r.Name).ToArray();
-                        var matchedDOIds = matchedDOs.Select(r => r.Name).ToArray();
-                        var usage = new FMDOUsageOutput()
-                        {
-                            Iteration = iteration,
-                            ManagementArea = area.Name,
-                            ActivatedDOValues = activatedDOs.Select(
-                                r => string.IsNullOrEmpty(r.Consequent.VariableValue)
-                                ? (string)r.Consequent.Value.ToString()
-                                : (string)agent[r.Consequent.VariableValue].ToString()).ToArray(),
-                            ActivatedDO = activatedDOIds,
-                            MatchedDO = matchedDOIds,
-                            MostImportantGoal = agentState.RankedGoals.First().Name,
-                            TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
-                            BiomassHarvested = _algorithmModel.HarvestResults.ManagementAreaHarvested[key],
-                            ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManagementAreaMaturityPercent[key],
-                            Biomass = _algorithmModel.HarvestResults.ManagementAreaBiomass[key]
-                        };
-                        CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), usage);
-                    }
-                }
-            });
-        }
+        //    // Save statistics for each agent
+        //    agentList.ActiveAgents.ForEach(agent =>
+        //    {
+        //        var agentState = iterations.Last.Value[agent];
+        //        if (agent.Archetype.NamePrefix == "FM")
+        //        {
+        //            foreach (var area in agentState.DecisionOptionHistories.Keys)
+        //            {
+        //                // Save activation rule stat
+        //                var key = HarvestResults.GetKey(_sheMode, agent, area);
+        //                var activatedDOs = agentState.DecisionOptionHistories[area]
+        //                    .Activated.Distinct().OrderBy(r => r.Name).ToArray();
+        //                var matchedDOs = agentState.DecisionOptionHistories[area]
+        //                    .Matched.Distinct().OrderBy(r => r.Name).ToArray();
+        //                var activatedDOIds = activatedDOs.Select(r => r.Name).ToArray();
+        //                var matchedDOIds = matchedDOs.Select(r => r.Name).ToArray();
+        //                var usage = new FMDOUsageOutput()
+        //                {
+        //                    Iteration = iteration,
+        //                    ManagementArea = area.Name,
+        //                    ActivatedDOValues = activatedDOs.Select(
+        //                        r => string.IsNullOrEmpty(r.Consequent.VariableValue)
+        //                        ? (string)r.Consequent.Value.ToString()
+        //                        : (string)agent[r.Consequent.VariableValue].ToString()).ToArray(),
+        //                    ActivatedDO = activatedDOIds,
+        //                    MatchedDO = matchedDOIds,
+        //                    MostImportantGoal = agentState.RankedGoals.First().Name,
+        //                    TotalNumberOfDO = agent.AssignedDecisionOptions.Count,
+        //                    BiomassHarvested = _algorithmModel.HarvestResults.ManagementAreaHarvested[key],
+        //                    ManageAreaMaturityPercent = _algorithmModel.HarvestResults.ManagementAreaMaturityPercent[key],
+        //                    Biomass = _algorithmModel.HarvestResults.ManagementAreaBiomass[key]
+        //                };
+        //                CSVHelper.AppendTo(string.Format("output_SOSIEL_Harvest_{0}.csv", agent.Id), usage);
+        //            }
+        //        }
+        //    });
+        //}
 
-        protected override IDataSet[] FilterManagementDataSets(IAgent agent, IDataSet[] orderedDataSets)
-        {
-            var agentName = agent.Id;
-            return orderedDataSets.Where(s => (s as Area).AssignedAgents.Contains(agentName)).ToArray();
-        }
+        //protected override IDataSet[] FilterManagementDataSets(IAgent agent, IDataSet[] orderedDataSets)
+        //{
+        //    var agentName = agent.Id;
+        //    return orderedDataSets.Where(s => (s as Area).AssignedAgents.Contains(agentName)).ToArray();
+        //}
     }
 }

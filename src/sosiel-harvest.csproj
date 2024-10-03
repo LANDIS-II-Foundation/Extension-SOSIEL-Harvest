@@ -29,9 +29,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Landis.Core" Version="3.0.1" />
+		<PackageReference Include="CsvHelper" Version="12.2.3" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
+
 	</ItemGroup>
 
   <ItemGroup>
+	  <Reference Include="Landis.Library.SiteHarvest-v2">
+	  </Reference>
 	  <Reference Include="Landis.Library.UniversalCohorts-v1">
 	  </Reference>
 	  <Reference Include="Landis.Library.Parameters-v2">
@@ -44,7 +49,9 @@
     </Reference>
     <Reference Include="Landis.Extension.BiomassHarvest-v4">
     </Reference>
-    <Reference Include="SOSIEL-v3">
+	  <Reference Include="Landis.Library.HarvestManagement-v4">
+	  </Reference>
+	  <Reference Include="SOSIEL-v3">
     </Reference>
     <Reference Include="SOSIEL.VBGP-v1">
     </Reference>

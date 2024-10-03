@@ -3,7 +3,7 @@
 
 using System.Collections.ObjectModel;
 
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
@@ -39,7 +39,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
             _siteHarvestingRules.Add(siteHarvestingRule);
         }
 
-        public bool CheckSiteToHarvest(ISiteCohorts siteCohorts)
+        public bool CheckSiteToHarvest(SiteCohorts siteCohorts)
         {
             foreach (var siteSelectionRule in SiteSelectionRules)
             {

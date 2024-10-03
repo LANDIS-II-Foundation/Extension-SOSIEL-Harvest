@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using Landis.Extension.SOSIELHarvest.Algorithm;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using Landis.SpatialModeling;
 
 namespace Landis.Extension.SOSIELHarvest.Models
@@ -16,7 +16,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         private Random _random;
         private readonly IEnumerable<Prescription> _prescriptions;
         private readonly ISiteVar<string> _harvestPrescriptionName;
-        private readonly ISiteVar<ISiteCohorts> _siteCohorts;
+        private readonly ISiteVar<SiteCohorts> _siteCohorts;
 
         private bool _isHarvestingFinished;
         private readonly Dictionary<Location, ActiveSite> _availableSites;
@@ -28,7 +28,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public int HarvestedSitesNumber => _harvestedSites.Count;
 
         public HarvestManager(Area area, IEnumerable<Prescription> prescriptions,
-            ISiteVar<string> harvestPrescriptionName, ISiteVar<ISiteCohorts> siteCohorts)
+            ISiteVar<string> harvestPrescriptionName, ISiteVar<SiteCohorts> siteCohorts)
         {
             _prescriptions = prescriptions;
             _harvestPrescriptionName = harvestPrescriptionName;

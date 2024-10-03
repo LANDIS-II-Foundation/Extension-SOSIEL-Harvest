@@ -2,6 +2,7 @@
 // Copyright (C) 2021 SOSIEL Inc. All rights reserved.
 
 using Landis.Utilities;
+using Landis.Library.UniversalCohorts;
 
 namespace Landis.Extension.SOSIELHarvest.Models
 {
@@ -20,14 +21,14 @@ namespace Landis.Extension.SOSIELHarvest.Models
         public int MaxAge { get; }
         public Percentage Percentage { get; }
 
-        public bool CheckSite(Landis.Library.BiomassCohorts.ISiteCohorts siteCohorts)
+        public bool CheckSite(SiteCohorts siteCohorts)
         {
             foreach (var siteCohort in siteCohorts)
             {
                 foreach (var speciesCohort in siteCohort)
                 {
-                    if (speciesCohort.Species.Name.Equals(SpeciesName) && speciesCohort.Age >= MinAge &&
-                        speciesCohort.Age <= MaxAge)
+                    if (speciesCohort.Species.Name.Equals(SpeciesName) && speciesCohort.Data.Age >= MinAge &&
+                        speciesCohort.Data.Age <= MaxAge)
                         return true;
                 }
             }
