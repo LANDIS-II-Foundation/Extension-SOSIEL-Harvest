@@ -3,7 +3,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -45,6 +44,9 @@ namespace Landis.Extension.SOSIELHarvest
             _log = new LogService();
             _log.StartService();
         }
+
+        public override void AddCohortData() { return; }
+
 
         public override void LoadParameters(string dataFile, ICore modelCore)
         {

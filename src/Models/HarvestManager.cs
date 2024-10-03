@@ -83,7 +83,8 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             int harvested = 0;
             foreach (var siteHarvestingRule in prescription.SiteHarvestingRules)
-                harvested += siteCohorts.ReduceOrKillBiomassCohorts(new Disturbance(activeSite, siteHarvestingRule));
+                harvested += siteCohorts.ReduceOrKillCohorts(new Disturbance(activeSite, siteHarvestingRule));
+            //SiteVars.Cohorts[site].ReduceOrKillCohorts(this);
             return harvested;
         }
 
