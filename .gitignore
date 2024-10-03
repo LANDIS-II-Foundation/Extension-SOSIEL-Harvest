@@ -433,7 +433,6 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 # LANDIS-II	
-*.dll
 testings/Testrun_2/biomass/
 testings/Testrun_2/biomass-reclass/
 testings/Testrun_2/biomass-succession/
