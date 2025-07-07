@@ -17,7 +17,7 @@ The SOSIEL (pronounced ˈsōSHəl and stands for Self-Organizing Social & Induct
 
 To use SHE, you need:
 
-- The [LANDIS-II model v7.0](http://www.landis-ii.org/install) installed on your computer.
+- The [LANDIS-II model v8.0](http://www.landis-ii.org/install) installed on your computer.
 - SHE and, for use in Mode 2, [Biomass Harvest](https://sites.google.com/site/landismodel/extensions) installed on your computer.
 - Input files for LANDIS-II; SHE; and, for use in Mode 2, Biomass Harvest. An examples of files is [here]( https://github.com/LANDIS-II-Foundation/Project-Michigan-Compare-Harvesting-2021).
 
