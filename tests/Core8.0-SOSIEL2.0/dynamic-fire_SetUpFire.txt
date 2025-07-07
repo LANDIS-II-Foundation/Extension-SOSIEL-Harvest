@@ -1,0 +1,91 @@
+LandisData  "Dynamic Fire System"
+
+Timestep  10
+
+>>---------------------------------------
+>> FIRE INPUTS
+>>----------------------------------------
+
+Species_CSV_File dynamic-fire-species.csv
+
+EventSizeType	size_based  		<<'size-based' or 'duration_based'
+
+
+BuildUpIndex	Y			<< yes or no; Y or N
+
+
+>> Fire Region Data Table
+>> Fire region| Fire Size    | Seasonal Foliar Moisture Content (FMC) Data: Hi, Lo, and Proportion (Pr) | Other Ecorgion Data
+>>            |              | Spring (Sp)            Summer (Su)             Fall (Fa)                 |           
+>> Code Name  | Mu Sigma Max | SpFMCLo SpFMCHi SpHiPr SuFMCLo SuFMCHi SuFMCPr FaFMCLo FaFMCHi FaHiPr    | OpenFuel NumIgns 
+>> -----------  ------------   ------------------------------------------------------------------------   ----------------
+   1    fire1   4.8  0.5  1000   85      105     0.70   94      120     0.50    120     120     0.50        12         0.7
+
+
+InitialFireEcoregionsMap  	ecoregions.img
+
+
+
+DynamicEcoregionTable
+>>Year	FileName
+
+>>GroundSlopeFile        		dynamic-fire_GroundSlope_s1e2.gis
+>>UphillSlopeAzimuthMap  		dynamic-fire_UphillSlope_s1e2.gis
+
+
+SeasonTable
+>> Season  Leaf,    Prop of  Percent  DayLength
+>> Name    Status   Fires    Curing   Proportion
+>> ------  -------  -------  -------  ----------
+   Spring  LeafOff  0.10     20		1.0
+   Summer  LeafOn   0.60     60		1.0
+   Fall    LeafOff  0.30     90		1.0
+
+InitialWeatherDatabase  	 Fire_Weather_Malheur.csv  << Weather from the Malheur National Forest, OR
+
+DynamicWeatherTable
+>>Year  FileName
+
+FuelTypeTable
+>> Allowed base types:  Conifer, ConiferPlantation, Deciduous, Slash, Open
+>> Allowed surface types:  See Canadian Fire Behavior System (CFBS)
+>> The fuel types in the example file (below) are derived from the CFBS.
+
+>> Index BaseType    SurfType InitProb	a	b	c	q	BUI	maxBE	CBH	FWIScale FWIShape
+
+   1	Conifer		C2	1.0	110	0.0282	1.5	0.50	62	1.321	1	<<0.3	-4	<< young fire-sensitive conifer
+   2	Conifer		C2	0.8	110	0.0282	1.5	0.70	64	1.321	5	<<0.3	-4	<< old fire-sensitive conifer
+
+   3	Conifer		C7	1.0	45	0.0305	2.0	0.85	106	1.321	1	<<0.34	-4.4	<< young fire-resilient conifer
+   4	Conifer   	C7	0.6	45	0.0305	2.0	0.85	106	1.321	8	<<0.34	-4.4	<< old fire-resilient conifer
+   
+   5    Deciduous	D1      1.0     90      0.0232  1.6     0.50    32      1.179   0    << 0.3     -4      << young fire-sensitive deciduous
+   6    Deciduous	D1      0.9     90      0.0232  1.6     0.50    32      1.179   2     <<	0.3     -4      << old fire-sensitive deciduous
+
+   7	Deciduous	C7	1.0	50	0.0305	2.2	0.70	40	1.179	1	<<0.3	-4	<< young fire-resilient deciduous
+   8	Deciduous	C7	1.0	50	0.0305	2.2	0.70	60	1.179	3	<<0.3	-4	<< old fire-resilient deciduous
+
+ 
+   9    Conifer		M1      1.0     60      0.0250	1.9	0.60	50	1.179	1	<<0.3	-4.1    << young mixed conifer-deciduous forest
+   10   Conifer		M2      .9      60      0.0250	1.9	0.60	50	1.179	2	<<0.3	-4.1    << old mixed conifer-deciduous forest	
+
+>>   11   ConiferPlantation	C6	.5	30  	0.0800	3.0	0.80	62	1.197	5	<<0.3	-4	<< Temporary fuel type following pre-commercial thinning
+   12	Open           		O1a	0.8	190	0.031	1.4	1.0	1	1.0	0      << 0.3	-4	<< Temporary fuel type following harvest - open areas with native bunch grasses - only patchy fire (Brooke, modified from Brian Miranda)
+		
+   
+SeverityCalibrationFactor  1
+
+FireDamageTable
+>> Cohort Age       FireSeverity - 
+>> % of longevity   FireTolerance
+>> --------------   --------------
+     20%               -2
+     50%               -1
+     85%                0
+    100%                1
+
+
+MapNames  		fire/severity-{timestep}.img
+LogFile   		dynamic-fire-event-log.csv
+SummaryLogFile 		dynamic-fire-summary-log.csv
+

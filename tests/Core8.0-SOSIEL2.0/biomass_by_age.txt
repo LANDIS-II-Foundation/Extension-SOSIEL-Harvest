@@ -1,0 +1,12 @@
+LandisData  "Output Biomass-by-Age"
+
+Timestep   10
+
+
+MapNames biomass_by_age/{species}-{ageclass}-{timestep}.img
+>> units are in g biomass m-2
+
+Species		confsens immature(<50) mature(>50)
+		confrslt immature(<50) mature(>50)
+		brdlsens immature(<50) mature(>50)
+		brdlrslt immature(<50) mature(>50)	

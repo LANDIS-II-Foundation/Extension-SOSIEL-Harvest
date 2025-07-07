@@ -7,7 +7,7 @@ using System.Diagnostics;
 using System.Linq;
 
 using Landis.Extension.SOSIELHarvest.Algorithm;
-using Landis.Library.BiomassCohorts;
+using Landis.Library.UniversalCohorts;
 using Landis.Library.HarvestManagement;
 using Landis.SpatialModeling;
 
@@ -17,7 +17,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
     {
         private List<Prescription> _prescriptions;
         private ISiteVar<string> _harvestPrescriptionName;
-        private ISiteVar<ISiteCohorts> _siteCohorts;
+        private ISiteVar<SiteCohorts> _siteCohorts;
         private readonly Dictionary<string, double> _harvested;
 
         public Mode1(PlugIn plugin)
@@ -30,7 +30,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
         {
             _prescriptions = sheParameters.Prescriptions;
             _harvestPrescriptionName = PlugIn.ModelCore.GetSiteVar<string>("Harvest.PrescriptionName");
-            _siteCohorts = PlugIn.ModelCore.GetSiteVar<ISiteCohorts>("Succession.BiomassCohorts");
+            _siteCohorts = PlugIn.ModelCore.GetSiteVar<SiteCohorts>("Succession.UniversalCohorts");
 
             var maDataSet = new ManagementAreaDataset();
             foreach (var agentToManagementArea in sheParameters.AgentToManagementAreaList)
@@ -129,9 +129,9 @@ namespace Landis.Extension.SOSIELHarvest.Models
                                 double siteSpeciesMaturity = 0;
                                 foreach (var cohort in cohorts)
                                 {
-                                    siteBiomass += cohort.Biomass;
-                                    if (cohort.Age >= PlugIn.ModelCore.Species[species.Name].Maturity)
-                                        siteSpeciesMaturity += cohort.Biomass;
+                                    siteBiomass += cohort.Data.Biomass;
+                                    if (cohort.Data.Age >= PlugIn.ModelCore.Species[species.Name].Maturity)
+                                        siteSpeciesMaturity += cohort.Data.Biomass;
                                 }
                                 siteMaturity += siteSpeciesMaturity;
                             }

@@ -433,7 +433,6 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 # LANDIS-II	
-*.dll
 testings/Testrun_2/biomass/
 testings/Testrun_2/biomass-reclass/
 testings/Testrun_2/biomass-succession/
@@ -447,3 +446,28 @@ testings/Testrun_2/spp-biomass-log.csv
 testings/Testrun_2/sosiel-harvest-log.txt
 testings/Testrun_2/SOSIELHuman_FM1_rules.csv
 src/sosiel-harvest.sln
+src/sosiel-harvest.sln.DotSettings
+src/postbuild.bat
+src/configuration.json
+src/.editorconfig
+src/lib/Landis.Library.BiomassHarvest-v3.dll
+src/lib/Landis.Library.HarvestManagement-v4.dll
+src/lib/Landis.Library.Metadata-v2.dll
+src/lib/Landis.Library.Parameters-v2.dll
+src/lib/Landis.Library.SiteHarvest-v2.dll
+src/lib/Landis.Library.Succession-v9.dll
+src/lib/Landis.Library.UniversalCohorts-v1.dll
+src/lib/Landis.Extension.BiomassHarvest-v6.dll
+src/lib/Landis.Extension.BiomassHarvest-v6.dll
+tests/Core8.0-SOSIEL2.0/biomass-harvest-event-log.csv
+tests/Core8.0-SOSIEL2.0/biomass-harvest-summary-log.csv
+tests/Core8.0-SOSIEL2.0/Biomass-succession-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-future-annual-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-future-input-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-spinup-annual-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-spinup-input-log.csv
+tests/Core8.0-SOSIEL2.0/dynamic-fire-event-log.csv
+tests/Core8.0-SOSIEL2.0/dynamic-fire-summary-log.csv
+tests/Core8.0-SOSIEL2.0/Landis-climate-log.txt
+tests/Core8.0-SOSIEL2.0/Landis-log.txt
+tests/Core8.0-SOSIEL2.0/spp-biomass-log.csv

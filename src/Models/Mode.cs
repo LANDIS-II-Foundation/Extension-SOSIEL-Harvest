@@ -89,7 +89,7 @@ namespace Landis.Extension.SOSIELHarvest.Models
                             if (cohorts != null)
                             {
                                 foreach (var cohort in cohorts)
-                                    biomass += cohort.Biomass;
+                                    biomass += cohort.Data.Biomass;
                             }
                         }
                     }

@@ -10,20 +10,27 @@ The SOSIEL (pronounced ˈsōSHəl and stands for Self-Organizing Social & Induct
 
 # Release Notes
 
-- Latest official release: Version 1.1.14 — February 2021
+- Latest official release: Version 2.0 — July 2025
 - [SHE User Guide](https://docs.google.com/document/d/1YBKuFaQ5Hsh3OjYsMJoXoHgtg7gv8Us0wZjcTaqSCOc).
 
 # Requirements
 
 To use SHE, you need:
 
-- The [LANDIS-II model v7.0](http://www.landis-ii.org/install) installed on your computer.
-- SHE and, for use in Mode 2, [Biomass Harvest](https://sites.google.com/site/landismodel/extensions) installed on your computer.
-- Input files for LANDIS-II; SHE; and, for use in Mode 2, Biomass Harvest. An examples of files is [here]( https://github.com/LANDIS-II-Foundation/Project-Michigan-Compare-Harvesting-2021).
+- The [LANDIS-II model v8.0](http://www.landis-ii.org/install) installed on your computer.
+- Extension Installer
+- Example files (see below)
 
-# Download
 
-Version 1.1.14 can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/deploy/installer/LANDIS-II-V7%20SOSIEL%20Harvest%201.1.14-setup.exe). To install it on your computer, just launch the installer.
+# Download and Install the Extension
+
+The latest version can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/deploy/installer/LANDIS-II-V8%20SOSIEL%20Harvest%202.0-setup.exe).  (Look for the download icon in the upper right corner.)  Launch the installer.
+
+# Example Files
+
+Example files can be [downloaded from GitHub](https://downgit.github.io/#/home?url=https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/tree/master/Testing/Core8.0-SOSIEL2.0).
+
+
 
 # Citation
 

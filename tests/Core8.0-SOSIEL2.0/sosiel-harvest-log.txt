@@ -1,0 +1,151 @@
+  Loading DecisionOptionAttributes from input_SOSIEL_SHE_DecisionOptionAttributes.csv
+  Loading DecisionOptionAntecedentAttributes from input_SOSIEL_SHE_DecisionOptionAntecedentAttributes.csv
+  Loading AgentGoalAttributes from input_SOSIEL_SHE_AgentGoalAttributes.csv
+  Loading AgentVariables from input_SOSIEL_SHE_AgentVariables.csv
+  Loading AgentDecisionOptionAttributes from input_SOSIEL_SHE_AgentDecisionOptionAttributes.csv
+  SosielHarvestAlgorithm: Initializing agents...
+  SosielHarvestAlgorithm: Initializing probabilities...
+SHE: Running for time=10
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:                     0
+		Harvested:                   0
+		MaturityPercent:          0.00
+  SosielHarvestAlgorithm: Initializing first iteration...
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=20
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               189,173
+		Harvested:                   0
+		MaturityPercent:         49.90
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=30
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               192,749
+		Harvested:              35,946
+		MaturityPercent:         26.06
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=40
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               194,489
+		Harvested:              21,987
+		MaturityPercent:         14.54
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=50
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               195,494
+		Harvested:              13,772
+		MaturityPercent:          9.00
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=60
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               192,637
+		Harvested:              12,123
+		MaturityPercent:          6.36
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=70
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               192,454
+		Harvested:               9,450
+		MaturityPercent:          4.59
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=80
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               193,206
+		Harvested:               6,926
+		MaturityPercent:          3.30
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=90
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               191,532
+		Harvested:               8,025
+		MaturityPercent:          2.62
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=100
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               191,343
+		Harvested:               9,161
+		MaturityPercent:          2.11
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****
+SHE: Running for time=110
+SHE: ***** Executing mode #2 *****
+	Run Sosiel with parameters:
+	Area: 1
+		Biomass:               190,169
+		Harvested:               8,000
+		MaturityPercent:          2.02
+	Sosiel: There are no new prescriptions.
+Run Mode2 harvesting ...
+Mode 2: Generating and applying prescriptions ...
+Mode 2: Running BiomassHarvest ...
+Mode 2: Harvesting finished.
+SHE: ***** Finished executing mode #2 *****

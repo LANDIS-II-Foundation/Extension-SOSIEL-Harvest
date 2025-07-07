@@ -1,0 +1,22 @@
+LandisData "Climate Config"				
+		
+>> Daily weather data from the Maurer (Santa Clara University)
+>> Daily Meterological data, 1/1/1949 - 12/31/2010.
+>> Spatially-weighted averages for ecoregions, including:
+>> - wind speed (mean m/s)
+>> - wind direction (degrees clockwise from 0, from University of Idaho Daily Meteorological Data)
+>> - precipitation(mm/day)
+>> - max temps(C) 
+>> - min temps(C).
+
+ClimateTimeSeries		Daily_RandomYears
+ClimateFile			LANDISv8-Malheur_Historical_Climate_Maurer_1990-2010.csv
+
+>> LANDIS-v7
+>>ClimateFileFormat		Daily_Temp-C_Precip-mmDay
+
+SpinUpClimateTimeSeries		Daily_SequencedYears
+SpinUpClimateFile		LANDISv8-Malheur_Historical_Climate_Maurer_1990-2010.csv
+
+>> LANDIS-v7
+>>SpinUpClimateFileFormat		Daily_Temp-C_Precip-mmDay

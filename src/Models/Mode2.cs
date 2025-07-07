@@ -126,9 +126,9 @@ namespace Landis.Extension.SOSIELHarvest.Models
                                 double siteSpeciesMaturity = 0.0;
                                 foreach (var cohort in cohorts)
                                 {
-                                    siteBiomass += cohort.Biomass;
-                                    if (cohort.Age >= PlugIn.ModelCore.Species[species.Name].Maturity)
-                                        siteSpeciesMaturity += cohort.Biomass;
+                                    siteBiomass += cohort.Data.Biomass;
+                                    if (cohort.Data.Age >= PlugIn.ModelCore.Species[species.Name].Maturity)
+                                        siteSpeciesMaturity += cohort.Data.Biomass;
                                 }
                                 siteMaturity += siteSpeciesMaturity;
                             }

@@ -1,0 +1,68 @@
+   LandisData  Scenario
+
+
+>> ---------------------------------------------
+>> DEFINING A SCENARIO FOR A SINGLE LANDIS-II RUN
+>>----------------------------------------------
+
+>>	1. Provide the Required Inputs
+>>	2. Select ONE Succession Extension
+>>	3. Select ONE OR MORE Disturbance Extensions (but only ONE harvest extension)
+>>	4. Select ONE OR MORE (compatible) Output Extensions
+
+>>	A selection is made active by uncommenting a line (ie, remove the >> symbols) 
+
+
+>> This is the "simple" scenario with a SIMPLE landscape
+
+
+>>-------------------
+>> REQUIRED INPUTS
+>>-------------------
+
+   Duration  	200
+
+   Species   	species.txt
+
+   Ecoregions      ecoregions.txt
+   EcoregionsMap   ecoregions.img
+
+   CellLength  	100 << meters, 100 x 100 m = 1 ha
+
+>> -----------------------
+>> SUCCESSION EXTENSIONS
+>> -----------------------
+
+>> 	Succession Extension     Initialization File
+>> 	--------------------     -------------------
+   "Biomass Succession"	 biomass-succession.txt
+
+
+>> --------------------------
+>> DISTURBANCE EXTENSIONS
+>> -------------------------
+
+>> 	Disturbance Extension	Initialization File
+>>	--------------------	-------------------
+   "SOSIEL Harvest"		input_SHE.txt	
+>>   "Biomass Harvest"		input_BHE_SHE.txt
+   "Dynamic Fuel System"	dynamic-fire_SetUpFuel.txt
+   "Dynamic Fire System"	dynamic-fire_SetUpFire.txt
+
+
+>>   DisturbancesRandomOrder  yes  	<< optional
+                         		<< Commented (default) is "no"
+
+>> ------------------------
+>> OUTPUT EXTENSONS
+>> ----------------------
+
+>> Output Extension		      Initialization File
+>> ----------------		      -------------------
+   "Output Biomass"			   output_Biomass.txt		
+>>   "Output Biomass Reclass"	output_BiomassReclass.txt	
+>>   "Output Biomass-by-Age"		biomass_by_age.txt
+
+
+>> RandomNumberSeed  1234  << optional parameter; uncomment for reproducibilty tests
+                           << Commented (default) is a RandomNumberSeed generated using the current time

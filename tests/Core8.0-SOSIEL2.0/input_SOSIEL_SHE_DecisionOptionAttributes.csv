@@ -1,0 +1,3 @@
+DecisionOption,RequiredParticipants,ConsequentVariable,ConsequentValue,ConsequentValueReference,ConsequentValueType
+MM1-1_DO1,1,PercentOfHarvestArea,20,,Double
+MM2-1_DO1,1,PercentOfHarvestArea,10,,Double

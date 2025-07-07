@@ -1,0 +1,2 @@
+DemographicChange,DeathProbability,BirthProbability,AdoptionProbability,SexualOrientationRate,HomosexualTypeRate,PairingProbability,PairingAgeMin,PairingAgeMax,YearsBetweenBirths,MinimumAgeForHouseholdHead,MaximumAge
+FALSE,Death,Birth,Birth,0.5,1,0.8,5,10,5,7,20
