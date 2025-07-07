@@ -28,7 +28,7 @@ The latest version can be downloaded [here](https://github.com/LANDIS-II-Foundat
 
 # Example Files
 
-Example files can be [downloaded from GitHub](https://downgit.github.io/#/home?url=https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/tree/master/Testing/Core8.0-SOSIEL2.0).
+Example files can be [downloaded from GitHub](https://downgit.github.io/#/home?url=https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/tree/master/tests/Core8.0-SOSIEL2.0).
 
 
 
