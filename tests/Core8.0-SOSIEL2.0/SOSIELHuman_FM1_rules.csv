@@ -1,0 +1,4 @@
+Iteration,ManagementArea,ActivatedDOValues,ActivatedDO,MatchedDO,MostImportantGoal,TotalNumberOfDO
+1,1,"20,10","MM1-1_DO1,MM2-1_DO1","MM1-1_DO1,MM2-1_DO1",G2,2
+2,1,"20,10","MM1-1_DO1,MM2-1_DO1","MM1-1_DO1,MM2-1_DO1",G2,2
+3,1,"33.7777,92.7183","MM1-1_DO2,MM2-1_DO2","MM1-1_DO1,MM1-1_DO2,MM2-1_DO1,MM2-1_DO2",G1,4

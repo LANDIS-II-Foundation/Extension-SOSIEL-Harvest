@@ -1,0 +1,98 @@
+LandisData  "Biomass Succession"
+
+>> This is the "simple" scenario with no climate change and a simplified landscape
+
+
+>>------------------
+>> REQUIRED INPUTS
+>>------------------
+
+Timestep  			10
+
+SeedingAlgorithm  		WardSeedDispersal
+
+InitialCommunities      	./biomass-succession_InitialCommunities.csv
+InitialCommunitiesMap   	./biomass-succession_InitialCommunities.img
+
+ClimateConfigFile		./biomass-succession_ClimateGenerator.txt
+
+CalibrateMode 		no
+
+>> LANDIS-v8: no longer in the configuration
+>>SpinupMortalityFraction 	0.001
+
+>>----------------------------
+>> LIFE HISTORY PARAMETERS
+>>----------------------------
+
+MinRelativeBiomass
+>> Shade	Percent Max Biomass
+>> Class	by Ecoregions
+>> ----------	--------------------	
+	        1    
+	1	25%    	    
+	2	45%      
+	3	56%    
+	4	70%     
+	5	90% 	
+
+SufficientLight
+>> Spp Shade	Probability
+>> Class	by Actual Shade
+>> ----------	--------------------	
+>>		0	1	2	3	4	5
+	1	1.0	0.5	0.25	0.0	0.0	0.0
+	2	1.0	1.0	0.5	0.25	0.0	0.0
+	3	1.0	1.0	1.0	0.5	0.25	0.0
+	4	1.0	1.0	1.0	1.0	0.5	0.25
+	5	0.1	0.5	1.0	1.0	1.0	1.0
+
+
+SpeciesDataFile biomass-succession-species.csv
+
+EcoregionParameters
+>>	AET (mm)
+1	600
+
+
+>> LANDIS-II v7
+>> DynamicInputFile  biomass-succession_DynamicInputs.txt 
+
+>> LANDIS-II v8 - crafted from the former biomass-succession_DynamicInputs.txt
+SpeciesEcoregionDataFile biomass-succession-species-ecoregion.csv
+
+FireReductionParameters
+>> 	Severity	WoodLitter	Litter
+>> 	Fire		Reduct		Reduct
+	1		0.0		0.5	
+	2		0.0		0.75	
+	3		0.0		1.0	
+	4		0.5		1.0	
+	5		0.75	1.0
+
+HarvestReductionParameters
+>>	Name		WoodLitter		Litter		Cohort		Cohort
+>>	------		Reduct			Reduct		Removal		LeafRemoval
+>>			---------		-------		-------		-----------
+	
+	MM2-1_DO1	0.0 			0.0 		0.85		0.0	
+	MM1-1_DO1	0.0 			0.0 		0.85		0.0	
+	MM1_DO1		0.0 			0.0 		0.85		0.0	
+	MM1_DO2		0.0 			0.0 		0.85		0.0	
+	MM1_DO3		0.0 			0.0 		0.85		0.0
+	MM1_DO4		0.0 			0.0 		0.85		0.0
+	MM1_DO5		0.0 			0.0 		0.85		0.0
+	MM1_DO6		0.0 			0.0 		0.85		0.0
+	MM1_DO7		0.0 			0.0 		0.85		0.0
+	MM1_DO8		0.0 			0.0 		0.85		0.0
+	MM1_DO9		0.0 			0.0 		0.85		0.0
+	MM2_DO1		0.0 			0.0 		0.85		0.0
+	MM2_DO2		0.0 			0.0 		0.85		0.0
+	MM2_DO3		0.0 			0.0 		0.85		0.0
+	MM2_DO4		0.0 			0.0 		0.85		0.0
+	MM2_DO5		0.0 			0.0 		0.85		0.0
+	MM2_DO6		0.0 			0.0 		0.85		0.0
+	MM2_DO7		0.0 			0.0 		0.85		0.0
+	MM2_DO8		0.0 			0.0 		0.85		0.0
+	MM2_DO9		0.0 			0.0 		0.85		0.0
+	MM2_DO10	0.0 			0.0 		0.85		0.0

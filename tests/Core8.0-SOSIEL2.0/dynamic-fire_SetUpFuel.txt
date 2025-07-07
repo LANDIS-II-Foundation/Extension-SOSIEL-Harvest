@@ -1,0 +1,47 @@
+LandisData  "Dynamic Fuel System"
+
+Timestep  10
+
+>> 		 Fuel 
+>> Species 	 Coefficient 
+>> -------- 	----------- 
+   confsens   	1.00
+   confrslt  	1.00
+   brdlsens   	1.00
+   brdlrslt	1.00
+
+HardwoodMaximum 60
+
+>> not using the BDA extension, so this does not apply
+DeadFirMaxAge 15
+
+FuelTypes
+
+>> These fuel types correspond to those defined in the Dynamic Fire input file.
+
+>> Fuel Type  BaseFuel  		Age Range	Species
+>> ---------  --------     		---------	----------
+      1		Conifer			0 to 70		confsens -confrslt -brdlsens -brdlrslt	<< young fire-sensitive conifer
+      2		Conifer			200 to 780	confsens -confrslt -brdlsens -brdlrslt  << old fire-sensitive conifer
+      3 	Conifer			0 to 70		confrslt -confsens -brdlsens -brdlrslt 	<< young fire-resilient conifer
+      4		Conifer			80 to 350	confrslt -confsens -brdlsens -brdlrslt 	<< old fire-resilient conifer
+      5 	Deciduous		0 to 80		brdlsens -confsens -confrslt -brdlrslt  << young fire-sensitive deciduous
+      6		Deciduous		90 to 400	brdlsens -confsens -confrslt -brdlrslt  << old fire-sensitive deciduous
+      7 	Deciduous		0 to 60		brdlrslt -confsens -confrslt -brdlsens 	<< young fire-resilient deciduous
+      8 	Deciduous		70 to 300	brdlrslt -confsens -confrslt -brdlsens	<< old fire-resilient deciduous
+>>    9         Conifer			0 to 70		confsens confrslt brdlsens brdlrslt 	<< young mixed forest - M1 type not described in this table but included
+>>    10        Conifer			80 to 400	confsens confrslt brdlsens brdlrslt 	<< old mixed forest - M2 type not described in this table but included
+	
+>>      11 	ConiferPlantation	0 to 400	confsens confrslt brdlsens brdlrslt	<< Temporary fuel type following pre-commercial thinning
+      12	Open			0 to 20 	confsens confrslt brdlsens brdlrslt	<< Temporary fuel type following harvest - open areas
+
+DisturbanceConversionTable
+>> Fuel Type	Duration       Disturbance Description
+>> ---------	---------	--------
+	11	20		MM2_DO1 MM2_DO2 MM2_DO3 MM2_DO4 MM2_DO5  MM2_DO6  MM2_DO7  MM2_DO8  MM2_DO9  MM2_DO10 	<<all thinning prescriptions
+
+	12	20		MM1_DO8 MM1_DO9 	<<harvest prescriptions with at least 80% biomass removed
+
+MapFileNames		fire/FuelType-{timestep}.img
+PctConiferFileName	fire/PctConifer-{timestep}.img
+PctDeadFirFileName	fire/PctDeadFir-{timestep}.img

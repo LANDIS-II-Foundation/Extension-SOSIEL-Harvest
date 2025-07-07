@@ -27,7 +27,7 @@ AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
 AppUpdatesURL={#AppURL}
-DefaultDirName={pf}\{#ExtensionName}
+DefaultDirName={commonpf}\{#ExtensionName}
 DisableDirPage=yes
 DefaultGroupName={#ExtensionName}
 DisableProgramGroupPage=yes
@@ -58,7 +58,7 @@ Source: {#BuildDir}\Landis.Library.HarvestManagement-v4.dll; DestDir: {#ExtDir};
 Source: {#BuildDir}\Landis.Library.SiteHarvest-v2.dll; DestDir: {#ExtDir}; Flags: uninsneveruninstall replacesameversion
 Source: {#BuildDir}\CsvHelper.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 Source: {#BuildDir}\Newtonsoft.Json.dll; DestDir: {#ExtDir}; Flags: replacesameversion
-; Source: {#BuildDir}\NLog.dll; DestDir: {#ExtDir}; Flags: replacesameversion
+Source: {#BuildDir}\NLog.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 Source: {#BuildDir}\Microsoft.CSharp.dll; DestDir: {#ExtDir}; Flags: replacesameversion
 
 ; LANDIS-II identifies the extension with the info in this .txt file

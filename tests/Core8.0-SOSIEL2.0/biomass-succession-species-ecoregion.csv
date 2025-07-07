@@ -1,0 +1,5 @@
+Year,SpeciesCode,EcoregionName,ProbEstablish,ProbMortality,ANPPmax,BiomassMax
+0,confsens,1,0.9,0.5,886,26000
+0,confrslt,1,0.82,0.5,1106,26000
+0,brdlsens,1,0.56,0.5,1017,26000
+0,brdlrslt,1,0.5,0.5,1000,26000,

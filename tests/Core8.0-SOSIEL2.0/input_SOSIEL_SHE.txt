@@ -1,0 +1,76 @@
+>> This is the input file used by all SOSIEL-algorithm-based models to parameterize SOSIEL agents.
+>> Parameterization instructions are provided in the SOSIEL algorithm's User Guide.
+
+>> Cognitive Level. There are four cognitive levels to choose from: CL1 inlcudes ...
+   CognitiveLevel	CL4
+
+>> The number of possible goals (rows) is unlimited.
+   GoalAttributes
+>> ---------------  -----  -------------------------  -----------------------------  ---------------  -----------  -----------------------------
+>> Archetype name   Goal   Goal tendency              Reference variable             Change focal     Is           Focal Value 
+>>                                                                                   value on prior   cumulative   Reference Variable
+>> ---------------  -----  -------------------------  -----------------------------  ---------------  -----------  -----------------------------
+   ForestManager    G1     Maximize                   ManageAreaHarvested            no               no           ManageAreaHarvested
+   ForestManager    G2     EqualToOrAboveFocalValue   ManageAreaMaturityProportion   no               no           ManageAreaMaturityProportion
+
+
+>> The number of possible mental (sub-)models (rows) is unlimited. The number of associated
+>> goals (columns) is limited to the number of goals in the GoalAttributes table. This table
+>> also associates mental models with goals. For this reason, use "--" in cases when a mental
+>> model skips a goal.
+
+   MentalModelAttributes
+>> --------------------------------------------------------------------------------------------------------------------
+>> Archetype		Mental		Modifiable	Maximum number of	Decision option		Assosiated with		Consequent value	Consequent     		 
+>> name			(sub-)model                     decision options	goal relationshi	goals			range			round
+>>										(required if 
+>>										MM is modifiable)
+>> --------------------------------------------------------------------------------------------------------------------
+    ForestManager	MM1-1		yes            10                 	G1<+>|G2<->		G1|G2			0.0001-100		4
+    ForestManager	MM2-1		yes            10                 	G1<+>|G2<->		G1|G2			0.0001-100		4
+
+>> The number of possible decision options (rows) is unlimited, as long as each is associated with
+>> a mental (sub-)model. The number of goal-related attributes is limited by the numbr of goals in
+>> GoalAttributes table.
+   DecisionOptionAttributes input_SOSIEL_SHE_DecisionOptionAttributes.csv
+   DecisionOptionAntecedentAttributes input_SOSIEL_SHE_DecisionOptionAntecedentAttributes.csv
+
+   AgentArchetypeAttributes
+>> ----------		---------	----------	----------
+>> Archetype		Archetype	Site 		Goal importance
+>> name            	prefix		orientied	adjusting
+>> ----------       	----------    	----------      ----------
+   ForestManager	FM		yes		yes
+
+   AgentArchetypeVariables
+>> --------   	        --------       	     --------	     --------
+>> Archetype		Variable	     Variable	     Variable
+>> name     		name		     type     	     value
+>> --------   		--------	     --------        --------
+   ForestManager        BiomassHarvested     Integer         0
+
+>> The number of possible agents (rows) is unlimited, but must equal the number in the other two
+>> agent-specific data tables. The number of agent goals and related goal attributes is limited
+>> by the number of goals in GoalAttributes.
+   AgentGoalAttributes input_SOSIEL_SHE_AgentGoalAttributes.csv
+   AgentVariables input_SOSIEL_SHE_AgentVariables.csv
+
+>> The number of possible agents (rows) is unlimited, but must equal the number in the other two
+>> agent-specific data tables. The number of agent MMs is limited by the number of MMs in
+>> MentalModelAttributes table. The number of goal AIs is limited by the number of goals
+>> in GoalAttributes table.
+   AgentDecisionOptionAttributes     input_SOSIEL_SHE_AgentDecisionOptionAttributes.csv
+
+>> Description. Providing a DeathProbability value activates the death process.
+>> Providing a BirthProbability value activates the birth process.
+>> Providing a PairingProbability value activates the pairing process.
+   DemographicAttributes             input_SOSIEL_SHE_DemographicAttributes.csv
+
+   ProbabilityAttributes
+>> ----------     --------     ----		                          ------------
+>> Variable       Variable     File 			                  Ignore first
+>> parameter      type	       name			                  line
+>> ----------     --------     ----			                  ------------
+   Birth          Integer      input_SOSIEL_SHE_Birth_probability.csv     yes
+   Death          Integer      input_SOSIEL_SHE_Death_probability.csv     yes
+   General        Integer      input_SOSIEL_SHE_General_probability.csv   yes

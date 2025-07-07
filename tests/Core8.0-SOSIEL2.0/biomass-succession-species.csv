@@ -1,0 +1,5 @@
+SpeciesCode,LeafLongevity,WoodDecayRate,MortalityCurve,GrowthCurve,LeafLignin,ShadeTolerance,FireTolerance
+confsens,3,0.1,10,0.25,0.252,5,1
+confrslt,3,0.1,10,0.25,0.266,2,4
+brdlsens,1,0.1,10,0.25,0.175,5,1
+brdlrslt,1,0.1,10,0.25,0.176,3,4

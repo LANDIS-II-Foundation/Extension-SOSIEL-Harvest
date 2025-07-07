@@ -1,0 +1,126 @@
+LandisData  "Biomass Harvest"
+
+>> NOTE: MM2-1_02 was superficially modified to account for a change in BHE that was preventing the program from running.
+
+
+>>----------------
+>> REQUIRED INPUTS
+>>-----------------
+   Timestep		10
+
+   ManagementAreas 	ecoregions.img
+
+   Stands     		Stand_Map.img
+
+
+>> -------------------------
+>> HARVESTING PRESCRIPTIONS
+>> -------------------------
+
+>>---- G1 PRESCRIPTIONS - ECONOMIC GAIN ---------------------------------------
+
+>> Harvest prescriptions for G1, maximize economic gain through harvesting mature (>/= 50 years) trees of all 4 species.
+>> Rank stands by economic value, where each species becomes economically valuable at age 50.
+>> Stands must be at least 50 years of age on average (mean max age of all cells in the stand).
+>> Stands cannot be re-harvested for at least 20 years.
+>> When a stand is selected for harvest, the entire stand is harvested regardless of size.
+>> Each harvest prescription has as different designated % of mature biomass harvested while the proportion of the landscape harvested remains at 20%.
+
+
+Prescription 	MM1-1_DO1
+
+    	StandRanking 	Economic
+>> 		Species 	Economic Rank 	Minimum Age
+>> 		------- 	------------- 	-----------
+    		confsens  	40           	50  
+		confrslt	90		50
+		brdlsens	40		50
+		brdlrslt	90		50 
+	
+	MinimumAge  	50
+	
+>>	MinimumTimeSinceLastHarvest	20
+    
+    	SiteSelection	Complete
+
+	CohortsRemoved	SpeciesList
+		confsens 50-200(90%)
+		confrslt 50-350(90%)
+		brdlsens 50-400(90%)
+		brdlrslt 50-300(90%)
+
+>>---- G2 PRESCRIPTIONS - SUSTAINABNILITY ---------------------------------------
+
+>> Thinning prescriptions for G2, maximize sustainability by creating fire resilient stands with mature structure by thinning from below. 
+>> Prescription is identical for both management areas at the beginning of the simulation.
+>> Stands are ranked using the Regulate Ages function, which aims to create an even distribution of stand ages across each management area.
+>> There is no max or min stand age requirement, as we simply want to remove young cohorts and leave mature trees.
+>> Stands cannot be re-harvested for at least 20 years.
+>> When a stand is selected for harvest, the entire stand is harvested regardless of size.
+>> Each thinning prescription is associated with a different percentage of the landscape treated while the percent of immature biomass thinned remains at 80%.
+
+
+Prescription 	MM2-1_DO1
+
+    	StandRanking 	Economic
+>> 		Species 	Economic Rank 	Minimum Age
+>> 		------- 	------------- 	-----------
+    		confsens  	40           	50  
+		confrslt	90		50
+		brdlsens	40		50
+		brdlrslt	90		50
+	MinimumAge  	50
+
+>>  	StandRanking 	FireHazard
+>>	>>Fuel Type	Fuel Type Rank
+>>	>>Index
+>>	>>----------- 	--------------
+>>		1		7		<< young fire-sensitive conifer
+>>		2		4		<< old fire-sensitive conifer
+>>		3		6		<< young fire-resilient conifer
+>>		4		1		<< old fire-resilient conifer
+>>		5		9		<< young fire-sensitive deciduous
+>>		6		6		<< old fire-sensitive deciduous
+>>		7		7		<< young fire-resilient deciduous
+>>		8		2		<< old fire-resilient deciduous
+>>		9		8		<< young mixed forest
+>>		10		5		<< old mixed forest
+>>		11		0		<< Temporary fuel type following pre-commercial thinning
+>>		12		0		<< Temporary fuel type following harvest - open areas
+>>	
+>>	MinimumTimeSinceLastHarvest	20
+
+	ForestTypeTable
+	>> Inclusion Rule	ageRange	percentCells	species
+	>> --------------	--------	------------	-------
+	   Optional		10-40		50		confsens
+	   Optional		10-40		50		confrslt
+	   Optional		10-40		50		brdlsens
+	   Optional		10-40		50		brdlrslt
+    
+    	SiteSelection	Complete
+
+	CohortsRemoved	SpeciesList
+		confsens 1-40(10%)
+		confrslt 1-40(10%)
+		brdlsens 1-40(10%)
+		brdlrslt 1-40(10%)
+
+>> ----------------------------------
+>> HARVESTING IMPLEMENTATION 
+>> ---------------------------------
+
+    HarvestImplementations
+>>	Mgmt Area	Prescription	Harvest Area	BeginTime	EndTime
+>> 	---------   	------------   	------------   	---------- 	--------
+	1		MM1-1_DO1	90%		0  	    	200
+	1		MM2-1_DO1	90%		0  	    	200
+	
+>> ----------
+>> OUTPUTS
+>> ----------
+
+PrescriptionMaps    harvest/biomass-harvest-prescripts-{timestep}.img
+BiomassMaps         harvest/biomass-removed-{timestep}.img
+EventLog            biomass-harvest-event-log.csv
+SummaryLog	    biomass-harvest-summary-log.csv

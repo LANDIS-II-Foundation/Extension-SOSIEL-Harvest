@@ -1,0 +1,22 @@
+   LandisData  "SOSIEL Harvest"
+
+>> Determines which mode SHE is in. In Mode 1, SHE functions alone. In Mode 2, SHE
+>> functions with Biomass Harvest.
+   Mode	        2
+
+>> Determines the frequency of SHE's activation. When SHE's in Mode 2, the timestep
+>> must align with Biomass Harvest's.
+   Timestep    10
+
+>> Designates which SOSIEL Harvest and Biomass Harvest configuration files to use. When
+>> in Mode 1, only a SOSIEL Harvest configuration file is used. When in Mode 2, both a
+>> SOSIEL Harvest and a Biomass Harvest configuration file are used.
+   "SOSIEL Harvest"	input_SOSIEL_SHE.txt
+   "Biomass Harvest"	input_BHE_SHE.txt
+
+AgentToManagementArea
+>> The table establishes a one-to-one relationship between agent(s) and management area(s).
+>> -------  -----------------  -----------------------  ------------
+>> Agent    Management Area    Site Selection Method    Agent Mode
+>> -------  -----------------  -----------------------  ------------
+   FM1      1                  RandomWalk               2

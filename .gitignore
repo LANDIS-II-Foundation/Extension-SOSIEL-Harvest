@@ -457,3 +457,17 @@ src/lib/Landis.Library.Parameters-v2.dll
 src/lib/Landis.Library.SiteHarvest-v2.dll
 src/lib/Landis.Library.Succession-v9.dll
 src/lib/Landis.Library.UniversalCohorts-v1.dll
+src/lib/Landis.Extension.BiomassHarvest-v6.dll
+src/lib/Landis.Extension.BiomassHarvest-v6.dll
+tests/Core8.0-SOSIEL2.0/biomass-harvest-event-log.csv
+tests/Core8.0-SOSIEL2.0/biomass-harvest-summary-log.csv
+tests/Core8.0-SOSIEL2.0/Biomass-succession-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-future-annual-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-future-input-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-spinup-annual-log.csv
+tests/Core8.0-SOSIEL2.0/Climate-spinup-input-log.csv
+tests/Core8.0-SOSIEL2.0/dynamic-fire-event-log.csv
+tests/Core8.0-SOSIEL2.0/dynamic-fire-summary-log.csv
+tests/Core8.0-SOSIEL2.0/Landis-climate-log.txt
+tests/Core8.0-SOSIEL2.0/Landis-log.txt
+tests/Core8.0-SOSIEL2.0/spp-biomass-log.csv
