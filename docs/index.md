@@ -11,7 +11,7 @@ The SOSIEL (pronounced ˈsōSHəl and stands for Self-Organizing Social & Induct
 # Release Notes
 
 - Latest official release: Version 2.0 — July 2025
-- [SHE User Guide](https://docs.google.com/document/d/1YBKuFaQ5Hsh3OjYsMJoXoHgtg7gv8Us0wZjcTaqSCOc).
+- [SHE User Guide](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/docs/SOSIEL%20Harvest%20Extension%20v2.0%20User%20Guide.pdf).
 
 # Requirements
 
@@ -21,7 +21,6 @@ To use SHE, you need:
 - Extension Installer
 - Example files (see below)
 
-
 # Download and Install the Extension
 
 The latest version can be downloaded [here](https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/blob/master/deploy/installer/LANDIS-II-V8%20SOSIEL%20Harvest%202.0-setup.exe).  (Look for the download icon in the upper right corner.)  Launch the installer.
@@ -29,8 +28,6 @@ The latest version can be downloaded [here](https://github.com/LANDIS-II-Foundat
 # Example Files
 
 Example files can be [downloaded from GitHub](https://downgit.github.io/#/home?url=https://github.com/LANDIS-II-Foundation/Extension-SOSIEL-Harvest/tree/master/tests/Core8.0-SOSIEL2.0).
-
-
 
 # Citation
 
